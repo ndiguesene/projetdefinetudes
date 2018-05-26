@@ -1,0 +1,268 @@
+<!-- <div class="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom"> -->
+<!-- <h1 class="h2">Dashboard</h1> -->
+<div id="accordion">
+  <div class="btn-toolbar mb-2 mb-md-0 justify-content-end">
+    <div class="btn-group">
+      <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationSave">
+        Enregitrer
+        <i class="fa fa-save"></i>
+      </button>
+      <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationShare">
+        Partager
+        <i class="fa fa-share-alt"></i>
+      </button>
+      <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationExport">
+        Exporter
+        <i class="fa fa-share-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<!-- </div> -->
+
+<div class="collapse card card-body" id="optionsVisualisationSave">
+  <div class="well">
+    {{ objectVisualizationSave | json }}
+  </div>
+  <input type="text" name="save" id="" [(ngModel)]="objectVisualizationSave.visualization.title">
+  <button (click)="saveVisualisation()" class="btn btn-success">
+    <i class="fa fa-save"></i> Enregistrer
+  </button>
+</div>
+<div class="collapse card card-body" id="optionsVisualisationShare">
+  <h1>Share</h1>
+</div>
+<div class="collapse card card-body" id="optionsVisualisationExport">
+  <h1>Export</h1>
+</div>
+
+
+<div class="card">
+  <div class="card-header">
+    <div class="container">
+      <!-- <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex">
+            <div class="mr-auto p-2">
+              <button class="btn btn-sm btn-outline-primary"
+                (click)="saveChartAsImage()">
+                Exporter
+              </div>
+            </div>
+            <div class="p-2">
+              <a class="btn btn-sm btn-primary" 
+                data-toggle="collapse" 
+                href="#collapseEnregistrerVisualisation" 
+                role="button" 
+                aria-expanded="false" 
+                aria-controls="collapseEnregistrerVisualisation">
+                Enregistrer
+              </a>
+              <button class="btn btn-sm btn-primary">Exporter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-end">
+            <div class="collapse" id="collapseEnregistrerVisualisation">
+              <div class="form-inline">
+                <div class="form-group mx-sm-1">
+                  <input 
+                    type="text" 
+                    class="form-control-sm" 
+                    placeholder="Entrer le nom de la visualisation"
+                    >
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                  Sauver
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <!-- <hr> -->
+      <div class="row card-body" *ngIf="nomDiagramme !== 'metrics';else templateMetric">
+        <app-buckets-aggrega 
+          class="form-inline" 
+          [index]="nomIndex" 
+          [hiddenButRemove]="true" 
+          (change)="indexChangeFiltreBucket($event)"
+          (changeResultFiltre)="filtreHitsChangeBucket($event)">
+        </app-buckets-aggrega>
+      </div>
+      <ng-template #templateMetric>
+        <div class="row card-body">
+          <app-metrics-aggrega
+            [index]="nomIndex"
+            [hiddenButRemove]="true"
+            (change)="indexChangeFiltreMetrics($event)">
+          </app-metrics-aggrega>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="container">
+      <div class="row">
+        <!-- <div class="col-md-3">
+            <div class="card text-capitalize text-center bg-dark text-white">
+              <div class="d-flex">
+                <div class="mr-auto p-2">
+                  {{ nomIndex }}
+                </div>
+                <div class="p-2" *ngIf="nomDiagramme === 'metrics';else templateMetrics">
+                  <a class="btn btn-default btn-sm border" 
+                     role="button" 
+                     (click) = "resultatMetrics()">
+                    <i class="fa fa-play-circle-o"></i>
+                  </a>
+                </div>
+                <ng-template #templateMetrics>
+                  <div class="p-2">
+                    <a class="btn btn-default btn-sm border" 
+                       role="button" 
+                       (click) = "resultatDesDonneesChart()">
+                      <i class="fa fa-play-circle-o"></i>
+                    </a>
+                  </div>
+                </ng-template>
+              </div>
+            </div> -->
+        <!-- <div class="card">
+              <select class="custom-select form-control-sm" (change)="changeTypeChart($event)">
+                <option>
+                  Type Chart
+                </option>
+                <option *ngFor="let chart of listeChart" [value]="chart">
+                  {{ chart }}
+                </option>
+              </select>
+            </div> -->
+        <!-- Debut axe x -->
+        <!-- <div class="card">
+              <div class="form-row">
+                <div class="col-md-12 form-control-sm">
+                  <select class="custom-select form-control-sm" (change)="selectField($event)">
+                    <option *ngIf="nomDiagramme !== 'metrics';else template">
+                      Axe x
+                    </option>
+                    <ng-template #template>
+                      <option>
+                        Nom champ
+                      </option>
+                    </ng-template>
+                    <option *ngFor="let field of listFieldString" [value]="field">
+                      {{ field }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div> -->
+        <!-- fin axe x -->
+        <!-- Axe Y -->
+        <!-- <div class="card" *ngIf="nomDiagramme === 'metrics';">
+              <div class="form-row">
+                <div class="col-md-12 form-control-sm">
+                  <select class="custom-select form-control-sm" (change)="selectNameAggregation($event);">
+                    <option>Nom aggrégation</option>
+                    <option *ngFor="let operation of listeOperationsMetrics" [value]="operation">
+                      {{ operation }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div> -->
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-10">
+              <div class="card text-capitalize text-center bg-dark text-white">
+                <h5>{{ nomIndex }} - {{ nomDiagramme }}</h5>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <a data-dismiss="modal"
+                [routerLink]="['/visualisation']"
+                [queryParams] = "{ showCollapse : 'true' }"
+                role="button" 
+                class="btn btn-primary btn-sm">
+                <i class="fa fa-plus-square"><b> Nouveau Diagramme</b></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="input-group" *ngIf="nomDiagramme !== 'metrics'">
+            <!-- <div class="input-group-prepend">
+                <span class="input-group-text" id="">Position légende</span>
+              </div> -->
+            <div>
+              <select (change)="changePositionLegend($event)" class="custom-select form-control">
+                <option value="top">Top</option>
+                <option value="right">Right</option>
+                <option value="left">Left</option>
+                <option value="bottom">Bottom</option>
+              </select>
+            </div>
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon3"> - </span>
+            </div>
+            <span *ngIf="params.showLabel">
+              <input type="text" placeholder="Nom du label" [(ngModel)]="params.nomLabel" class="form-control">
+            </span>
+            <span *ngIf="params.showLabel">
+              <button type="button" class="btn btn-primary" (click)="loadLabelChart()" data-toggle="tooltip" title="Valider la modifier le nom du label du diagramme">
+                <i class="fa fa-save"></i>
+              </button>
+            </span>
+            <!-- La fonction 'selectShowLabelChart' permet d'afficher le input et button de validation pour
+              le changement du label duc chart -->
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <span> Label </span>
+                <input type="checkbox" checked (change)="selectShowLabelChart()" data-toggle="tooltip" title="Activer/Desactiver le label du diagramme">
+              </div>
+            </div>
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <span> Légende </span>
+                <input type="checkbox" checked (change)="selectShowLegendChart()" data-toggle="tooltip" title="Activer/Desactiver la légende du diagramme">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div style="display: block;">
+            <div class="">
+              <!-- Pour ne pas répéter le id myChart on utilise la varible nomDiagramme pour générer
+                automatique le nom de l'id correspondant au type de chart -->
+              <div *ngIf="nomDiagramme !== 'metrics';else templateMetrics">
+                <canvas id="myChart"></canvas>
+              </div>
+              <ng-template #templateMetrics>
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-6 card text-center" 
+                      *ngFor="let result of resultatAggregationMetrics">
+                      <div>
+                        <button type="button" class="close" aria-label="Close"
+                          (click)="removeMetrics(result.id)">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <p style="font-size: 50px;"><b>{{ result.objectResult.result | number }}</b></p>
+                      <div class="card-body">
+                        <p class="card-text text-center">{{ result.objectResult.label }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

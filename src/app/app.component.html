@@ -1,0 +1,44 @@
+<ng2-slim-loading-bar></ng2-slim-loading-bar>
+<div id="wrapper">
+  <nav class="navbar header-top fixed-top navbar-expand-lg  navbar-dark bg-dark">
+    <a class="navbar-brand" 
+      [routerLink]="['/accueil']">
+      <b>Portail Rapport</b>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarText">
+        <span class="d-flex justify-content-end">
+            <button (click)="switchLanguage('fr')" 
+            class="btn btn-sm btn-outline-secondary" 
+            style="color: black;background-color: #F8F8F8;">
+              <i class="fa fa-language"> <b>fr</b></i>
+            </button>
+            <button (click)="switchLanguage('en')" 
+            class="btn btn-sm btn-outline-secondary" 
+            style="color: black;background-color: #F8F8F8;">
+              <i class="fa fa-language"> <b>en</b></i>
+            </button>
+          </span>
+      <app-sidebar></app-sidebar>
+      <app-navbar></app-navbar>
+      <!-- Portion de code pour la transcription -->
+      
+      <!-- Fin de la portion de code pour la transcription -->
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div 
+    class="alert alert-warning alert-dismissible fade show" 
+    role="alert" 
+    *ngIf="!indexParDefaut">
+      <strong>Index</strong> Vueillez choisir un index par défaut dans votre base Elasticsearch.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
+</div>

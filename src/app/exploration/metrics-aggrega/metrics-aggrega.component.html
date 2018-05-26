@@ -1,0 +1,114 @@
+<div class="row">
+  <div div class="col-sm">
+    <select id="index" class="custom-select form-control form-control-sm" 
+            (change)="selectTypeOfAggregationSwtich($event)">
+      <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+        {{ aggrega.value }}
+      </option>
+    </select>
+  </div>
+  <div class="col-sm" *ngIf="typeOfaggregationSwtich !== 'count'">
+    <div *ngIf="choiceListeFieldAll;else templateForChoiceListFieldShow">
+      <select 
+        class="custom-select form-control form-control-sm" 
+        (change)="selectFieldMetricsChoice($event)">
+        <option [value] = "'null'">
+          Nom Champ
+        </option>
+        <option *ngFor="let field of listFieldString" [value]="field">
+          {{ field }}
+        </option>
+      </select>
+    </div>
+    <div class="col-sm">
+      <ng-template #templateForChoiceListFieldShow>
+        <select 
+          class="custom-select form-control form-control-sm"
+          (change)="selectFieldMetricsChoice($event)">
+          <option [value] = "'null'">
+            Nom Champ
+          </option>
+          <option *ngFor="let field of listFieldNumber" [value]="field">
+            {{ field }}
+          </option>
+        </select>
+      </ng-template>
+    </div>
+  </div>
+  <div class="col-sm">
+    <span class="col-sm">
+      <button class="btn btn-sm btn-primary" (click)="resultatAggregat(typeOfaggregationSwtich)">Filtrer</button>
+    </span>
+    <span class="col-sm">
+      <button type="button" class="btn btn-sm btn-danger" (click)="removeMetricsAggregat()">
+        <i class="fa fa-remove"></i>
+      </button>
+    </span>
+  </div>
+  <!-- <ng-template #templateChoiceBuckets class="col-lg-8">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2">
+          <select id="index" class="custom-select form-control form-control-sm" 
+                  (change)="selectFieldAgg($event)">
+            <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+              {{ aggrega.value }}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="selectFieldForAggregationAndBucket;else templateForChoiceListFieldShow" class="col-lg-2">
+            <select class="custom-select form-control form-control-sm">
+              <option [value] = "'null'">
+                Nom Champ
+              </option>
+              <option *ngFor="let field of listFieldString" [value]="field">
+                {{ field }}
+              </option>
+            </select>
+          <ng-template #templateForChoiceListFieldShow>
+            <select class="custom-select form-control form-control-sm">
+              <option [value] = "'null'">
+                Nom Champ
+              </option>
+              <option *ngFor="let field of listFieldNumber" [value]="field">
+                {{ field }}
+              </option>
+            </select>
+          </ng-template>
+        </div>
+        <div class="col-lg-2">
+          <select id="index" class="custom-select form-control form-control-sm" (change)="selectBucket($event)">
+            <option *ngFor="let li of listeBuckets" [value]="li.key">
+              {{ li.value }}
+            </option>
+          </select>
+        </div>
+        <div class="col-lg-4" *ngIf="searchByRange">
+          <div class="input-group">
+            <div class="input-group input-daterange">
+              <div class="input-group-addon"> From </div>
+              <input type="number" class="form-control form-control-sm">
+              <div class="input-group-addon"> To </div>
+              <input type="number" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4" *ngIf="searchByDateHistogramme">
+          <div class="input-group">
+            <div class="input-group input-daterange">
+              <div class="input-group-addon"> From </div>
+              <input type="date" class="form-control form-control-sm">
+              <div class="input-group-addon"> To </div>
+              <input type="date" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row center">
+          <div class="col-lg-2">
+            <button class="btn btn-sm btn-primary" (click)="resultatAggregat()">Filtrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template> -->
+</div>

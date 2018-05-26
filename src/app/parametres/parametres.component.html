@@ -1,0 +1,94 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Index</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Infos</a>
+    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Parametres avancés</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+    <div class="card">
+      <div class="card-body">
+        <div class="form-row">
+          <div class="col">
+            <select class="custom-select"
+              (change)="selectionIndex($event)">
+              <option value="nom_index">
+                Nom index
+              </option>
+              <option 
+                value="{{index.index}}" 
+                *ngFor="let index of listeIndex">{{ index.index }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <div class="btn-group mr-4">
+              <button [disabled]="!buttonDisabledSetIndex"
+              class="btn btn-xd btn-outline-success" id="btnSetIndex">
+                <i class="fa fa-star"></i>
+              </button>
+              <button [disabled]="!buttonDisabledSetIndex"
+              class="btn btn-xd btn-outline-danger" id="btnSetIndex" (click)="removeIndex()">
+                <i class="fa fa-remove"></i>
+              </button>
+              <button 
+                type="button" 
+                [disabled]="!buttonDisabledSetIndex"
+                class="btn btn-xd btn-outline-info" id="btnSetIndex"
+                (click)="getStatIndex()"
+                data-toggle="collapse" data-target="#modalStatIndex" 
+                aria-expanded="false" aria-controls="modalStatIndex">
+                <i class="fa fa-file-text"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="card collapse" id="modalStatIndex" *ngIf="statIndex">
+          <div class="list-group">
+            <ul class="list-group list-group-flush">
+              <li style="border-right: 1px dashed blue;" class="list-group-item">Nombre de documents : {{ statIndex.docs.count }}</li>
+              <li style="border-right: 1px dashed blue;" class="list-group-item">Taille : {{ statIndex.store.size_in_bytes }}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+            This page lists every field in the .portail index and the field's 
+            associated core type as recorded by Elasticsearch. 
+            While this list allows you to view the core type of each field, 
+            changing field types must be done using Elasticsearch's Mapping API 
+        </div>
+        <!-- <div class="card">
+          <table class="table">
+            <tr>
+              <th></th>
+              <th></th>
+            </tr>
+            <tr *ngFor="let liste of liste">
+              <td>{{}}</td>
+            </tr>  
+          </table>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+    <div class="card">
+      {{ listeSetting | json }}
+      <div class="d-flex flex-column" *ngFor="let setting of listeSetting">
+        <ul class="list-group list-group-flush">
+          <li style="border-right: 1px dashed blue;" class="list-group-item">Nombre de document : {{ setting.index.create_date }}</li>
+          <li class="list-group-item">Nombre de partitions : {{ setting.index.number_of_shards }}</li>
+          <li class="list-group-item">Nombre de réplicat : {{ setting.index.number_of_replicas }}</li>
+          <li class="list-group-item">Nom de l'index : {{ setting.index.provided_name }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+    <div class="card">
+      parametres avancé
+    </div>
+  </div>
+</div>

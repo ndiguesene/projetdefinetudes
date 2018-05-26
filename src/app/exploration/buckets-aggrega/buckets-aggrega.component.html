@@ -1,0 +1,121 @@
+<div class="row">
+  <div class="col-sm">
+    <select id="index" class="custom-select form-control form-control-sm" (change)="selectBucket($event)">
+      <option *ngFor="let li of listeBuckets" [value]="li.key">
+        {{ li.value }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="nameBucket === 'date_histogram' || nameBucket === 'date_range'">
+    <select  
+    class="custom-select form-control form-control-sm"
+    (change)="selectFieldBucketsChoice($event)">
+      <option disabled>
+        Champ Date
+      </option>
+      <option *ngFor="let field of listFieldDate" [value]="field">
+        {{ field }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="searchByDateHistogrammeRange">
+    <div class="input-group">
+      <input type="text"
+        placeholder="Date Début et Fin"
+        class="form-control form-control-sm"
+        placement="bottom"
+        (bsValueChange)="dateChangeFormated($event)"
+        [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' }"
+        bsDaterangepicker>
+    </div>
+  </div>
+
+  <div class="col-sm" *ngIf="searchByHostogram">
+    <select class="custom-select form-control form-control-sm"
+          (change)="selectFieldBucketsChoiceForFilter($event)">
+      <option disabled>
+      Nom Champ
+      </option>
+      <option *ngFor="let field of listFieldNumber" [value]="field">
+      {{ field }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="searchByHostogram">
+    <input type="number" class="form-control form-control-sm" placeholder="Minimal interval">
+  </div>
+
+  <div class="col-sm" *ngIf="nameBucket === 'date_range'">
+    <select class="custom-select form-control form-control-sm"
+            (change)="selectFieldBucketsChoiceForFilter($event)">
+      <option disabled>
+        Nom Champ
+      </option>
+      <option *ngFor="let field of listFieldNumber" [value]="field">
+        {{ field }}
+      </option>
+      <!-- <option *ngFor="let field of listFieldDate" [value]="field">
+        {{ field }}
+      </option> -->
+    </select>
+  </div>
+  <div class="col-sm" *ngIf="nameBucket === 'range_aggregation'">
+    <select class="custom-select form-control form-control-sm"
+            (change)="selectFieldBucketsChoice($event)">
+      <option disabled>
+        Nom Champ
+      </option>
+      <option *ngFor="let field of listFieldNumber" [value]="field">
+        {{ field }}
+      </option>
+      <!-- <option *ngFor="let field of listFieldDate" [value]="field">
+        {{ field }}
+      </option> -->
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="nameBucket === 'range_aggregation' || nameBucket ==='date_range'">
+    <select id="index" class="custom-select form-control form-control-sm" 
+            (change)="selectTypeOfAggregationSwtich($event)">
+      <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+        {{ aggrega.value }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="searchByRange">
+    <div class="input-group">
+      <div class="input-group input-daterange">
+        <div class="input-group-addon">De</div>
+        <input type="number" [(ngModel)]="rangeValeurDe" class="form-control form-control-sm">
+        <div class="input-group-addon"> à </div>
+        <input type="number" [(ngModel)]="rangeValeurA"class="form-control form-control-sm">
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm" *ngIf="searchByDateHistogrammeAggregation">
+    <select (change)="selectTypeDateFiltre($event)" class="custom-select form-control form-control-sm">
+      <option value="" disabled>Intervale</option>
+      <option value="year">Année</option>
+      <option value="month">Mois</option>
+      <option value="day">Jour</option>
+    </select>
+  </div>
+  <div class="col-sm">
+    <span class="col-sm">
+      <button class="btn btn-sm btn-primary"
+          (click)="resultatAggregat(typeOfaggregationSwtich,nameBucket)">
+          Filtrer <i class="fa fa-search-plus"></i>
+        </button>
+    </span>
+    <span class="col-sm" *ngIf="hiddenButRemove === false">
+      <button type="button" class="btn btn-sm btn-danger" (click)="removeBucketAggregat()">
+        <i class="fa fa-remove"></i>
+      </button>
+    </span>
+  </div>
+</div>

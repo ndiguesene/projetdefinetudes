@@ -1,0 +1,54 @@
+<div class="card">
+  <div class="card-header">
+    <h5>Appercu du Cluster</h5>
+  </div>
+  <div class="card-body">
+  <!-- {{ infoscluster | json }} -->
+    <div class="row" *ngIf="(couleurSanteCluster.length !== 0)">
+      <div class="col">
+        <div class="card bg-light mb-3" style="max-width: 18rem;">
+          <div class="card-body">
+            <i class="fa fa-home"></i>
+            <div><b><u>Nom Cluster</u></b>: {{ infoscluster.cluster_name }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card text-white bg-{{ couleurSanteCluster }} mb-3" style="max-width: 18rem;">
+          <div class="card-body">
+            <i class="fa fa-heart"></i>
+            <div><b><u>Santé</u></b>: {{ infoscluster.status }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bg-light mb-3" style="max-width: 18rem;">
+          <div class="card-body">
+            <i class="fa fa-home"></i>
+            <div><b><u>Nombre de noeud</u></b>: {{ infoscluster.number_of_nodes }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+      <!-- <div class="card-header">
+        <h5>Cluster</h5>
+      </div> -->
+      <div class="card-body">
+        <!-- {{ infoscluster | json }} -->
+        <div class="row" *ngIf="(couleurSanteCluster.length !== 0)">
+          <div class="col">
+            <div class="card bg-light mb-3" style="max-width: 18rem;">
+              <div class="card-body">
+                <!-- <div *ngFor="let li of listeIndexAndInfos"> -->
+                <!-- </div> -->
+                {{ listeIndexAndInfos | json }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
