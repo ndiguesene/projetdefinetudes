@@ -340,38 +340,39 @@
                   </tbody>
                 </table>  -->
                 <!-- {{ resultFilterDateHistogram[resultFilterDateHistogram.length-1] | json }} -->
-                <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'"
-                  class="form-control">
-                  <div class="card"><b>Count number : {{showList.length}}</b></div>
-                  <div class="card">
-                    <label for="showByNumber" class="">Nombre de ligne : </label>
-                    <select name="showByNumber" id="showByNumber" (change)="showResult($event)"
-                      class="custom-select form-control form-control-sm">
-                      <option value="{{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}" selected>Tout</option>
-                      <option *ngFor="let resul of countLineResultByAggregation">
-                        {{ resul }}
-                      </option>
-                    </select>
+                <div *ngIf="resultFilterDateHistogramShowInHtml">
+                  <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'"
+                    class="form-control">
+                    <div class="card"><b>Count number : {{showList.length}}</b></div>
+                    <div class="card">
+                      <label for="showByNumber" class="">Nombre de ligne : </label>
+                      <select name="showByNumber" id="showByNumber" (change)="showResult($event)"
+                        class="custom-select form-control form-control-sm">
+                        <option value="{{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}" selected>Tout</option>
+                        <option *ngFor="let resul of countLineResultByAggregation">
+                          {{ resul }}
+                        </option>
+                      </select>
+                    </div>
+                    <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>{{resultFilterDateHistogramShowInHtml.nom_champ}}</th>
+                          <th>Nombre d'enregistrement</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let l of showList">
+                          <td>{{ l.key_as_string | date }}</td>
+                          <td>{{ l.doc_count }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <!-- <div class="col-md-3 align-content-center">
+                      <button class="btn btn-primary btn-sm" (click)="showResult(showList.length%5)">Plus de données</button>
+                    </div> -->
                   </div>
-                  <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>{{resultFilterDateHistogramShowInHtml.nom_champ}}</th>
-                        <th>Nombre d'enregistrement</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let l of showList">
-                        <td>{{ l.key_as_string | date }}</td>
-                        <td>{{ l.doc_count }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <!-- <div class="col-md-3 align-content-center">
-                    <button class="btn btn-primary btn-sm" (click)="showResult(showList.length%5)">Plus de données</button>
-                  </div> -->
                 </div>
-
                 <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'range_aggregation'">
                   <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
                     <li class="list-group-item">

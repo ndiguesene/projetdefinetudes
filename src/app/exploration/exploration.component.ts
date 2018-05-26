@@ -127,23 +127,32 @@ export class ExplorationComponent implements OnInit, OnDestroy {
     // console.log(this.listeChampForFilter);
   }
   async ngOnInit() {
-    // permet de recupérer le contenu du variable stocké dans une variable de stockage qu niveau du navigateur
     this.getAllIndex();
-    await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
-      this.resultatFiltre = await JSON.parse(res);
-    });
-    await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
-      this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
-    });
-    await this.localStorage.getItem('listeMetrics').subscribe(async res => {
-      this.listeMetrics = await JSON.parse(res);
-    });
-    await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
-      this.listeBucketsAggrega = await JSON.parse(res);
-    });
-    await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
-      this.listeBucketsAggrega = await JSON.parse(res);
-    });
+    // permet de recupérer le contenu du variable stocké dans une variable de stockage qu niveau du navigateur
+    if (!!localStorage.getItem) {
+      await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
+        this.resultatFiltre = await JSON.parse(res);
+      });
+      await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
+        this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
+      });
+      await this.localStorage.getItem('listeMetrics').subscribe(async res => {
+        this.listeMetrics = await JSON.parse(res);
+      });
+      await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
+        this.listeBucketsAggrega = await JSON.parse(res);
+      });
+    } else {
+      alert('listeBucketsAggrega non');
+    }
+    // if(!!localStorage.getItem)
+    if (!!localStorage.getItem) {
+      await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
+        this.listeBucketsAggrega = await JSON.parse(res);
+      });
+    } else {
+      alert('indexpardefaut non');
+    }
     /**
      *  await permet de d'attendre jusqu'à la fin de l'instruction indiqué pour contiuner
      *  les instructions
@@ -269,14 +278,17 @@ export class ExplorationComponent implements OnInit, OnDestroy {
       for (const ite of resultatFiltre) {
         this.resultatFiltre.unshift(
           {
-            'objectResult': ite,
+            objectResult: ite,
             id: this.resultatFiltre.length + 1
           }
         );
       }
-      this.localStorage.setItem('resultatFiltre', JSON.stringify(this.resultatFiltre))
-        .subscribe(() => {});
-      // JSON.stringify(this.resultatFiltre)
+      if (this.resultatFiltre.length !== 0) {
+        this.localStorage.removeItemSubscribe('resultatFiltre');
+        this.localStorage.setItem('resultatFiltre', JSON.stringify(this.resultatFiltre))
+        .subscribe((r) => {console.log('forFiltre'); console.log(r);
+        });
+      }
     }
   }
   removeMetrics(id: number) {
@@ -346,7 +358,8 @@ export class ExplorationComponent implements OnInit, OnDestroy {
       }
       this.localStorage.setItem('resultFilterDateHistogramShowInHtml',
                     JSON.stringify(this.resultFilterDateHistogramShowInHtml))
-        .subscribe(() => {});
+        .subscribe((r) => {console.log(r);
+        });
       this.showList = this.resultFilterDateHistogramShowInHtml['dataAggregation'];
     }
     this.loading = false;
@@ -378,7 +391,8 @@ export class ExplorationComponent implements OnInit, OnDestroy {
         }
       });
       this.localStorage.setItem('listeBucketsAggrega', JSON.stringify(this.listeBucketsAggrega))
-        .subscribe(() => {});
+        .subscribe((r) => {console.log(r);
+        });
     }
   }
   // fin evenement pour recevoir les données du composant enfant buckets

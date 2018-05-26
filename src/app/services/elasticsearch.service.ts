@@ -55,7 +55,7 @@ export class ElasticsearchService {
     // }, function (error, exists) {
     //   if (exists === false) {
       try {
-        // this.createIndexService();
+         this.createIndexService();
       } catch (error) {
         console.log(error);
       }
