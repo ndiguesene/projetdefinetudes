@@ -1,3 +1,29 @@
+<!-- Début Modal pour la sélection des liste de champs à filtrer pour la Recherche -->
+<!-- <div class="modal fade" id="ModalCenterForSelectFields" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Choisir votre liste de champs
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-success" 
+          data-dismiss="modal"
+          (click) = "selectFieldForFilter();">Valider</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
 <div class="row">
   <div class="col-sm">
     <select id="index" class="custom-select form-control form-control-sm" (change)="selectBucket($event)">
@@ -10,7 +36,7 @@
   <div class="col-sm" *ngIf="nameBucket === 'date_histogram' || nameBucket === 'date_range'">
     <select  
     class="custom-select form-control form-control-sm"
-    (change)="selectFieldBucketsChoice($event)">
+    (change)="selectFieldBucketsChoiceDate($event)">
       <option disabled>
         Champ Date
       </option>
@@ -105,6 +131,39 @@
       <option value="day">Jour</option>
     </select>
   </div>
+
+  <div class="checkbox-inline col-sm" *ngIf="nameBucket === 'date_histogram'">
+    <label>Tracer par {{ typeDateFiltre }}
+      <input type="checkbox" [(ngModel)]="tracerParTypeInterval" (click)="selectTracerParTypeInterval();">
+    </label>
+  </div>
+
+  <div *ngIf="tracerParTypeInterval" class="col-sm">
+    Année Début <input type="number" [(ngModel)]="intervalDatehistogram.date_debut" class="col-sm form-control form-control-sm">
+    Année Fin <input type="number" [(ngModel)]="intervalDatehistogram.date_fin" class="col-sm form-control form-control-sm">
+  </div>
+  <div class="col-sm" *ngIf="tracerParTypeInterval">
+    <select class="custom-select form-control form-control-sm"
+            (change)="selectFieldBucketsChoice($event)">
+      <option disabled>
+        Nom Champ
+      </option>
+      <option *ngFor="let field of listFieldNumber" [value]="field">
+        {{ field }}
+      </option>
+      <!-- <option *ngFor="let field of listFieldDate" [value]="field">
+        {{ field }}
+      </option> -->
+    </select>
+  </div>
+  <div class="col-sm" *ngIf="tracerParTypeInterval">
+    <select id="index" class="custom-select form-control form-control-sm" 
+            (change)="selectTypeOfAggregationSwtich($event)">
+      <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+        {{ aggrega.value }}
+      </option>
+    </select>
+  </div>
   <div class="col-sm">
     <span class="col-sm">
       <button class="btn btn-sm btn-primary"
@@ -118,4 +177,6 @@
       </button>
     </span>
   </div>
+  
+
 </div>

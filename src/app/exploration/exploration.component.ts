@@ -43,7 +43,10 @@ export class ExplorationComponent implements OnInit, OnDestroy {
   maxDate = new Date();
 
   resultatFiltre = [];
+  resultatFiltreWithAggregation: any;
   component: any;
+
+  showResultsHits = false;
   /**
    * Cette permet de définir le nombre de champs qui sera affiché par défaut
    */
@@ -99,6 +102,10 @@ export class ExplorationComponent implements OnInit, OnDestroy {
 
   private _subscriptions: Subscription;
   countLineResultByAggregation = [];
+
+  aggregation: AggregationData;
+  name_field_aggrega_for_result: string;
+  masquerresultatFiltreWithAggregation = true;
   /*
   cette variable va permettre d'afficher la liste des elements en fonction d'un nombre bien définit
   */
@@ -129,30 +136,34 @@ export class ExplorationComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     this.getAllIndex();
     // permet de recupérer le contenu du variable stocké dans une variable de stockage qu niveau du navigateur
-    if (!!localStorage.getItem) {
-      await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
-        this.resultatFiltre = await JSON.parse(res);
-      });
-      await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
-        this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
-      });
-      await this.localStorage.getItem('listeMetrics').subscribe(async res => {
-        this.listeMetrics = await JSON.parse(res);
-      });
-      await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
-        this.listeBucketsAggrega = await JSON.parse(res);
-      });
-    } else {
-      alert('listeBucketsAggrega non');
-    }
-    // if(!!localStorage.getItem)
-    if (!!localStorage.getItem) {
-      await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
-        this.listeBucketsAggrega = await JSON.parse(res);
-      });
-    } else {
-      alert('indexpardefaut non');
-    }
+    // if (!!localStorage.getItem('resultatFiltre')) {
+    //   await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
+    //     this.resultatFiltre = await JSON.parse(res);
+    //   });
+    // }
+    // if (!!localStorage.getItem('resultFilterDateHistogramShowInHtml')) {
+    //   await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
+    //     this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
+    //   });
+    // }
+    // if (!!localStorage.getItem('listeMetrics')) {
+    //   await this.localStorage.getItem('listeMetrics').subscribe(async res => {
+    //     this.listeMetrics = await JSON.parse(res);
+    //   });
+    // }
+    // if (!!localStorage.getItem('listeBucketsAggrega')) {
+    //   await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
+    //     this.listeBucketsAggrega = await JSON.parse(res);
+    //   });
+    // }
+    // // if(!!localStorage.getItem)
+    // if (!!localStorage.getItem('indexParDefaut')) {
+    //   await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
+    //     this.listeBucketsAggrega = await JSON.parse(res);
+    //   });
+    // } else {
+    //   alert('indexpardefaut non');
+    // }
     /**
      *  await permet de d'attendre jusqu'à la fin de l'instruction indiqué pour contiuner
      *  les instructions
@@ -201,10 +212,10 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           id: this.listeBucketsAggrega.length + 1
         });
       }
-      this.localStorage.setItem('listeBucketsAggrega', JSON.stringify(this.listeBucketsAggrega))
-        .subscribe(() => {});
-      this.localStorage.setItem('listeMetrics', JSON.stringify(this.listeMetrics))
-        .subscribe(() => {});
+      // this.localStorage.setItem('listeBucketsAggrega', JSON.stringify(this.listeBucketsAggrega))
+      //   .subscribe(() => {});
+      // this.localStorage.setItem('listeMetrics', JSON.stringify(this.listeMetrics))
+      //   .subscribe(() => {});
     }
   }
   pageChanged(event: PageChangedEvent): void {
@@ -275,19 +286,25 @@ export class ExplorationComponent implements OnInit, OnDestroy {
    */
   indexChangeFiltreMetrics(resultatFiltre: any) {
     if (resultatFiltre) {
-      for (const ite of resultatFiltre) {
-        this.resultatFiltre.unshift(
-          {
-            objectResult: ite,
-            id: this.resultatFiltre.length + 1
-          }
-        );
+      if (resultatFiltre['metricsAggregationRangeDate']) {
+        this.resultatFiltreWithAggregation = resultatFiltre;
+        this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
+        this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
+      } else {
+        for (const ite of resultatFiltre) {
+          this.resultatFiltre.unshift(
+            {
+              objectResult: ite,
+              id: this.resultatFiltre.length + 1
+            }
+          );
+        }
       }
+
       if (this.resultatFiltre.length !== 0) {
         this.localStorage.removeItemSubscribe('resultatFiltre');
         this.localStorage.setItem('resultatFiltre', JSON.stringify(this.resultatFiltre))
-        .subscribe((r) => {console.log('forFiltre'); console.log(r);
-        });
+        .subscribe((r) => {});
       }
     }
   }
@@ -331,46 +348,59 @@ export class ExplorationComponent implements OnInit, OnDestroy {
     this.loading = true;
     if (this.resultFilterDateHistogram) {
       if (resultat['type_bucket'] === 'date_histogram') {
-        this.resultFilterDateHistogram.unshift({
+        this.resultFilterDateHistogram.push({
           id: this.resultFilterDateHistogram.length + 1,
           dataAggregation: resultat['filter_aggregation'],
           data: resultat['filter_hits'],
           type_bucket: resultat['type_bucket'],
-          nom_champ: resultat['nom_champ']
+          nom_champ: resultat['fieldBucketsChoiceForFilter']
         });
         this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
       } else {
-        this.resultFilterDateHistogram.unshift({
+        this.resultFilterDateHistogram.push({
           id: this.resultFilterDateHistogram.length + 1,
           data: resultat['filter_hits'],
           dataAggregation: resultat['filter_aggregation'],
           type_bucket: resultat['type_bucket'],
-          nom_champ: resultat['nom_champ'],
+          nom_champ: resultat['fieldBucketsChoiceForFilter'],
+          range : resultat['range'],
+          aggregation: resultat['typeOfaggregationSwtich'] // pour date_range
         });
         this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
       }
-      let j = 0;
-      for (let i = 0; i < this.resultFilterDateHistogramShowInHtml['dataAggregation'].length; i++) {
-        if (i % 5 === 0) {
-          this.countLineResultByAggregation[j] = i;
-          j++;
+      if (!this.resultFilterDateHistogramShowInHtml['dataAggregation'].value) {
+        let j = 0;
+        for (let i = 0; i < this.resultFilterDateHistogramShowInHtml['dataAggregation'].length; i++) {
+          if (i % 5 === 0) {
+            this.countLineResultByAggregation[j] = i;
+            j++;
+          }
         }
+        this.showList = this.resultFilterDateHistogramShowInHtml['dataAggregation'];
+      } else {
+        this.showList = [
+          this.resultFilterDateHistogramShowInHtml['aggregation'] + ' of '
+          + this.resultFilterDateHistogramShowInHtml['nom_champ']
+          + ' between [ ' + this.resultFilterDateHistogramShowInHtml['range'][0] + ', '
+          + this.resultFilterDateHistogramShowInHtml['range'][1] + ' ]',
+          this.resultFilterDateHistogramShowInHtml['dataAggregation'].value
+        ];
       }
-      this.localStorage.setItem('resultFilterDateHistogramShowInHtml',
-                    JSON.stringify(this.resultFilterDateHistogramShowInHtml))
-        .subscribe((r) => {console.log(r);
-        });
-      this.showList = this.resultFilterDateHistogramShowInHtml['dataAggregation'];
+
+      // this.localStorage.setItem('resultFilterDateHistogramShowInHtml',
+      //               JSON.stringify(this.resultFilterDateHistogramShowInHtml))
+      //   .subscribe((r) => {console.log(r);
+      //   });
     }
     this.loading = false;
   }
-  // indexChangeFiltreBucket(resultat: any) {
-  //   // console.log(resultat);
-  //   // this.resultFilterDateHistogram.push({
-  //   //   id: this.resultFilterDateHistogram.length + 1,
-  //   //   data: resultat
-  //   // });
-  // }
+  indexChangeFiltreBucket(resultat: any) {
+    // console.log(resultat);
+    // this.resultFilterDateHistogram.push({
+    //   id: this.resultFilterDateHistogram.length + 1,
+    //   data: resultat
+    // });
+  }
   /**
    * Cette fonction communique avec le composant metricAggregaComponent comme parent
    * pour recupérer l'id du composant et le composant à la demande ce celui ci (du composant)

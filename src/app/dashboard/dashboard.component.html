@@ -4,7 +4,7 @@
           <div class="card-header">
             <h3>Tableau de Bord</h3>
           </div>
-          <div class="card-body" *ngIf="!listeDashBoard; else listeDashBoardTemplate">
+          <div class="card-body" *ngIf="listeDashBoard.length === 0; else listeDashBoardTemplate">
             <h5 class="card-title">
               On dirait que vous n'avez aucun tableau de bord. Créons-en un peu!
             </h5>

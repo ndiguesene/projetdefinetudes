@@ -8,20 +8,33 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarText">
-        <span class="d-flex justify-content-end">
-            <button (click)="switchLanguage('fr')" 
-            class="btn btn-sm btn-outline-secondary" 
-            style="color: black;background-color: #F8F8F8;">
-              <i class="fa fa-language"> <b>fr</b></i>
-            </button>
-            <button (click)="switchLanguage('en')" 
-            class="btn btn-sm btn-outline-secondary" 
-            style="color: black;background-color: #F8F8F8;">
+    <ul class="nav nav-pills">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Lang</a>
+        <div class="dropdown-menu">
+          <a (click)="switchLanguage('fr')" class="dropdown-item" role="button">
+            <i class="fa fa-language"> <b>fr</b></i>
+          </a>
+          <a (click)="switchLanguage('fr')" class="dropdown-item" role="button">
               <i class="fa fa-language"> <b>en</b></i>
-            </button>
-          </span>
+            </a>
+        </div>
+      </li>
+    </ul>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <!-- <span class="d-flex justify-content-end">
+        <button (click)="switchLanguage('fr')" 
+        class="btn btn-sm btn-outline-secondary" 
+        style="color: black;background-color: #F8F8F8;">
+          <i class="fa fa-language"> <b>fr</b></i>
+        </button>
+        <button (click)="switchLanguage('en')" 
+        class="btn btn-sm btn-outline-secondary" 
+        style="color: black;background-color: #F8F8F8;">
+          <i class="fa fa-language"> <b>en</b></i>
+        </button>
+      </span> -->
+      <!-- Split dropup button -->
       <app-sidebar></app-sidebar>
       <app-navbar></app-navbar>
       <!-- Portion de code pour la transcription -->

@@ -1,3 +1,4 @@
+import { Config } from './../config/Config';
 import { Component, OnInit } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
@@ -10,18 +11,37 @@ import { ElasticsearchService } from '../services/elasticsearch.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  listeIndex: Observable<any>;
-  listeDiagramme: string[];
-  listeDashBoard: Observable<any>;
-  constructor(private es: ElasticsearchService, private router: Router) {}
+  listeIndex: any;
+  listeDashBoard = [];
+  dataAllPortail = [];
+  listeVisualisation = [];
 
-  ngOnInit() {
+  constructor(private es: ElasticsearchService,
+              private router: Router) {}
+
+  async ngOnInit() {
+    await this.es.getAllDocumentsService(
+      Config.INDEX.NOM_INDEX_FOR_MAPPING,
+      Config.INDEX.TYPE,
+      Config.NAME_FIELD_OF_MAPPING.VISUALIZATION).then(
+      async res => {
+        this.dataAllPortail = Object.values(res.hits.hits);
+        await this.dataAllPortail.map(visua => {
+          /**
+           *  ici vu que le contenu de l'objet enregistré dans la base est un objet qu'on a converti
+           * en string , on le parse pour recupérer l'objet en tant que tel
+           **/
+          visua['_source'].visualization.visState = JSON.parse(visua['_source'].visualization.visState);
+        });
+        this.listeVisualisation = this.dataAllPortail;
+      }
+    );
+    this.getAllIndex();
+  }
+  getAllIndex() {
     this.es.getAllIndexService().then(
-      (res: any) => {
-        this.listeIndex = res;
-      },
-      error => {
-        this.listeIndex = error;
+      resp => {
+        this.listeIndex = resp;
       }
     );
   }

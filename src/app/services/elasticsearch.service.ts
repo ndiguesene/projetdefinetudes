@@ -55,7 +55,7 @@ export class ElasticsearchService {
     // }, function (error, exists) {
     //   if (exists === false) {
       try {
-         this.createIndexService();
+        // this.createIndexService();
       } catch (error) {
         console.log(error);
       }
@@ -114,11 +114,12 @@ export class ElasticsearchService {
       size: _size
     });
   }
-  getSearchWithAgg(_index, _query): any {
+  getSearchWithAgg(_index, _query, size = 20): any {
     return this.client.search({
       index: _index,
       // type: _type,
-      body: _query
+      body: _query,
+      size: size
       // filterPath: ['aggregations'],
     });
   }

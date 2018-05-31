@@ -28,10 +28,13 @@ export class MetricsAggregaComponent implements OnInit {
   listFieldNumber: string[];
   listFieldDate: string[];
   listFieldStringAll: string[];
+  typeDateFiltre: string;
 
   typeChampSelected = '';
 
   listeIndex: Promise<any>;
+  selectFieldAggregation = false;
+  fieldBucketsChoiceDate: string;
 
   /**
    * Ce champ permet de déterminer quel champ a été choisit pour le filtre metrics
@@ -117,31 +120,77 @@ export class MetricsAggregaComponent implements OnInit {
     if (this.fieldMetricsChoice === '') {
       this.fieldMetricsChoice = this.listFieldNumber[0];
     }
-    const _query = bodybuilder().aggregation(
-      typeOfaggregationSwtich, this.fieldMetricsChoice
-    ).build();
-    const agg = new AggregationData();
-    agg.type = typeOfaggregationSwtich;
-    agg.enabled = true;
-    agg.schema = 'metric';
-    agg.id = '';
-    agg.params = {
-      field: this.fieldMetricsChoice,
-      query: _query
-    };
+    if (this.selectFieldAggregation) {
+      const _query = bodybuilder()
+        .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+          format: 'yyyy-MM-dd',
+          interval: this.typeDateFiltre
+        }, (a) => {
+          return a.aggregation(typeOfaggregationSwtich, this.fieldMetricsChoice);
+        }).build();
 
-    this.es.getSearchWithAgg(this.index, _query).then(
-      res => {
-        this.resultatFiltre = this.metricsAgg._getAggResult(res, agg);
-        this.change.emit(this.resultatFiltre);
-      }
-    );
+      const agg = new AggregationData();
+      agg.type = typeOfaggregationSwtich;
+      agg.enabled = true;
+      agg.schema = 'metric';
+      agg.id = '';
+      agg.params = {
+        field: this.fieldMetricsChoice,
+        query: _query,
+        typeDateFiltre: this.typeDateFiltre,
+        fieldBucketsChoiceDate: this.fieldBucketsChoiceDate
+      };
+      this.es.getSearchWithAgg(this.index, _query).then(
+        res => {
+          this.resultatFiltre = this.buck.getResultFilterAggregationBucket(res);
+          this.change.emit({
+            result: this.resultatFiltre,
+            aggregation: agg,
+            size: res.hits.total,
+            metricsAggregationRangeDate: true
+          });
+        }
+      );
+    } else {
+      const _query = bodybuilder().aggregation(
+        typeOfaggregationSwtich, this.fieldMetricsChoice
+      ).build();
+      const agg = new AggregationData();
+      agg.type = typeOfaggregationSwtich;
+      agg.enabled = true;
+      agg.schema = 'metric';
+      agg.id = '';
+      agg.params = {
+        field: this.fieldMetricsChoice,
+        query: _query
+      };
+
+      this.es.getSearchWithAgg(this.index, _query).then(
+        res => {
+          this.resultatFiltre = this.metricsAgg._getAggResult(res, agg);
+          this.change.emit(this.resultatFiltre);
+        }
+      );
+    }
   }
   // ajoutNewMetricsAggregat() {
   //   alert('AJout');
   // }
+  selectFieldBucketsChoiceDate(event: any) {
+    if (event) {
+      this.fieldBucketsChoiceDate = event.target.value;
+    }
+  }
   removeMetricsAggregat() {
     this.changeRemoveComposant.emit(this.idComposant);
+  }
+  selectAppliedFieldAggregation() {
+    this.selectFieldAggregation = !this.selectFieldAggregation;
+  }
+  selectTypeDateFiltre(event: any) {
+    if (event) {
+      this.typeDateFiltre = event.target.value;
+    }
   }
 
 }

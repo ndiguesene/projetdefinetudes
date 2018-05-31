@@ -1,5 +1,5 @@
 <ng2-slim-loading-bar></ng2-slim-loading-bar>
-<!-- D2but Modal pour la sélection des liste de champs à filtrer pour la Recherche -->
+<!-- Début Modal pour la sélection des liste de champs à filtrer pour la Recherche -->
 <div class="modal fade" id="ModalCenterForSelectFields" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -55,7 +55,7 @@
           <option [value] = "'null'" disabled>
             Index
           </option>
-          <option *ngFor="let index of listeIndex" [value]="index.index">
+          <option [selected]="indexParDefaut === index.index" *ngFor="let index of listeIndex" [value]="index.index">
             {{ index.index }}
           </option>
         </select>
@@ -64,7 +64,7 @@
         <select id="index" class="custom-select form-control form-control-sm" 
               (change)="selectFieldMetricsAndBuckets($event)">
           <option [value] = "''" disabled>
-            type opération
+            Type opération
           </option>
           <option [value] = "'metrics'">
             Metrics
@@ -95,7 +95,6 @@
             [index]="bucketAgg.index"
             [idComposant]="bucketAgg.id"
             [hiddenButRemove] = "false"
-            (change)="indexChangeFiltreBucket($event)"
             (changeRemoveComponent)="recupererIdComposantChangeBucket($event)"
             (changeResultFiltre)="filtreHitsChangeBucket($event)"
           ></app-buckets-aggrega>
@@ -235,7 +234,7 @@
         </div>
     </ng-container>
     <ng-template #explorationDonneesTemplate>
-      <h5 class="align-items-lef">Index : {{ indexParDefaut }}</h5>
+      <h5 class="align-items-lef"><u>Index</u> : {{ indexParDefaut }}</h5>
       <hr>
       <div class="row">
         <div class="col-md-4">
@@ -251,14 +250,14 @@
                     <option value="tous">
                       Tous
                     </option>
+                    <option value="date">
+                      Date
+                    </option>
                     <option value="text">
                       Text
                     </option>
                     <option value="number">
                       Number
-                    </option>
-                    <option value="date">
-                      Date
                     </option>
                   </select>
               </div>
@@ -276,7 +275,9 @@
                     <span class="" *ngFor="let content of returnedArray;let i = index">
                       {{ content }}
                       <hr>
-                      <!-- <span class="badge badge-primary badge-pill">type</span> -->
+                      <!-- <span class="badge badge-primary badge-pill">
+                        <button class="btn btn-primary btn-sm">add</button>
+                      </span> -->
                     </span>
                   </div>
                 </div>
@@ -323,7 +324,34 @@
                   </div>
                 </div>
               </div>
-              <div class="table-responsive" style="overflow-x:auto;">
+              
+              <div *ngIf="resultatFiltreWithAggregation" class="card">
+                <div>
+                  <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                    Metrics Aggrégation
+                  </button>
+                </div>
+                <div *ngIf="masquerresultatFiltreWithAggregation" class="collapse" id="collapseExample">
+                  <h3>{{ aggregation.type | titlecase }} of {{ aggregation.params.field }}</h3>
+                  <table class="table table-striped table-sm">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>{{ aggregation.params.fieldBucketsChoiceDate }} Interval '{{aggregation.params.typeDateFiltre | titlecase}}'</th>
+                        <th>Nombre enregistrement</th>
+                        <th>{{ aggregation.type | titlecase }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let l of resultatFiltreWithAggregation.result">
+                        <td>{{ l.key_as_string | date }}</td>
+                        <td>{{ l.doc_count | number }}</td>
+                        <td>{{ l[name_field_aggrega_for_result].value | number }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- <div class="table-responsive" style="overflow-x:auto;"> -->
                 <!-- <table class="table table-striped table-sm">
                   <thead class="thead-light">
                     <tr>
@@ -340,10 +368,16 @@
                   </tbody>
                 </table>  -->
                 <!-- {{ resultFilterDateHistogram[resultFilterDateHistogram.length-1] | json }} -->
-                <div *ngIf="resultFilterDateHistogramShowInHtml">
+                
+                <div *ngIf="resultFilterDateHistogram.length > 0" class="card">
+                  <div>
+                    <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseDataAggregation" aria-expanded="false" aria-controls="collapseDataAggregation">
+                        Buckets Aggrégation
+                    </button>
+                  </div>
                   <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'"
-                    class="form-control">
-                    <div class="card"><b>Count number : {{showList.length}}</b></div>
+                    class="collapse form-control" id="collapseDataAggregation">
+                    <div class="card"><b>Count number : {{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}</b></div>
                     <div class="card">
                       <label for="showByNumber" class="">Nombre de ligne : </label>
                       <select name="showByNumber" id="showByNumber" (change)="showResult($event)"
@@ -354,7 +388,7 @@
                         </option>
                       </select>
                     </div>
-                    <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'">
+                    <table class="table table-striped table-sm">
                       <thead class="thead-light">
                         <tr>
                           <th>{{resultFilterDateHistogramShowInHtml.nom_champ}}</th>
@@ -372,56 +406,69 @@
                       <button class="btn btn-primary btn-sm" (click)="showResult(showList.length%5)">Plus de données</button>
                     </div> -->
                   </div>
-                </div>
-                <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'range_aggregation'">
-                  <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
-                    <li class="list-group-item">
-                      <b>Index:</b> {{ l._index }}, <b>Type:</b> {{ l._type }},<b>Id:</b> {{ l._id }},
-                      <!-- <span *ngFor="let field of listFieldStringAll"> -->
-                      <b>{{ resultFilterDateHistogramShowInHtml.nom_champ }}:</b> {{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}
-                      <span *ngIf="listFieldDate">
-                        <b>, {{ listFieldDate[0] }}</b> {{ l._source[listFieldDate[0]] }}
-                      </span>
-                      <!-- </span> -->
-                    </li>
-                  </ul>
-                  <!-- <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'range_aggregation'">
-                    <thead class="thead-light">
-                      <tr>
-                        <th>Index</th>
-                        <th>Type</th>
-                        <th>Id</th>
-                        <th>{{ resultFilterDateHistogramShowInHtml.nom_champ }}</th>
-                        <th *ngIf="listFieldDate">
-                          {{ listFieldDate[0] }}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
-                        <td>{{ l._index }}</td>
-                        <td>{{ l._type }}</td>
-                        <td>{{ l._id }}</td>
-                        <td>{{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}</td>
-                        <td *ngIf="listFieldDate">
-                            {{ l._source[listFieldDate[0]] }}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table> -->
+                  <div *ngIf="resultFilterDateHistogramShowInHtml?.type_bucket === 'range_aggregation'">
+                    <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                      <li class="list-group-item">
+                        <b>Index:</b> {{ l._index }}, <b>Type:</b> {{ l._type }},<b>Id:</b> {{ l._id }},
+                        <!-- <span *ngFor="let field of listFieldStringAll"> -->
+                        <b>{{ resultFilterDateHistogramShowInHtml.nom_champ }}:</b> {{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}
+                        <span *ngIf="listFieldDate">
+                          <b>, {{ listFieldDate[0] }}</b> {{ l._source[listFieldDate[0]] }}
+                        </span>
+                        <!-- </span> -->
+                      </li>
+                    </ul>
+                    <!-- <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'range_aggregation'">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Index</th>
+                          <th>Type</th>
+                          <th>Id</th>
+                          <th>{{ resultFilterDateHistogramShowInHtml.nom_champ }}</th>
+                          <th *ngIf="listFieldDate">
+                            {{ listFieldDate[0] }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                          <td>{{ l._index }}</td>
+                          <td>{{ l._type }}</td>
+                          <td>{{ l._id }}</td>
+                          <td>{{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}</td>
+                          <td *ngIf="listFieldDate">
+                              {{ l._source[listFieldDate[0]] }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table> -->
+                  </div>
                 </div>
                 
-                <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket !== 'date_histogram'
-                            && resultFilterDateHistogramShowInHtml.type_bucket !== 'range_aggregation'">
-                  <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
-                    <li class="list-group-item">
-                      <span *ngFor="let field of listFieldStringAll">
-                        <b>{{ field }}:</b> {{ l._source[field] }},
-                      </span>
-                    </li>
-                  </ul>
+                
+                <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_range'">
+                  <div class="col-md-12 card text-center">
+                    <p style="font-size: 50px;"><b>{{ showList[1] | number }}</b></p>
+                    <div class="card-body">
+                      <p class="card-text text-center">{{ showList[0] }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <button (click)="showResultsHits = !showResultsHits" 
+                    class="btn btn-primary btn-sm btn-block">
+                    Afficher Resultats ( {{resultFilterDateHistogramShowInHtml.data.length}} row(s) )
+                  </button>
+                  <div *ngIf="showResultsHits">
+                    <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                      <li class="list-group-item">
+                        <span *ngFor="let field of listFieldStringAll">
+                          <b>{{ field }}:</b> {{ l._source[field] }},
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              <!-- </div> -->
             </ng-template>
               <!-- <div class="content-wrapper" *ngIf="listDataInIndex">
                 <div *ngFor="let li of listDataInIndex">

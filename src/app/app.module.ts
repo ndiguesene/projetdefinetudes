@@ -42,7 +42,7 @@ import { MetricsAggregaComponent } from './exploration/metrics-aggrega/metrics-a
 import { BucketsAggregaComponent } from './exploration/buckets-aggrega/buckets-aggrega.component';
 
 import { LocalStorageModule } from '@ngx-pwa/local-storage';
-
+import { DatePipe } from '@angular/common';
 export const createTranslateLoader = (http: HttpClient) => {
   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 };
@@ -97,7 +97,8 @@ export const createTranslateLoader = (http: HttpClient) => {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,
       multi: true,
-    }
+    },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

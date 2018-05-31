@@ -9,11 +9,11 @@ export class BucketsService {
     /**
      * Uniquement appliqué aux champs date
      */
-    {key: 'date_histogram', value: 'Date Histogram Aggregation'},
-    {key: 'date_range', value: 'Date Range Aggregation'},
-    {key: 'range_aggregation', value: 'Range Aggregation'},
+    {key: 'date_histogram', value: 'Date Histogram'},
+    {key: 'date_range', value: 'Date Range'},
+    {key: 'range_aggregation', value: 'Range'},
     {key: 'histogram', value: 'Histogram'},
-    {key: 'filter_aggregation', value: 'Filter Aggregation'},
+    {key: 'filter_aggregation', value: 'Filter'},
   ];
 
   constructor(private es: ElasticsearchService) { }
@@ -27,17 +27,17 @@ export class BucketsService {
    */
   queryDateHistoGrammAggregation(
         _index: string,
-        _query: any): any {
+        _query: any, size = 20): any {
     /**
      * Le 'field' doit etre de type 'Date'
      */
-    return this.es.getSearchWithAgg(_index, _query);
+    return this.es.getSearchWithAgg(_index, _query, size);
   }
-  queryDateRangeAggregation(_index: string, _query: any, _format?: string): any {
+  queryDateRangeAggregation(_index: string, _query: any, size = 20, _format?: string): any {
   /**
    * Le 'field' doit etre de type 'Date'
    */
-    return this.es.getSearchWithAgg(_index, _query);
+    return this.es.getSearchWithAgg(_index, _query, size);
   }
   getResultFilterAggregationBucket(response: any): any {
     const nameAggregation = Object.keys(response.aggregations)[0];
@@ -45,8 +45,10 @@ export class BucketsService {
       (response.aggregations) ? response.aggregations[nameAggregation] : response[nameAggregation] || null;
     if (aggResponse['buckets']) {
       return aggResponse['buckets'];
+    } else if (aggResponse['aggregations']) {
+      return aggResponse['aggregations'];
     } else {
-      return null;
+      return aggResponse;
     }
   }
   getResultFilterHitsBucket(response: any): any {

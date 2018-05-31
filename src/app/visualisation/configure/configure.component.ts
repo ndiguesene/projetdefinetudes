@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { AggregationData } from './../../entities/aggregationData';
 import { Config } from './../../config/Config';
 import { MetricsService } from './../../services/metrics.service';
@@ -47,6 +48,7 @@ export class ConfigureComponent implements OnInit {
   loading = false;
 
   aggs: AggregationData;
+  errorGlobal: any;
 
   objectVisualizationSave = {
     type: 'visualization',
@@ -68,7 +70,8 @@ export class ConfigureComponent implements OnInit {
     showLegend: true,
     type_bucket: '',
     nom_champ: '',
-    typeDateFiltre: ''
+    typeDateFiltre: '',
+    fill: false
   };
     /**
          * Cette  variable permet de faire la configuration de notre chart
@@ -104,73 +107,79 @@ export class ConfigureComponent implements OnInit {
               private chartService: ChartService,
               private es: ElasticsearchService,
               private metr: MetricsService,
-              private buck: BucketsService) {
+              private buck: BucketsService,
+              private datePipe: DatePipe) {
   }
   randomColor(opacity: number): string {
     // tslint:disable-next-line:max-line-length
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
   async ngOnInit() {
-    this.route.params.subscribe( params => {
-      this.nomDiagramme = params.id.toString();
-    });
-    // Pour recupérer les parametres passé en URL
-    // index est le nom du parametre
-    this.route.queryParamMap.subscribe(async params => {
-      if (params.get('index')) {
-        this.nomIndex = params.get('index');
-      } else {
-        this.nomIndex = this.es.getDefaultIndexService();
-      }
-      if (params.get('idVisualisation')) {
-          const id = params.get('idVisualisation');
-          const body = bodybuilder()
-            .query('match', 'type', Config.NAME_FIELD_OF_MAPPING.VISUALIZATION)
-            .filter('term', '_id', id)
-            .build();
-          await this.es.existDocument(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, body).then(
-            async resp => {
-              if (resp[0].isExist === true) {
-                const visState = JSON.parse(resp[0].data[0]._source.visualization.visState);
-                this.aggs = visState.aggregation;
-                // vérifie si le type de traitement qu'on doit faire est de type metrics ou buckets
-                if (this.nomDiagramme !== 'metrics') {
-                  this.buck.queryDateHistoGrammAggregation(
-                    visState.index, this.aggs.aggreg
-                  ).then(
-                    async res => {
-                        const resultat = {
-                          filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
-                          filter_hits: this.buck.getResultFilterHitsBucket(res),
-                          type_bucket: this.aggs.params.type_bucket,
-                          nom_champ: this.aggs.params.nom_champ,
-                          typeDateFiltre: this.aggs.params.typeDateFiltre
-                        };
-                      this.filtreHitsChangeBucket(resultat);
-                    }
-                  );
-                } else {
-                  // this.aggs.type = [0].objectResult.aggregation
-                  // console.log(this.aggs);
+    try {
+      this.route.params.subscribe( params => {
+        this.nomDiagramme = params.id.toString();
+      });
+      // Pour recupérer les parametres passé en URL
+      // index est le nom du parametre
+      this.route.queryParamMap.subscribe(async params => {
+        if (params.get('index')) {
+          this.nomIndex = params.get('index');
+        } else {
+          this.nomIndex = this.es.getDefaultIndexService();
+        }
+        if (params.get('idVisualisation')) {
+            const id = params.get('idVisualisation');
+            const body = bodybuilder()
+              .query('match', 'type', Config.NAME_FIELD_OF_MAPPING.VISUALIZATION)
+              .filter('term', '_id', id)
+              .build();
+            await this.es.existDocument(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, body).then(
+              async resp => {
+                if (resp[0].isExist === true) {
+                  const visState = JSON.parse(resp[0].data[0]._source.visualization.visState);
+                  this.aggs = visState.aggregation;
+                  // vérifie si le type de traitement qu'on doit faire est de type metrics ou buckets
+                  if (this.nomDiagramme !== 'metrics') {
+                    this.buck.queryDateHistoGrammAggregation(
+                      visState.index, this.aggs.aggreg, 100
+                    ).then(
+                      async res => {
+                          const resultat = {
+                            filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
+                            filter_hits: this.buck.getResultFilterHitsBucket(res),
+                            type_bucket: this.aggs.params.type_bucket,
+                            nom_champ: this.aggs.params.nom_champ,
+                            typeDateFiltre: this.aggs.params.typeDateFiltre,
+                            chartLabels: this.aggs.params.chartLabels
+                          };
+                        this.filtreHitsChangeBucket(resultat);
+                      }
+                    );
+                  } else {
+                    // this.aggs.type = [0].objectResult.aggregation
+                    // console.log(this.aggs);
 
-                  this.es.getSearchWithAgg(visState.index, this.aggs.aggreg).then(
-                    async res => {
-                      this.indexChangeFiltreMetrics(
-                        this.metr._getAggResult(res, this.aggs.params)
-                      );
-                    }
-                  );
+                    this.es.getSearchWithAgg(visState.index, this.aggs.aggreg).then(
+                      async res => {
+                        this.indexChangeFiltreMetrics(
+                          this.metr._getAggResult(res, this.aggs.params)
+                        );
+                      }
+                    );
+                  }
+                } else {
+                  alert('non ok');
                 }
-              } else {
-                alert('non ok');
               }
-            }
-          );
-      } else {
-        // this.nomIndex = this.es.getDefaultIndexService();
-      }
-    });
-    this.loadListFieldOnView(this.nomIndex);
+            );
+        } else {
+          // this.nomIndex = this.es.getDefaultIndexService();
+        }
+      });
+      this.loadListFieldOnView(this.nomIndex);
+    } catch (error) {
+      this.errorGlobal = error;
+    }
   }
   selectNameAggregation(event: any) {
     const element = event.target.value;
@@ -267,104 +276,286 @@ export class ConfigureComponent implements OnInit {
   }
   // le resulat sera traité ici pour le traitement d'un bucket
   filtreHitsChangeBucket(resultat: any) {
-    this.loading = true;
-    if (this.resultFilterDateHistogram) {
-      if (resultat['type_bucket'] === 'date_histogram') {
-        this.resultFilterDateHistogram.push({
-          id: this.resultFilterDateHistogram.length + 1,
-          data: resultat['filter_aggregation'],
-          type_bucket: resultat['type_bucket'],
-          nom_champ: resultat['nom_champ']
-        });
-      } else {
-        this.resultFilterDateHistogram.push({
-          id: this.resultFilterDateHistogram.length + 1,
-          data: resultat['filter_hits'],
-          type_bucket: resultat['type_bucket'],
-          nom_champ: resultat['nom_champ'],
-          fieldBucketsChoiceForFilter: resultat['fieldBucketsChoiceForFilter']
-        });
+    try {
+      if (this.currentChart) {
+        this.currentChart.clear();
+        this.currentChart.destroy();
       }
-      this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
-      if (this.nomDiagramme === 'metrics') {
-        this.resultatMetrics();
-      } else {
-        if (resultat['type_bucket'] === 'date_histogram') {
-          let i;
-          i = 0;
-          let dataTab: number[];
-          const taille = this.resultFilterDateHistogramShowInHtml['data'].length;
-          dataTab = [];
-          const donnees = this.resultFilterDateHistogramShowInHtml['data'];
-          for (const ite of donnees) {
-            /**
-             * item_count contient le nombre d'enregistrement de la requete
-             */
-            dataTab.push(ite.doc_count);
-            /**
-             * Ce permet de ne afficher que l'année au niveau de l'axe des abscisses
-             */
-            // format date: YYYY-MM-DD
-            if (resultat['typeDateFiltre'] === 'year') {
-              // this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
-              this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
-            } else if (resultat['typeDateFiltre'] === 'month') {
-              /**
-               * 'month' contient la valeur du mois ,qui sera convertit en valeur lettrée (ex: 1=Janvier...)
-               */
-              const month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
-              /*this.chartLabels.push(
-                month + '-' + ite.key_as_string.toString().split('-')[0]
-              );*/
-              this.chartLabels.push(month + '-' + ite.key_as_string.toString().split('-')[0]);
-            } else {
-              this.chartLabels.push(ite.key_as_string.toString().split('-')[2]);
-            }
-          }
-          const chartColor = [];
-          for (const iterator of dataTab) {
-            chartColor.push(this.randomColor(1));
-          }
-          if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
-            || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
-            // tslint:disable-next-line:no-shadowed-variable
-            const chartColor = [];
-            for (const iterator of dataTab) {
-              chartColor.push(this.randomColor(1));
-            }
-            this.chartData = [
-              {
-                label: resultat['nom_champ'],
-                fill: true,
-                data : dataTab,
-                backgroundColor: chartColor
-              }
-            ];
-          } else {
-            this.chartData = [
-              {
-                label: resultat['nom_champ'],
-                fill: true,
-                data : dataTab,
-                backgroundColor: this.randomColor(1)
-              }
-            ];
-          }
-        this.currentChart = this.chartService.tracerChart(
-          this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
-        );
-        // tslint:disable-next-line:max-line-length
-        this.currentChart.options.title.text = 'Diagramme ' + this.nomDiagramme + ' du(des) ' + resultat['typeDateFiltre'] + ' du champ << ' + resultat['nom_champ'] + ' >> ';
-        // pour reinitialiser le label vide
-        this.chartLabels = [];
-        this.chartData = [];
-        } else {
-          console.log(resultat);
-        }
-      }
-      this.resultatAllForBucket = resultat;
+    } catch (error) {
     }
-    this.loading = false;
+    try {
+      this.loading = true;
+      if (this.resultFilterDateHistogram) {
+        if (resultat['type_bucket'] === 'date_histogram') {
+          this.resultFilterDateHistogram.push({
+            id: this.resultFilterDateHistogram.length + 1,
+            data: resultat['filter_aggregation'],
+            dataMutliChart: resultat['filter_hits'],
+            type_bucket: resultat['type_bucket'],
+            nom_champ: resultat['nom_champ'],
+          });
+        } else if (resultat['type_bucket'] === 'date_range') {
+          this.resultFilterDateHistogram.push({
+            id: this.resultFilterDateHistogram.length + 1,
+            data: resultat['filter_hits'],
+            dataAggregation: resultat['filter_aggregation'],
+            type_bucket: resultat['type_bucket'],
+            nom_champ: resultat['nom_champ'],
+            chartLabels: resultat['chartLabels'],
+            fieldBucketsChoiceDate: resultat['fieldBucketsChoiceDate']
+          });
+        } else {
+          this.resultFilterDateHistogram.push({
+            id: this.resultFilterDateHistogram.length + 1,
+            data: resultat['filter_hits'],
+            type_bucket: resultat['type_bucket'],
+            nom_champ: resultat['nom_champ'],
+            fieldBucketsChoiceForFilter: resultat['fieldBucketsChoiceForFilter']
+          });
+        }
+        this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
+
+        if (this.nomDiagramme === 'metrics') {
+          this.resultatMetrics();
+        } else {
+          if (resultat['type_bucket'] === 'date_histogram') {
+            if (resultat['filtreAvecMultiChart'] === true) {
+              this.chartData = [];
+              this.chartLabels = [];
+              /**
+               * C'est dans cette partie qu'on va faire les plusieurs graphes
+               */
+              let dataTab;
+              dataTab = [];
+              let donnees;
+              if (resultat['typeOfaggregationSwtich'] === 'null') {
+                donnees = resultat['filter_hits'];
+              } else {
+                donnees = resultat['filter_aggregation'];
+              }
+              this.chartData = [];
+              if (resultat['typeDateFiltre'] === 'year') {
+                let name_field_aggrega_for_result = '';
+                for (const ite of donnees) {
+                  if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
+                    dataTab.push(ite.doc_count);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                  } else {
+                    name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
+                    if (ite[name_field_aggrega_for_result].value === null) {
+                      dataTab.push(0);
+                    } else {
+                      dataTab.push(ite[name_field_aggrega_for_result].value);
+                    }
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                  }
+                }
+                const chartColor = [];
+                for (const iterator of dataTab) {
+                  chartColor.push(this.randomColor(1));
+                }
+                this.chartData.push(
+                  {
+                    label: resultat['nom_champ'], // dans la variable données ai la valeur de l'année comme ID
+                    fill: this.params.fill,
+                    data : dataTab,
+                    backgroundColor: this.randomColor(1),
+                    borderColor: 'rgba(148,159,177,1)',
+                    pointBackgroundColor: 'rgba(148,159,177,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                  }
+                );
+              } else { // si le type de filtre en interval est en Mois ou jour
+                if (resultat['typeOfaggregationSwtich'] === 'null') {
+                  donnees = resultat['filter_hits'];
+                } else {
+                  donnees = resultat['filter_aggregation'];
+                }
+                const name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
+                let chaineObjectData = '';
+                if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
+                  for (const ite of donnees) {
+                    dataTab.push(ite.doc_count);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                  }
+                } else {
+                  // tslint:disable-next-line:radix
+                  const debut = parseInt(donnees[0].key_as_string.toString().split('-')[0]);
+                  for (let i = debut; i <= resultat['range'].date_fin; i++) {
+                    // let month;
+                    let j = 0;
+                    for (const ite of donnees) {
+                      let val = 0;
+                      // tslint:disable-next-line:radix
+                      val = parseInt(ite.key_as_string.toString().split('-')[0]);
+                      if (i === val) {
+                        if (ite[name_field_aggrega_for_result].value === null) {
+                          dataTab[j] = 0;
+                        } else {
+                          dataTab[j] = ite[name_field_aggrega_for_result].value;
+                        }
+                        // month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
+                        this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                                            'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                        j++;
+                      }
+                    }
+                    const objec = {
+                      label: i, // dans la variable données ai la valeur de l'année comme ID
+                      fill: this.params.fill,
+                      data : dataTab,
+                      backgroundColor: this.randomColor(1),
+                      borderColor: 'rgba(148,159,177,1)',
+                      pointBackgroundColor: 'rgba(148,159,177,1)',
+                      pointBorderColor: '#fff',
+                      pointHoverBackgroundColor: '#fff',
+                      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                    };
+                    chaineObjectData += JSON.stringify(objec) + ',';
+                  }
+                }
+                // cette instruction permet d'enlever le dernier ',' de la chaine pour apres le paser en json
+                chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
+                this.chartData = JSON.parse(chaineObjectData);
+              }
+              /**
+               * Fin de cette partie qu'on va faire les plusieurs graphes
+               */
+            } else {
+              let dataTab: number[];
+              dataTab = [];
+              const donnees = this.resultFilterDateHistogramShowInHtml['data'];
+              for (const ite of donnees) {
+                /**
+                 * item_count contient le nombre d'enregistrement de la requete
+                 */
+                dataTab.push(ite.doc_count);
+                /**
+                 * Ce permet de ne afficher que l'année au niveau de l'axe des abscisses
+                 */
+                // format date: YYYY-MM-DD
+                if (resultat['typeDateFiltre'] === 'year') {
+                  // this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                  this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                } else if (resultat['typeDateFiltre'] === 'month') {
+                  /**
+                   * 'month' contient la valeur du mois ,qui sera convertit en valeur lettrée (ex: 1=Janvier...)
+                   */
+                  const month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
+                  /*this.chartLabels.push(
+                    month + '-' + ite.key_as_string.toString().split('-')[0]
+                  );*/
+                  this.chartLabels.push(month + '-' + ite.key_as_string.toString().split('-')[0]);
+                } else {
+                  this.chartLabels.push(ite.key_as_string.toString().split('-')[2]);
+                }
+              }
+              const chartColor = [];
+              for (const iterator of dataTab) {
+                chartColor.push(this.randomColor(1));
+              }
+              if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
+                || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
+                // tslint:disable-next-line:no-shadowed-variable
+                const chartColor = [];
+                for (const iterator of dataTab) {
+                  chartColor.push(this.randomColor(1));
+                }
+                this.chartData = [
+                  {
+                    label: resultat['nom_champ'],
+                    fill: this.params.fill,
+                    data : dataTab,
+                    backgroundColor: chartColor
+                  }
+                ];
+              } else {
+                this.chartData = [
+                  {
+                    label: resultat['nom_champ'],
+                    fill: this.params.fill,
+                    data : dataTab,
+                    backgroundColor: this.randomColor(1),
+                    borderColor: 'rgba(148,159,177,1)',
+                    pointBackgroundColor: 'rgba(148,159,177,1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                  }
+                ];
+              }
+            }
+            this.currentChart = this.chartService.tracerChart(
+              this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
+            );
+            // tslint:disable-next-line:max-line-length
+            this.currentChart.options.title.text = 'Diagramme ' + this.nomDiagramme + ' du(des) ' + resultat['typeDateFiltre'] + ' du champ << ' + resultat['nom_champ'] + ' >> ';
+            // pour reinitialiser le label vide
+            this.chartLabels = [];
+            this.chartData = [];
+          } else if (resultat['type_bucket'] === 'date_range') {
+            let dataTab: number[];
+            dataTab = [];
+            let donnees = [];
+            donnees = resultat['filter_hits'];
+            for (const ite of donnees) {
+              /**
+               * item_count contient le nombre d'enregistrement de la requete
+               */
+              dataTab.push(ite._source[resultat['nom_champ']]);
+              this.chartLabels.push(
+                this.datePipe.transform(ite._source[resultat['fieldBucketsChoiceDate']], 'dd-MM-yyyy')
+              );
+            }
+            if (resultat['chartLabels']) {
+              this.chartLabels = [];
+              for (const ite of resultat['chartLabels']) {
+                this.chartLabels.push(ite);
+              }
+            }
+            if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
+              || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
+              // tslint:disable-next-line:no-shadowed-variable
+              const chartColor = [];
+              for (const iterator of dataTab) {
+                chartColor.push(this.randomColor(1));
+              }
+              this.chartData = [
+                {
+                  label: resultat['nom_champ'],
+                  fill: this.params.fill,
+                  data : dataTab,
+                  backgroundColor: chartColor
+                }
+              ];
+            } else {
+              this.chartData = [
+                {
+                  label: resultat['nom_champ'],
+                  fill: this.params.fill,
+                  data : dataTab,
+                  backgroundColor: this.randomColor(1),
+                  borderColor: 'rgba(148,159,177,1)',
+                  pointBackgroundColor: 'rgba(148,159,177,1)',
+                  pointBorderColor: '#fff',
+                  pointHoverBackgroundColor: '#fff',
+                  pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                }
+              ];
+            }
+            this.currentChart = this.chartService.tracerChart(
+              this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
+            );
+          }
+        }
+        this.resultatAllForBucket = resultat;
+      }
+      this.loading = false;
+    } catch (error) {
+        this.errorGlobal = error;
+    }
   }
   async saveVisualisation() {
     let type;
@@ -376,6 +567,7 @@ export class ConfigureComponent implements OnInit {
       this.params.nom_champ = this.resultatAllForBucket['nom_champ'];
       this.params.typeDateFiltre = this.resultatAllForBucket['typeDateFiltre'];
       this.params.nomLabel = this.currentChart.options.title.text;
+      this.params.chartLabels = this.chartLabels;
 
       const visState = {
         name_type_chart: this.nomDiagramme,
@@ -414,25 +606,48 @@ export class ConfigureComponent implements OnInit {
   selectShowLabelChart() {
     this.params.showLabel = !this.params.showLabel;
     this.currentChart.options.title.display = this.params.showLabel;
-    this.currentChart.update();
+    this.currentChart.update({
+      duration: 800,
+      easing: 'easeOutBounce'
+    });
+  }
+  selectShowFeelChart() {
+    this.params.fill = !this.params.fill;
+    console.log(this.currentChart.data.datasets[0]);
+    alert(this.params.fill);
+    this.filtreHitsChangeBucket(this.resultatAllForBucket);
+    // this.currentChart.options.legend.display = this.params.showLegend;
+    this.currentChart.update({
+      duration: 800,
+      easing: 'easeOutBounce'
+    });
   }
   selectShowLegendChart() {
     this.params.showLegend = !this.params.showLegend;
     this.currentChart.options.legend.display = this.params.showLegend;
-    this.currentChart.update();
+    this.currentChart.update({
+      duration: 800,
+      easing: 'easeOutBounce'
+    });
   }
   loadLabelChart() {
     if (this.params.nomLabel) {
       this.currentChart.options.title.text = this.params.nomLabel;
       this.params.nomLabel = '';
-      this.currentChart.update();
+      this.currentChart.update({
+        duration: 800,
+        easing: 'easeOutBounce'
+      });
     }
   }
   changePositionLegend(event: any) {
     this.params.positionLegend = event.target.value;
     if (this.params.positionLegend) {
       this.currentChart.options.legend.position = this.params.positionLegend;
-      this.currentChart.update();
+      this.currentChart.update({
+      duration: 800,
+      easing: 'easeOutBounce'
+    });
     }
   }
   convertValueMonthInLetter(valeur: string): string {
