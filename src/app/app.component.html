@@ -3,7 +3,7 @@
   <nav class="navbar header-top fixed-top navbar-expand-lg  navbar-dark bg-dark">
     <a class="navbar-brand" 
       [routerLink]="['/accueil']">
-      <b>Portail Rapport</b>
+      <b>{{ 'app.nom_projet' | translate }}</b>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -15,7 +15,7 @@
           <a (click)="switchLanguage('fr')" class="dropdown-item" role="button">
             <i class="fa fa-language"> <b>fr</b></i>
           </a>
-          <a (click)="switchLanguage('fr')" class="dropdown-item" role="button">
+          <a (click)="switchLanguage('en')" class="dropdown-item" role="button">
               <i class="fa fa-language"> <b>en</b></i>
             </a>
         </div>

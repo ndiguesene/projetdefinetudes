@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { ChartsModule } from 'ng2-charts';
-// import { Bootstra} from 'bootstrap-select';
 
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -43,10 +42,11 @@ import { BucketsAggregaComponent } from './exploration/buckets-aggrega/buckets-a
 
 import { LocalStorageModule } from '@ngx-pwa/local-storage';
 import { DatePipe } from '@angular/common';
-export const createTranslateLoader = (http: HttpClient) => {
-  return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
-};
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 
+// export const createTranslateLoader = (http: HttpClient) => {
+//   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
+// };
 
 @NgModule({
   declarations: [
@@ -70,6 +70,7 @@ export const createTranslateLoader = (http: HttpClient) => {
     BrowserModule,
     LocalStorageModule,
     FormsModule,
+    LeafletModule.forRoot(),
     BrowserAnimationsModule,
     AngularFontAwesomeModule,
     routing,
@@ -86,7 +87,7 @@ export const createTranslateLoader = (http: HttpClient) => {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: createTranslateLoader,
+        useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
     })
@@ -103,3 +104,7 @@ export const createTranslateLoader = (http: HttpClient) => {
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}

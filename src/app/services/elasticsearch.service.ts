@@ -10,19 +10,6 @@ import 'rxjs/add/operator/map';
 export class ElasticsearchService {
 
   private client: Client;
-  listeChart = [
-    { key: 'null', value: 'Nom Chart' },
-    { key: 'pie', value: 'Pie' },
-    { key: 'line', value: 'Line' },
-    { key: 'bar', value: 'Bar' },
-    { key: 'horizontalBar', value: 'Horizontal Bar' },
-    { key: 'bubble', value: 'Somme' },
-    { key: 'doughnut', value: 'Somme' },
-    { key: 'radar', value: 'Somme' },
-    { key: 'polarArea', value: 'Polar Area' },
-    { key: 'metrics', value: 'Metrics' }
-  ];
-
   queryalldocs = {
     'query': {
       'match_all': {}
@@ -123,6 +110,19 @@ export class ElasticsearchService {
       // filterPath: ['aggregations'],
     });
   }
+  fullTextSearchService(index, chaine): any {
+    return this.client.search({
+      index: index,
+      body: {
+        'query': {
+          'multi_match': {
+            'query': chaine,
+            'type': 'phrase_prefix'
+          }
+        }
+      }
+    });
+  }
   getDefaultIndexService(): any {
     const body = bodybuilder()
             .query('match', 'type', 'config')
@@ -174,28 +174,6 @@ export class ElasticsearchService {
         'size': _size,
         'query': {
           'match_all': {}
-        },
-        'sort': [
-          { '_uid': { 'order': _order } }
-        ]
-      }
-    });
-  }
-  getAllDocumentsWithDateRangeService(_index, _type, _date_debut, _date_fin, _order: string = 'asc'): any {
-    return this.client.search({
-      index: _index,
-      type: _type,
-      scroll: '1m',
-      filterPath: ['hits.hits._source', 'hits.total', '_scroll_id'],
-      body: {
-        'query': {
-          'range': {
-            'born': {
-              'gte': _date_debut,
-              'lte': _date_fin,
-              'format': 'dd/MM-yyyy||yyyy'
-            }
-          }
         },
         'sort': [
           { '_uid': { 'order': _order } }
@@ -355,22 +333,6 @@ export class ElasticsearchService {
   }
   removeIndexService(_name): any {
     return this.client.indices.delete({ index: _name });
-  }
-  fullTextSearchService(_index, _queryText): any {
-    return this.client.search({
-      index: _index,
-      filterPath: ['hits.hits._source', 'hits.total', '_scroll_id'],
-      body: {
-        'query': {
-          'multi_match': {
-            'query': _queryText,
-            'fields': [],
-            'type': 'phrase_prefix'
-          }
-        }
-      },
-      '_source': []
-    });
   }
   fullTextSearchOnClusterService(_field, _queryText): any {
     return this.client.search({

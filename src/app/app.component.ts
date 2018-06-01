@@ -11,9 +11,11 @@ import { TranslateService } from '@ngx-translate/core';
 export class AppComponent implements OnInit {
   indexParDefaut = '';
 
-  constructor(private _loadingBar: SlimLoadingBarService, private translate: TranslateService, private es: ElasticsearchService) {
-    translate.setDefaultLang('en');
-    this.translate.use('en');
+  constructor(private _loadingBar: SlimLoadingBarService,
+              private translate: TranslateService,
+              private es: ElasticsearchService) {
+    translate.setDefaultLang('fr');
+    this.translate.use('fr');
     this.indexParDefaut = this.es.getDefaultIndexService();
     // this.es.createIndexService('gestionpersonne');
   }

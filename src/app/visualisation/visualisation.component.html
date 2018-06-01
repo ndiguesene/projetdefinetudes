@@ -64,244 +64,7 @@
 
 <!-- Modal -->
 <!-- fin configuration choix de l'index -->
-<div class="collapse" [class.show]="showCollapseListChart" id="ajouterNouveauVisualisationTemplate">
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <h5 class="card-header">Basic Charts</h5>
-            <div class="card-body">
-              <div class="row">
-                  <div class="col-md-2">
-                    <a role="button" data-toggle="modal" 
-                      (click) = "getNameVisualisation('polarArea')"
-                      data-target="#ModalCenterForSwitchIndex">
-                      <div class="card">
-                        <div class="card-body text-center"
-                            data-toggle="tooltip" 
-                            title="créer un diagramme de ...">
-                          <!-- <a data-toggle="modal" data-target="#ModalCenterForSwitchIndex">
-                            <i class="fa fa-area-chart" style="font-size: 50px;color:black;">
-                              <h6>Polar Area</h6>
-                            </i>
-                          </a> -->
-                          
-                            <i class="fa fa-area-chart" style="font-size: 50px;color:black;">
-                              <h6>Polar Area</h6>
-                            </i>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                  <div class="col-md-2">
-                    <a role="button" data-toggle="modal"
-                    (click) = "getNameVisualisation('radar')"
-                    data-target="#ModalCenterForSwitchIndex">
-                      <div class="card">
-                        <div class="card-body text-center"
-                            data-toggle="tooltip" 
-                            title="créer un diagramme de ...">
-                          <!-- <a [routerLink]="['/visualisation', 'radar']">
-                            <i class="fa fa-bar-chart-o" style="font-size: 50px;color:black;">
-                              <h6>Radar</h6>
-                            </i>
-                          </a> -->
-                            <i class="fa fa-bar-chart-o" style="font-size: 50px;color:black;">
-                              <h6>Radar</h6>
-                            </i>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                  <div class="col-md-2">
-                    <a role="button" data-toggle="modal" 
-                    (click) = "getNameVisualisation('bar')"
-                    data-target="#ModalCenterForSwitchIndex">
-                      <div class="card">
-                        <div class="card-body text-center"
-                            data-toggle="tooltip" 
-                            title="créer un diagramme de ...">
-                          <!-- <a [routerLink]="['/visualisation', 'bar']">
-                            <i class="fa fa-align-center" style="font-size: 50px;color:black;">
-                              <h6>Bar</h6>
-                            </i>
-                          </a> -->
-                            <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
-                              <h6>Bar</h6>
-                            </i>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                    <div class="col-md-2">
-                      <a role="button" data-toggle="modal"
-                      (click) = "getNameVisualisation('line')"
-                      data-target="#ModalCenterForSwitchIndex">
-                      <div class="card">
-                        <div class="card-body text-center"
-                            data-toggle="tooltip" 
-                            title="créer un diagramme de ...">
-                          <!-- <a [routerLink]="['/visualisation', 'line']">
-                            <i class="fa fa-line-chart" style="font-size: 50px;color:black;">
-                              <h6>Line</h6>
-                            </i>
-                          </a> -->
-                            <i class="fa fa-line-chart" style="font-size: 50px;color:black;">
-                              <h6>Line</h6>
-                            </i>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                      <div class="col-md-2">
-                        <a role="button" data-toggle="modal" 
-                        (click) = "getNameVisualisation('pie')"
-                        data-target="#ModalCenterForSwitchIndex">
-                          <div class="card">
-                            <div class="card-body text-center"
-                                data-toggle="tooltip" 
-                                title="créer un diagramme de ...">
-                              <!-- <a [routerLink]="['/visualisation', 'pie']">
-                                <i class="fa fa-pie-chart" style="font-size: 50px;color:black;">
-                                  <h6>Pie</h6>
-                                </i>
-                              </a> -->
-                                <i class="fa fa-pie-chart" style="font-size: 50px;color:black;">
-                                  <h6>Pie</h6>
-                                </i>
-                            </div>
-                          </div>
-                        </a>
-                      </div>
-                      <div class="col-md-2">
-                        <a role="button" data-toggle="modal" 
-                        (click) = "getNameVisualisation('doughnut')"
-                        data-target="#ModalCenterForSwitchIndex">
-                          <div class="card">
-                            <div class="card-body text-center"
-                                data-toggle="tooltip" 
-                                title="créer un diagramme de ...">
-                              <!-- <a [routerLink]="['/visualisation', 'doughnut']">
-                                <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
-                                  <h6>Doughnut</h6>
-                                </i>
-                              </a> -->
-                                <i class="fa fa-adjust" aria-hidden="true" style="font-size: 50px;color:black;">
-                                  <h6>Doughnut</h6>
-                                </i>
-                            </div>
-                          </div>
-                        </a>
-                      </div>
 
-                      <!-- <div class="col-md-2">
-                        <a role="button" data-toggle="modal"
-                        (click) = "getNameVisualisation('bubble')"
-                        data-target="#ModalCenterForSwitchIndex">
-                          <div class="card">
-                            <div class="card-body text-center" data-toggle="tooltip" title="créer un diagramme de ...">
-                              <!-- <a [routerLink]="['/visualisation', 'bubble']">
-                                <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
-                                  <h6>Bubble</h6>
-                                </i>
-                              </a> 
-                              <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
-                                <h6>Bubble</h6>
-                              </i>
-                            </div>
-                          </div>
-                        </a>
-                      </div> -->
-
-                      <div class="col-md-2">
-                        <a role="button" data-toggle="modal"
-                        (click) = "getNameVisualisation('horizontalBar')"
-                        data-target="#ModalCenterForSwitchIndex">
-                          <div class="card">
-                            <div class="card-body text-center" data-toggle="tooltip" title="créer un diagramme de ...">
-                              <!-- <a [routerLink]="['/visualisation', 'bubble']">
-                              <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
-                                <h6>Bubble</h6>
-                              </i>
-                            </a> -->
-                              <i class="fa fa-bar-chart-o" style="font-size: 50px;color:black;">
-                                <h6>Horizontal Bar</h6>
-                              </i>
-                            </div>
-                          </div>
-                        </a>
-                      </div>
-                </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-12">
-          <div class="card">
-            <h5 class="card-header">Données</h5>
-            <div class="card-body">
-              <div class="row">
-                  <div class="col-md-2">
-                    <div class="card">
-                      <div class="card-body text-center">
-                        <a role="button" data-toggle="modal"
-                          (click) = "getNameVisualisation('metrics')"
-                          data-target="#ModalCenterForSwitchIndex">
-                          <i class="fa fa-table" style="font-size: 50px;color:black;">
-                            <h6>Metrics</h6>
-                          </i>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-12">
-            <div class="card">
-              <h5 class="card-header">Maps</h5>
-              <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                      <div class="card">
-                        <div class="card-body text-center">
-                          <a role="button" data-toggle="modal"
-                            (click) = "getNameVisualisation('coordonneesmap')"
-                            data-target="#ModalCenterForSwitchIndex">
-                            <i class="fa fa-map" style="font-size: 45px;color:black;">
-                              <h6>Coordonnées Map</h6>
-                            </i>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-md-2">
-                      <div class="card">
-                        <div class="card-body text-center">
-                          <a role="button" data-toggle="modal"
-                            (click) = "getNameVisualisation('regionmap')"
-                            data-target="#ModalCenterForSwitchIndex">
-                            <i class="fa fa-map-marker" style="font-size: 45px;color:black;">
-                              <h6>Région Map</h6>
-                            </i>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <!-- {{ listeVisualisation | json }} -->
 <div class="card">
   <div class="card-header">
     <div class="input-group">
@@ -332,8 +95,192 @@
       </div>
     </div>
   </div>
+  
+  <!-- <div class="card"> -->
+    <div class="collapse" [class.show]="showCollapseListChart" id="ajouterNouveauVisualisationTemplate">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <h5 class="card-header">Basic Charts</h5>
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal" 
+                          (click) = "getNameVisualisation('polarArea')"
+                          data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-area-chart" style="font-size: 50px;color:black;">
+                                  <h6>Polar Area</h6>
+                                </i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal"
+                        (click) = "getNameVisualisation('radar')"
+                        data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-bar-chart-o" style="font-size: 50px;color:black;">
+                                  <h6>Radar</h6>
+                                </i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal" 
+                        (click) = "getNameVisualisation('bar')"
+                        data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-bar-chart" style="font-size: 50px;color:black;">
+                                  <h6>Bar</h6>
+                                </i>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        <div class="col-md-2">
+                          <a role="button" data-toggle="modal"
+                          (click) = "getNameVisualisation('line')"
+                          data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-line-chart" style="font-size: 50px;color:black;">
+                                  <h6>Line</h6>
+                                </i>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal" 
+                            (click) = "getNameVisualisation('pie')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center"
+                                    data-toggle="tooltip" 
+                                    title="créer un diagramme de ...">
+                                    <i class="fa fa-pie-chart" style="font-size: 50px;color:black;">
+                                      <h6>Pie</h6>
+                                    </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal" 
+                            (click) = "getNameVisualisation('doughnut')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center"
+                                    data-toggle="tooltip" 
+                                    title="créer un diagramme de ...">
+                                    <i class="fa fa-adjust" aria-hidden="true" style="font-size: 50px;color:black;">
+                                      <h6>Doughnut</h6>
+                                    </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+    
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal"
+                            (click) = "getNameVisualisation('horizontalBar')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center" data-toggle="tooltip" title="créer un diagramme de ...">
+                                  <i class="fa fa-bar-chart-o" style="font-size: 50px;color:black;">
+                                    <h6>Horizontal Bar</h6>
+                                  </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-md-12">
+              <div class="card">
+                <h5 class="card-header">Données</h5>
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-2">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <a role="button" data-toggle="modal"
+                              (click) = "getNameVisualisation('metrics')"
+                              data-target="#ModalCenterForSwitchIndex">
+                              <i class="fa fa-table" style="font-size: 50px;color:black;">
+                                <h6>Metrics</h6>
+                              </i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-md-12">
+                <div class="card">
+                  <h5 class="card-header">Maps</h5>
+                  <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                          <div class="card">
+                            <div class="card-body text-center">
+                              <a role="button" data-toggle="modal"
+                                (click) = "getNameVisualisation('coordonneesmap')"
+                                data-target="#ModalCenterForSwitchIndex">
+                                <i class="fa fa-map" style="font-size: 45px;color:black;">
+                                  <h6>Coordonnées Map</h6>
+                                </i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+    
+                        <div class="col-md-2">
+                          <div class="card">
+                            <div class="card-body text-center">
+                              <a role="button" data-toggle="modal"
+                                (click) = "getNameVisualisation('regionmap')"
+                                data-target="#ModalCenterForSwitchIndex">
+                                <i class="fa fa-map-marker" style="font-size: 45px;color:black;">
+                                  <h6>Région Map</h6>
+                                </i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- </div> -->
   <!-- {{ listeVisualisation | json }} -->
-  <div class="card-body" *ngIf="listeVisualisation; else templatePasDeVisualisation">
+  <div class="card-body" *ngIf="listeVisualisation?.length !== 0; else templatePasDeVisualisation">
     <table class="table" id="table" class="table table-striped table-bordered">
       <thead class="thead-light">
         <tr>
@@ -362,7 +309,6 @@
             </a>
           </td>
           <td>
-              {{visua['_id']}}
             <!-- Modal pour confirmer la suppression d'un index avec toutes ses données -->
             <div class="modal fade" id="ModalCenterForDeleteIndex" 
                 tabindex="-1"
@@ -419,7 +365,7 @@
   </div>
   <ng-template #templatePasDeVisualisation>
     <div>
-      <h1>On dirait que vous n'avez aucune visualisation. Créons-en un peu!</h1>
+      <h5>Oups !!! On dirait que vous n'avez aucune visualisation. Créons-en un peu!</h5>
     </div>
   </ng-template>
 </div>

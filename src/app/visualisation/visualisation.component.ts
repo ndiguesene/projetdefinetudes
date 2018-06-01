@@ -1,9 +1,10 @@
+import { Config } from './../config/Config';
 import { VisualizationObj } from './../entities/visualizationObj';
 import { Component, OnInit } from '@angular/core';
 import { ElasticsearchService } from '../services/elasticsearch.service';
-import { Config } from '../config/Config';
 import 'rxjs/add/operator/map';
 import { ActivatedRoute } from '@angular/router';
+import * as bodybuilder from 'bodybuilder';
 
 @Component({
   selector: 'app-visualisation',
@@ -12,11 +13,12 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class VisualisationComponent implements OnInit {
   listeVisualisation = new Array<any>();
+  listeVisualisationAll = new Array<any>();
   dataAllPortail = [];
-  inputRecherche: any;
   listeIndex: Promise<any>;
   nomIndexChoisi: string = this.es.getDefaultIndexService();
   nomChart = '';
+  lastKeypress = 0;
 
   font_size = false;
   showCollapseListChart = false;
@@ -37,6 +39,7 @@ export class VisualisationComponent implements OnInit {
           visua['_source'].visualization.visState = JSON.parse(visua['_source'].visualization.visState);
         });
         this.listeVisualisation = this.dataAllPortail;
+        this.listeVisualisationAll = this.listeVisualisation;
       }
     );
     this.getAllIndex();
@@ -53,15 +56,17 @@ export class VisualisationComponent implements OnInit {
   changeStyleForLienTypeChart(event: any) {
     this.font_size = event.type === 'mouseover' ? true : false;
   }
-  recherche(event: any): any {
-    this.inputRecherche = event.target.value;
-    this.es.fullTextSearchService(
-        this.es.getDefaultIndexService(),
-        this.inputRecherche).then(
-          res => {
-            this.listeVisualisation = res;
-          }
-        );
+  recherche(event: any) {
+    const inputRecherche = event.target.value;
+    if ((event.timeStamp - this.lastKeypress) > 100) {
+      this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, inputRecherche).then(
+        res => this.listeVisualisation = res.hits.hits
+      );
+    }
+    if (inputRecherche.length === 0) {
+      this.listeVisualisation = this.listeVisualisationAll;
+    }
+    this.lastKeypress = event.timeStamp;
   }
   getAllIndex() {
     this.es.getAllIndexService().then(

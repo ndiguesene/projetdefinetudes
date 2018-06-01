@@ -3,7 +3,7 @@ import { AggregationData } from './../../entities/aggregationData';
 import { Config } from './../../config/Config';
 import { MetricsService } from './../../services/metrics.service';
 import { ElasticsearchService } from './../../services/elasticsearch.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChartService } from '../../services/chart.service';
 
@@ -13,6 +13,7 @@ import { VisualizationObj } from '../../entities/visualizationObj';
 
 import * as bodybuilder from 'bodybuilder';
 import { BucketsService } from '../../services/buckets.service';
+import { tileLayer, latLng, circle, polygon, marker } from 'leaflet';
 
 @Component({
   selector: 'app-configure',
@@ -102,6 +103,24 @@ export class ConfigureComponent implements OnInit {
       mode: 'xy'
     }
   };
+  name_field_aggrega_for_result = '';
+  resultatFiltreWithAggregation: any;
+  aggregation: AggregationData;
+
+
+  option = {
+    layers: [
+      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        maxZoom: 18, attribution: '...'
+      })
+    ],
+    zoom: 10,
+    center: latLng(14.7456593, -17.3336657)
+  };
+  layers = [
+      marker([ 46.879966, -121.726909 ])
+  ];
 
   constructor(private route: ActivatedRoute,
               private chartService: ChartService,
@@ -249,13 +268,26 @@ export class ConfigureComponent implements OnInit {
   }
   indexChangeFiltreMetrics(resultat: any) {
     // Ici on recupere juste les objets de type Array Array qui contient nos resultats
-    if (resultat instanceof Array) {
-      resultat.forEach(res =>  this.resultatAggregationMetrics.push(
-        {
-          objectResult: res,
-          id: this.resultatAggregationMetrics.length + 1
-        }
-      ));
+    console.log(resultat);
+    // if (resultatFiltre['metricsAggregationRangeDate']) {
+    //   this.resultatFiltreWithAggregation = resultatFiltre;
+    //   this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
+    //   this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
+    // }
+    if (resultat['metricsAggregationRangeDate'] === true) {
+      console.log(resultat['result']);
+      this.resultatFiltreWithAggregation = resultat;
+      this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
+      this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
+    } else {
+      if (resultat instanceof Array) {
+        resultat.forEach(res =>  this.resultatAggregationMetrics.push(
+          {
+            objectResult: res,
+            id: this.resultatAggregationMetrics.length + 1
+          }
+        ));
+      }
     }
   }
   removeMetrics(id: number) {
@@ -360,11 +392,6 @@ export class ConfigureComponent implements OnInit {
                     fill: this.params.fill,
                     data : dataTab,
                     backgroundColor: this.randomColor(1),
-                    borderColor: 'rgba(148,159,177,1)',
-                    pointBackgroundColor: 'rgba(148,159,177,1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
                   }
                 );
               } else { // si le type de filtre en interval est en Mois ou jour

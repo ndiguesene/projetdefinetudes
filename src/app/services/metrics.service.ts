@@ -20,8 +20,6 @@ export class MetricsService {
   constructor() { }
 
   _getAggResult(response: any, agg: AggregationData): any {
-    console.log(agg);
-
     // const aggResponse = (response.aggregations) ? response.aggregations[agg.id] : response[agg.id] || null;
     // permet de recuprer le nom du key de l'objet
     const nameAggregation = Object.keys(response.aggregations)[0];
