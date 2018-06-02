@@ -1,3 +1,4 @@
+import { PnotifyService } from './../services/pnotify.service';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -13,28 +14,38 @@ export class InformationsclusterComponent implements OnInit {
   infoscluster: Promise<any>;
   couleurSanteCluster = '';
   listeIndexAndInfos: any;
-  constructor(private es: ElasticsearchService) { }
+  pnotify = this.ps.getPNotify();
+  constructor(private es: ElasticsearchService,
+              private ps: PnotifyService) { }
 
   ngOnInit() {
-    this.es.findClusterInfosService().then(
-      resp => {
-        this.infoscluster = resp;
-        if (this.infoscluster['status'] === 'yellow') {
-          this.couleurSanteCluster = 'warning';
-        } else if (this.infoscluster['status'] === 'red') {
-          this.couleurSanteCluster = 'danger';
-        } else if (this.infoscluster['status'] === 'green') {
-          this.couleurSanteCluster = 'success';
-        } else {
-          this.couleurSanteCluster = '';
-        }
-      }, error => {
-        console.error(error);
+    try {
+      this.es.findClusterInfosService().then(
+        resp => {
+          this.infoscluster = resp;
+          if (this.infoscluster['status'] === 'yellow') {
+            this.couleurSanteCluster = 'warning';
+          } else if (this.infoscluster['status'] === 'red') {
+            this.couleurSanteCluster = 'danger';
+          } else if (this.infoscluster['status'] === 'green') {
+            this.couleurSanteCluster = 'success';
+          } else {
+            this.couleurSanteCluster = '';
+          }
+        }, error => {
+          this.pnotify.error({
+            text: error
+          });
+        });
+      /**
+       * permet de charger les informations de l'ensemble du cluster
+       */
+      this.getListIndexStat();
+    } catch (error) {
+      this.pnotify.error({
+        text: error
       });
-    /**
-     * permet de charger les informations de l'ensemble du cluster
-     */
-    this.getListIndexStat();
+    }
   }
   getListIndexStat(): any {
     return this.es.getAllStatIndexOnCluster(['indices']).then(

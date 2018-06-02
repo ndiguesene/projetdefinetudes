@@ -1,3 +1,4 @@
+import { PnotifyService } from './services/pnotify.service';
 import { BucketsService } from './services/buckets.service';
 import { MetricsService } from './services/metrics.service';
 import { LoaderInterceptorService } from './interceptors/loader-interceptor.service';
@@ -93,7 +94,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
     })
   ],
   providers: [
-    ElasticsearchService, ChartService, MetricsService, BucketsService,
+    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,

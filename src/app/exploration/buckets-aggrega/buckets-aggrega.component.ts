@@ -7,6 +7,7 @@ import * as bodybuilder from 'bodybuilder';
 import { DatePipe } from '@angular/common';
 import { BsDaterangepickerConfig } from 'ngx-bootstrap';
 import { formatDate } from 'ngx-bootstrap/chronos';
+import { PnotifyService } from '../../services/pnotify.service';
 
 @Component({
   selector: 'app-buckets-aggrega',
@@ -57,9 +58,11 @@ export class BucketsAggregaComponent implements OnInit {
   rangeDate = [];
   listeChampForFilter = [];
 
+  pnotify = this.ps.getPNotify();
   constructor(private es: ElasticsearchService,
               private buck: BucketsService,
-              private metr: MetricsService) {}
+              private metr: MetricsService,
+              private ps: PnotifyService) {}
 
 
   async ngOnInit() {
@@ -165,83 +168,113 @@ export class BucketsAggregaComponent implements OnInit {
     }
   }
   async resultatAggregat(typeOfaggregationSwtich: string, nameBucket: string) {
-    const agg = new AggregationData();
-    agg.type = this.typeOfaggregationSwtich;
-    agg.enabled = true;
-    agg.schema = 'metric';
-    agg.id = '';
-    agg.params = {
-      field: this.fieldBucketsChoice
-    };
-    if (this.fieldBucketsChoice === '') {
-      this.fieldBucketsChoice = this.listFieldNumber[0];
-    }
-    if (this.nameBucket === 'range_aggregation') {
-      if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '' || this.typeOfaggregationSwtich === null) {
-        /**
-         * Ici c'est au cas ou il n'applique pas d'aggrégation metrics(max,min,avg...)
-         */
-        let _query;
-        _query = bodybuilder()
-          .filter('range', this.fieldBucketsChoice,
-            {'gte': this.rangeValeurDe, 'lte': this.rangeValeurA }
-          ).build();
-
-          await this.es.getSearchWithAgg(this.index, _query).then(
-            res => {
-              this.changeResultFiltre.emit({
-                ...{
-                  filter_aggregation: null,
-                  filter_hits: this.buck.getResultFilterHitsBucket(res),
-                  type_bucket: this.nameBucket,
-                  nom_champ: this.fieldBucketsChoice,
-                  size: res.hits.total,
-                  query: _query,
-                  index: this.index
-                }
-              });
-            }
-          );
-      } else {
-        /**
-         * Ici c'est dans le cas ou il applique une aggrégation dans le range donné
-         */
-        let _query;
-        _query = bodybuilder()
-          .filter('range', this.fieldBucketsChoice,
-              {'gte': this.rangeValeurDe, 'lte': this.rangeValeurA}
-            )
-          .aggregation(this.typeOfaggregationSwtich, this.fieldBucketsChoice)
-          .sort(this.fieldBucketsChoice, 'asc')
-          .build();
-          await this.es.getSearchWithAgg(this.index, _query).then(
-            res => {
-              this.changeResultFiltre.emit({
-                ...{
-                  filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
-                  filter_hits: this.buck.getResultFilterHitsBucket(res),
-                  type_bucket: this.nameBucket,
-                  nom_champ: this.fieldBucketsChoice,
-                  index: this.index,
-                  size: res.hits.total,
-                  query: _query,
-                  typeOfaggregationSwtich: this.typeOfaggregationSwtich
-                }
-              });
-            }
-          );
+    try {
+      const agg = new AggregationData();
+      agg.type = this.typeOfaggregationSwtich;
+      agg.enabled = true;
+      agg.schema = 'metric';
+      agg.id = '';
+      agg.params = {
+        field: this.fieldBucketsChoice
+      };
+      if (this.fieldBucketsChoice === '') {
+        this.fieldBucketsChoice = this.listFieldNumber[0];
       }
-    } else if (this.nameBucket === 'date_histogram') {
-      /**
-       * Dans la variable 'resultFilterDateHistogram' j'enregistre tous les résultats que fera l'utilisateur
-       */
-      if (this.tracerParTypeInterval) {
-        let _query;
-        if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '') { // cette partie ou il ya pas d'aggrégation
+      if (this.nameBucket === 'range_aggregation') {
+        if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '' || this.typeOfaggregationSwtich === null) {
+          /**
+           * Ici c'est au cas ou il n'applique pas d'aggrégation metrics(max,min,avg...)
+           */
+          let _query;
+          _query = bodybuilder()
+            .filter('range', this.fieldBucketsChoice,
+              {'gte': this.rangeValeurDe, 'lte': this.rangeValeurA }
+            ).build();
+
+            await this.es.getSearchWithAgg(this.index, _query).then(
+              res => {
+                this.changeResultFiltre.emit({
+                  ...{
+                    filter_aggregation: null,
+                    filter_hits: this.buck.getResultFilterHitsBucket(res),
+                    type_bucket: this.nameBucket,
+                    nom_champ: this.fieldBucketsChoice,
+                    size: res.hits.total,
+                    query: _query,
+                    index: this.index
+                  }
+                });
+              }
+            );
+        } else {
+          /**
+           * Ici c'est dans le cas ou il applique une aggrégation dans le range donné
+           */
+          let _query;
+          _query = bodybuilder()
+            .filter('range', this.fieldBucketsChoice,
+                {'gte': this.rangeValeurDe, 'lte': this.rangeValeurA}
+              )
+            .aggregation(this.typeOfaggregationSwtich, this.fieldBucketsChoice)
+            .sort(this.fieldBucketsChoice, 'asc')
+            .build();
+            await this.es.getSearchWithAgg(this.index, _query).then(
+              res => {
+                this.changeResultFiltre.emit({
+                  ...{
+                    filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
+                    filter_hits: this.buck.getResultFilterHitsBucket(res),
+                    type_bucket: this.nameBucket,
+                    nom_champ: this.fieldBucketsChoice,
+                    index: this.index,
+                    size: res.hits.total,
+                    query: _query,
+                    typeOfaggregationSwtich: this.typeOfaggregationSwtich
+                  }
+                });
+              }
+            );
+        }
+      } else if (this.nameBucket === 'date_histogram') {
+        /**
+         * Dans la variable 'resultFilterDateHistogram' j'enregistre tous les résultats que fera l'utilisateur
+         */
+        if (this.tracerParTypeInterval) {
+          let _query;
+          if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '') { // cette partie ou il ya pas d'aggrégation
+              _query = bodybuilder()
+                .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+                  format: 'yyyy-MM-dd',
+                  interval: this.typeDateFiltre
+                }).query('range', this.fieldBucketsChoiceDate, {
+                    'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
+                }).build();
+                await this.buck.queryDateRangeAggregation(this.index, _query, 10000).then(
+                  resp => {
+                    this.changeResultFiltre.emit({
+                      ...{
+                        filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
+                        filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                        size: resp.hits.total,
+                        fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
+                        type_bucket: this.nameBucket,
+                        nom_champ: this.fieldBucketsChoice,
+                        typeDateFiltre: this.typeDateFiltre,
+                        range: this.intervalDatehistogram,
+                        query: _query,
+                        typeOfaggregationSwtich: this.typeOfaggregationSwtich,
+                        filtreAvecMultiChart: true
+                      }
+                    });
+                  }
+                );
+          } else { // Cette partie ou il ya une aggrégation
             _query = bodybuilder()
               .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
                 format: 'yyyy-MM-dd',
                 interval: this.typeDateFiltre
+              }, (a) => {
+                return a.aggregation(this.typeOfaggregationSwtich, this.fieldBucketsChoice);
               }).query('range', this.fieldBucketsChoiceDate, {
                   'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
               }).build();
@@ -264,137 +297,113 @@ export class BucketsAggregaComponent implements OnInit {
                   });
                 }
               );
-        } else { // Cette partie ou il ya une aggrégation
-          _query = bodybuilder()
-            .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
-              format: 'yyyy-MM-dd',
-              interval: this.typeDateFiltre
-            }, (a) => {
-              return a.aggregation(this.typeOfaggregationSwtich, this.fieldBucketsChoice);
-            }).query('range', this.fieldBucketsChoiceDate, {
-                'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
-            }).build();
-            await this.buck.queryDateRangeAggregation(this.index, _query, 10000).then(
+          }
+        } else {
+          const _query = bodybuilder()
+                .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+                  format: 'yyyy-MM-dd',
+                  interval: this.typeDateFiltre
+                }).build();
+          await this.buck.queryDateHistoGrammAggregation(
+            this.index, _query).then(
               resp => {
+                /**
+                 * J'envoi ici la un objet au lieu de la référence de l'objet en
+                 * utilisant {... nom_objet}
+                 */
+                this.changeResultFiltre.emit({
+                    ...{
+                      filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
+                      filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                      type_bucket: this.nameBucket,
+                      nom_champ: this.fieldBucketsChoiceDate,
+                      size: resp.hits.total,
+                      typeDateFiltre: this.typeDateFiltre,
+                      query: _query
+                    }
+                  });
+              }
+          );
+        }
+      } else if (this.nameBucket === 'date_range') {
+        let _query;
+        if ((this.typeOfaggregationSwtich !== null) && (this.typeOfaggregationSwtich !== 'null') &&
+          (this.typeOfaggregationSwtich !== undefined) &&
+          (this.typeOfaggregationSwtich !== '') && (this.typeOfaggregationSwtich)) {
+          _query = bodybuilder()
+            .query('range', this.fieldBucketsChoiceDate,
+              {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
+            ).aggregation(
+              this.typeOfaggregationSwtich, this.fieldBucketsChoiceForFilter
+            ).build();
+          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+            resp => {
+              this.changeResultFiltre.emit({
+                ...{
+                  filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
+                  filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                  type_bucket: this.nameBucket,
+                  nom_champ: this.fieldBucketsChoiceForFilter,
+                  query: _query,
+                  range: this.rangeDate,
+                  size: resp.hits.total,
+                  fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
+                  typeOfaggregationSwtich: this.typeOfaggregationSwtich
+                }
+              });
+            }
+          );
+        } else {
+            _query = bodybuilder()
+              .query('range', this.fieldBucketsChoiceDate,
+                {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
+              ).build();
+          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+            resp => {
+              this.changeResultFiltre.emit({
+                ...{
+                  filter_aggregation: null,
+                  filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                  type_bucket: this.nameBucket,
+                  nom_champ: this.fieldBucketsChoiceForFilter,
+                  size: resp.hits.total,
+                  query: _query,
+                  range: this.rangeDate,
+                  fieldBucketsChoiceDate: this.fieldBucketsChoiceDate
+                }
+              });
+            }
+          );
+          this.typeOfaggregationSwtich = 'null';
+        }
+      } else if (this.nameBucket === 'histogram') {
+        let _query;
+          _query = bodybuilder()
+          .aggregation('histogram', this.fieldBucketsChoice, {
+              'field': this.fieldBucketsChoice,
+              'interval': 20
+            }).sort(this.fieldBucketsChoice, 'asc')
+            .build();
+
+            await this.es.getSearchWithAgg(this.index, _query).then(
+              res => {
                 this.changeResultFiltre.emit({
                   ...{
-                    filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
-                    filter_hits: this.buck.getResultFilterHitsBucket(resp),
-                    size: resp.hits.total,
-                    fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
+                    filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
+                    filter_hits: this.buck.getResultFilterHitsBucket(res),
                     type_bucket: this.nameBucket,
+                    size: res.hits.total,
                     nom_champ: this.fieldBucketsChoice,
-                    typeDateFiltre: this.typeDateFiltre,
-                    range: this.intervalDatehistogram,
-                    query: _query,
-                    typeOfaggregationSwtich: this.typeOfaggregationSwtich,
-                    filtreAvecMultiChart: true
+                    query: _query
                   }
                 });
               }
             );
         }
-      } else {
-        const _query = bodybuilder()
-              .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
-                format: 'yyyy-MM-dd',
-                interval: this.typeDateFiltre
-              }).build();
-        await this.buck.queryDateHistoGrammAggregation(
-          this.index, _query).then(
-            resp => {
-              /**
-               * J'envoi ici la un objet au lieu de la référence de l'objet en
-               * utilisant {... nom_objet}
-               */
-              this.changeResultFiltre.emit({
-                  ...{
-                    filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
-                    filter_hits: this.buck.getResultFilterHitsBucket(resp),
-                    type_bucket: this.nameBucket,
-                    nom_champ: this.fieldBucketsChoiceDate,
-                    size: resp.hits.total,
-                    typeDateFiltre: this.typeDateFiltre,
-                    query: _query
-                  }
-                });
-            }
-        );
-      }
-    } else if (this.nameBucket === 'date_range') {
-      let _query;
-      if ((this.typeOfaggregationSwtich !== null) && (this.typeOfaggregationSwtich !== 'null') &&
-        (this.typeOfaggregationSwtich !== undefined) &&
-        (this.typeOfaggregationSwtich !== '') && (this.typeOfaggregationSwtich)) {
-        _query = bodybuilder()
-          .query('range', this.fieldBucketsChoiceDate,
-            {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
-          ).aggregation(
-            this.typeOfaggregationSwtich, this.fieldBucketsChoiceForFilter
-          ).build();
-        await this.buck.queryDateRangeAggregation(this.index, _query).then(
-          resp => {
-            this.changeResultFiltre.emit({
-              ...{
-                filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
-                filter_hits: this.buck.getResultFilterHitsBucket(resp),
-                type_bucket: this.nameBucket,
-                nom_champ: this.fieldBucketsChoiceForFilter,
-                query: _query,
-                range: this.rangeDate,
-                size: resp.hits.total,
-                fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
-                typeOfaggregationSwtich: this.typeOfaggregationSwtich
-              }
-            });
-          }
-        );
-      } else {
-          _query = bodybuilder()
-            .query('range', this.fieldBucketsChoiceDate,
-              {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
-            ).build();
-        await this.buck.queryDateRangeAggregation(this.index, _query).then(
-          resp => {
-            this.changeResultFiltre.emit({
-              ...{
-                filter_aggregation: null,
-                filter_hits: this.buck.getResultFilterHitsBucket(resp),
-                type_bucket: this.nameBucket,
-                nom_champ: this.fieldBucketsChoiceForFilter,
-                size: resp.hits.total,
-                query: _query,
-                range: this.rangeDate,
-                fieldBucketsChoiceDate: this.fieldBucketsChoiceDate
-              }
-            });
-          }
-        );
-        this.typeOfaggregationSwtich = 'null';
-      }
-    } else if (this.nameBucket === 'histogram') {
-      let _query;
-        _query = bodybuilder()
-        .aggregation('histogram', this.fieldBucketsChoice, {
-            'field': this.fieldBucketsChoice,
-            'interval': 20
-          }).sort(this.fieldBucketsChoice, 'asc')
-          .build();
-
-          await this.es.getSearchWithAgg(this.index, _query).then(
-            res => {
-              this.changeResultFiltre.emit({
-                ...{
-                  filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
-                  filter_hits: this.buck.getResultFilterHitsBucket(res),
-                  type_bucket: this.nameBucket,
-                  size: res.hits.total,
-                  nom_champ: this.fieldBucketsChoice,
-                  query: _query
-                }
-              });
-            }
-          );
+    } catch (error) {
+      this.pnotify.error({
+        text: error
+      });
     }
   }
   selectTracerParTypeInterval () {

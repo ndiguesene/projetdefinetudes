@@ -1,3 +1,4 @@
+import { PnotifyService } from './../../services/pnotify.service';
 import { DatePipe } from '@angular/common';
 import { AggregationData } from './../../entities/aggregationData';
 import { Config } from './../../config/Config';
@@ -49,7 +50,7 @@ export class ConfigureComponent implements OnInit {
   loading = false;
 
   aggs: AggregationData;
-  errorGlobal: any;
+  pnotify = this.ps.getPNotify();
 
   objectVisualizationSave = {
     type: 'visualization',
@@ -127,7 +128,8 @@ export class ConfigureComponent implements OnInit {
               private es: ElasticsearchService,
               private metr: MetricsService,
               private buck: BucketsService,
-              private datePipe: DatePipe) {
+              private datePipe: DatePipe,
+              private ps: PnotifyService) {
   }
   randomColor(opacity: number): string {
     // tslint:disable-next-line:max-line-length
@@ -197,7 +199,9 @@ export class ConfigureComponent implements OnInit {
       });
       this.loadListFieldOnView(this.nomIndex);
     } catch (error) {
-      this.errorGlobal = error;
+      this.pnotify.error({
+        text: error
+      });
     }
   }
   selectNameAggregation(event: any) {
@@ -314,6 +318,9 @@ export class ConfigureComponent implements OnInit {
         this.currentChart.destroy();
       }
     } catch (error) {
+      this.pnotify.error({
+        text: error
+      });
     }
     try {
       this.loading = true;
@@ -581,7 +588,9 @@ export class ConfigureComponent implements OnInit {
       }
       this.loading = false;
     } catch (error) {
-        this.errorGlobal = error;
+      this.pnotify.error({
+        text: error
+      });
     }
   }
   async saveVisualisation() {

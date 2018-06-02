@@ -1,3 +1,5 @@
+import { PnotifyService } from './services/pnotify.service';
+import { PNotify } from 'pnotify/dist/es/PNotify';
 import { SlimLoadingBarService } from 'ng2-slim-loading-bar';
 import { ElasticsearchService } from './services/elasticsearch.service';
 import { Component, OnInit } from '@angular/core';
@@ -10,10 +12,12 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent implements OnInit {
   indexParDefaut = '';
+  pnotify = undefined;
 
   constructor(private _loadingBar: SlimLoadingBarService,
               private translate: TranslateService,
-              private es: ElasticsearchService) {
+              private es: ElasticsearchService,
+              private ps: PnotifyService) {
     translate.setDefaultLang('fr');
     this.translate.use('fr');
     this.indexParDefaut = this.es.getDefaultIndexService();
@@ -24,6 +28,5 @@ export class AppComponent implements OnInit {
     this.translate.use(language);
   }
   ngOnInit() {
-
   }
 }
