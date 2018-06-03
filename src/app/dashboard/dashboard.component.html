@@ -1,41 +1,37 @@
 <div class="card">
-    <div class="card-body">
-        <div class="card text-center">
-          <div class="card-header">
-            <h3>{{ 'menu.tableauDeBord' | translate}}</h3>
-          </div>
-          <div class="card-body" *ngIf="listeDashBoard.length === 0; else listeDashBoardTemplate">
-            <h5 class="card-title">
-              {{ 'page.dashboard.message_dashboard_vide' | translate}}
-            </h5>
-            <a data-dismiss="modal" role="button" routerLinkActive="active" class="btn btn-primary"
-                [routerLink]="['/visualisation']"
-                [queryParams] = "{ showCollapse : 'true' }"
-                role="button" 
-                class="btn btn-primary btn-sm">
-                <i class="fa fa-plus-square"><b> {{ 'page.dashboard.creer_tableau_de_bord' | translate }}</b></i>
-              </a>
-          </div>
-          <ng-template #listeDashBoardTemplate>
-            <div class="container">
-              <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">Tableau de bord</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                  <div class="btn-group mr-2">
-                    <button class="btn btn-sm btn-outline-secondary">Paratager</button>
-                    <button class="btn btn-sm btn-outline-secondary">Exporter</button>
+  <div class="card-body">
+    <div class="card text-center">
+      <div class="card-header">
+        <h3>{{ 'menu.tableauDeBord' | translate}}</h3>
+      </div>
+      <div class="card-body" *ngIf="listeDashBoard?.length === 0; else listeDashBoardTemplate">
+        <h5 class="card-title">
+          {{ 'page.dashboard.message_dashboard_vide' | translate}}
+        </h5>
+        {{ listeDashBoard | json }}
+        <a data-dismiss="modal" role="button" routerLinkActive="active" class="btn btn-primary"
+          [routerLink]="['/visualisation']"
+          [queryParams] = "{ showCollapse : 'true' }"
+          role="button" 
+          class="btn btn-primary btn-sm">
+          <i class="fa fa-plus-square"><b> {{ 'page.dashboard.creer_tableau_de_bord' | translate }}</b></i>
+        </a>
+        <ng-template #listeDashBoardTemplate>zrzerze
+          <div class="container">
+            <div class="row">
+              <gridster [options]="options">
+                <gridster-item [item]="item" *ngFor="let item of listeDashBoard;let i = index">
+                  <div class="item-container">
+                    <div class="item-mock">
+                      <h4>item {{ i }}</h4>
+                    </div>
                   </div>
-                  <!-- <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                    <span data-feather="calendar"></span>
-                    This week
-                  </button> -->
-                </div>
-              </div>
+                </gridster-item>
+              </gridster>
             </div>
-          </ng-template>
-        </div>
-        <div class="row">
-
-        </div>
+          </div>
+        </ng-template>
+      </div>
     </div>
   </div>
+</div>

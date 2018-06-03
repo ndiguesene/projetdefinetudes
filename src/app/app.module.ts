@@ -45,6 +45,7 @@ import { LocalStorageModule } from '@ngx-pwa/local-storage';
 import { DatePipe } from '@angular/common';
 
 import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
+import { GridsterModule } from 'angular-gridster2';
 
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
@@ -70,6 +71,7 @@ import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
   ],
   imports: [
     BrowserModule,
+    GridsterModule,
     LocalStorageModule,
     FormsModule,
     Ng4GeoautocompleteModule.forRoot(),
