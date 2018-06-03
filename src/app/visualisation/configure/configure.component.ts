@@ -14,7 +14,8 @@ import { VisualizationObj } from '../../entities/visualizationObj';
 
 import * as bodybuilder from 'bodybuilder';
 import { BucketsService } from '../../services/buckets.service';
-import { tileLayer, latLng, circle, polygon, marker } from 'leaflet';
+import { ViewChild } from '@angular/core';
+import { } from '@types/googlemaps';
 
 @Component({
   selector: 'app-configure',
@@ -108,21 +109,10 @@ export class ConfigureComponent implements OnInit {
   resultatFiltreWithAggregation: any;
   aggregation: AggregationData;
 
+  @ViewChild('gmap') gmapElement: any;
+  map: google.maps.Map;
 
-  option = {
-    layers: [
-      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        maxZoom: 18, attribution: '...'
-      })
-    ],
-    zoom: 10,
-    center: latLng(14.7456593, -17.3336657)
-  };
-  layers = [
-      marker([ 46.879966, -121.726909 ])
-  ];
-
+  userSettings = {};
   constructor(private route: ActivatedRoute,
               private chartService: ChartService,
               private es: ElasticsearchService,
@@ -131,11 +121,23 @@ export class ConfigureComponent implements OnInit {
               private datePipe: DatePipe,
               private ps: PnotifyService) {
   }
+
+  autoCompleteCallback1(selectedData: any) {
+    // do any necessery stuff.
+  }
   randomColor(opacity: number): string {
     // tslint:disable-next-line:max-line-length
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
   async ngOnInit() {
+    const mapProp = {
+      center: new google.maps.LatLng(18.5793, 73.8143),
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+
+
     try {
       this.route.params.subscribe( params => {
         this.nomDiagramme = params.id.toString();

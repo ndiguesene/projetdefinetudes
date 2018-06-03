@@ -43,7 +43,8 @@ import { BucketsAggregaComponent } from './exploration/buckets-aggrega/buckets-a
 
 import { LocalStorageModule } from '@ngx-pwa/local-storage';
 import { DatePipe } from '@angular/common';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+
+import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
 
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
@@ -71,7 +72,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
     BrowserModule,
     LocalStorageModule,
     FormsModule,
-    LeafletModule.forRoot(),
+    Ng4GeoautocompleteModule.forRoot(),
     BrowserAnimationsModule,
     AngularFontAwesomeModule,
     routing,
