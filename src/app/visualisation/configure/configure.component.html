@@ -1,23 +1,33 @@
 <div class="container" *ngIf="nomDiagramme === 'coordonneesmap' || nomDiagramme === 'regionmap';else tempOtherChart">
   <div class="card">
     <div class="row">
-      <div class="col">
-        <input type="text" class="form-control-sm" placeholder="Lieux, Ville, Pays ...">
+      <div class="col-md-4">
+          <div class="inline">
+            <input type="text" class="form-control-sm" id="customFileLang" lang="fr" placeholder="
+            Nom, Lieux ...">
+            <button class="btn btn-primary btn-sm">Rechercher</button>
+            <!-- <label class="custom-file-label" for="customFileLang">No</label> -->
+          </div>
       </div>
-      <div class="col">
-        option2
-      </div>
-      <div class="col">
-        option3
-      </div>
-      <div class="col">
-        option4
-      </div>
-      <div class="col">
-        option5
-      </div>
-      <div class="col">
-        option6
+      <div class="col-md-8">
+          <form class="form-inline">
+            <!-- <label class="sr-only" for="inlineFormInputGroupUsername2">Lng</label> -->
+            <div class="input-group mb-1 mr-sm-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Lon</div>
+              </div>
+              <input type="text" class="form-control-sm" id="long" placeholder="Longitude">
+            </div>
+            <!-- <label class="sr-only" for="inlineFormInputGroupUsername2">Lat</label> -->
+            <div class="input-group mb-1 mr-sm-1">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Lat</div>
+              </div>
+              <input type="text" class="form-control-sm" id="lat" placeholder="Latitude">
+            </div>
+          
+            <button type="submit" class="btn btn-primary btn-sm mb-2">Rechercher</button>
+          </form>
       </div>
     </div>
   </div>

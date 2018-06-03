@@ -8,9 +8,13 @@
             <h5 class="card-title">
               {{ 'page.dashboard.message_dashboard_vide' | translate}}
             </h5>
-            <a [routerLink]="['/visualisation']" routerLinkActive="active" class="btn btn-primary">
-                {{ 'page.dashboard.creer_tableau_de_bord' | translate }} <i class="fa fa-plus-square" aria-hidden="true"></i>
-            </a>
+            <a data-dismiss="modal" role="button" routerLinkActive="active" class="btn btn-primary"
+                [routerLink]="['/visualisation']"
+                [queryParams] = "{ showCollapse : 'true' }"
+                role="button" 
+                class="btn btn-primary btn-sm">
+                <i class="fa fa-plus-square"><b> {{ 'page.dashboard.creer_tableau_de_bord' | translate }}</b></i>
+              </a>
           </div>
           <ng-template #listeDashBoardTemplate>
             <div class="container">
