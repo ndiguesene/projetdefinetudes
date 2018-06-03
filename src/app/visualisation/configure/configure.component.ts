@@ -650,7 +650,6 @@ export class ConfigureComponent implements OnInit {
   selectShowFeelChart() {
     this.params.fill = !this.params.fill;
     console.log(this.currentChart.data.datasets[0]);
-    alert(this.params.fill);
     this.filtreHitsChangeBucket(this.resultatAllForBucket);
     // this.currentChart.options.legend.display = this.params.showLegend;
     this.currentChart.update({

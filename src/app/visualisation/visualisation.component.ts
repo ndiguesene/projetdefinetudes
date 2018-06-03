@@ -39,7 +39,7 @@ export class VisualisationComponent implements OnInit {
           visua['_source'].visualization.visState = JSON.parse(visua['_source'].visualization.visState);
         });
         this.listeVisualisation = this.dataAllPortail;
-        this.listeVisualisationAll = this.listeVisualisation;
+        this.listeVisualisationAll = this.dataAllPortail;
       }
     );
     this.getAllIndex();
@@ -60,11 +60,13 @@ export class VisualisationComponent implements OnInit {
     const inputRecherche = event.target.value;
     if ((event.timeStamp - this.lastKeypress) > 100) {
       this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, inputRecherche).then(
-        res => this.listeVisualisation = res.hits.hits
+        res => {
+          this.listeVisualisation = res.hits.hits;
+          if (inputRecherche === '') {
+            this.listeVisualisation = this.listeVisualisationAll;
+          }
+        }
       );
-    }
-    if (inputRecherche.length === 0) {
-      this.listeVisualisation = this.listeVisualisationAll;
     }
     this.lastKeypress = event.timeStamp;
   }

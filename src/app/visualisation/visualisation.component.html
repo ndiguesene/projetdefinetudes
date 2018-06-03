@@ -288,7 +288,7 @@
           <th>Titre</th>
           <th>Index</th>
           <th>Type</th>
-          <th>Details Visualisation</th>
+          <th>Détails Visualisation</th>
         </tr>
       </thead>
       <tbody>
@@ -364,8 +364,13 @@
     </table>
   </div>
   <ng-template #templatePasDeVisualisation>
-    <div>
-      <h5>Oups !!! On dirait que vous n'avez aucune visualisation. Créons-en un peu!</h5>
+    <div class="well well-lg text-center">
+      <h4>Visualisation non trouvée !</h4>
+      <p class="lead">Oups !!! On dirait qu'aucune visualisation portant ce nom n'a été toruvée.</p>
+      <hr class="my-4">
+      <a class="btn btn-primary btn-sm" href="#" role="button"
+          data-toggle="collapse" 
+          data-target="#ajouterNouveauVisualisationTemplate">Créez s'en une</a>
     </div>
   </ng-template>
 </div>
