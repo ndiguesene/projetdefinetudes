@@ -1,3 +1,4 @@
+import { DashboardGridsterConfigService } from './dashboard/dashboardgridsterconfig.service';
 import { PnotifyService } from './services/pnotify.service';
 import { BucketsService } from './services/buckets.service';
 import { MetricsService } from './services/metrics.service';
@@ -14,6 +15,7 @@ import { FooterComponent } from './footer/footer.component';
 
 import { routing } from './app.routing';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardlisteComponent } from './dashboard/dashboardliste.component';
 import { ParametresComponent } from './parametres/parametres.component';
 import { ConsoleComponent } from './console/console.component';
 import { VisualisationComponent } from './visualisation/visualisation.component';
@@ -58,6 +60,7 @@ import { GridsterModule } from 'angular-gridster2';
     NavbarComponent,
     FooterComponent,
     DashboardComponent,
+    DashboardlisteComponent,
     ParametresComponent,
     ConsoleComponent,
     VisualisationComponent,
@@ -97,7 +100,7 @@ import { GridsterModule } from 'angular-gridster2';
     })
   ],
   providers: [
-    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService,
+    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService, DashboardGridsterConfigService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,

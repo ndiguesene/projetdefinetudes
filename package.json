@@ -29,7 +29,7 @@
     "@types/elasticsearch": "^5.0.22",
     "@types/googlemaps": "^3.30.9",
     "angular-font-awesome": "^3.1.2",
-    "angular-gridster2": "^6.0.5",
+    "angular-gridster2": "^4.7.2",
     "angular-popper": "^1.0.0",
     "angular-translate": "^2.17.1",
     "bodybuilder": "^2.2.10",

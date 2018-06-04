@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12" *ngIf="listeDashboard?.length !== 0; else templatePasDeDashboard">
+      <div class="card">
+        <div class="card-header">
+          <div class="input-group">
+            <div class="col-md-6">
+              <input type="text" 
+                class="form-control float-right" 
+                placeholder="Rechercher un tableau de bord" 
+                name="search"
+                (keyup)="recherche($event)"/>
+            </div>
+            <div class="col-md-2">
+              <a role="button" class="btn btn-primary" [routerLink]="['/dashboard']" routerLinkActive="active">
+                <i class="fa fa-plus-square fa fa-th"></i> 
+                <span>{{ 'menu.tableauDeBord' | translate }}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body" >
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm" id="table">
+              <thead class="thead-light">
+                <tr>
+                  <th>Titre</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let visua of listeDashboard;let i = index;">
+                  <td><a href="">{{ visua }}</a></td>
+                  <td>{{ visua }}</td>
+                  <td>
+                    <button type="button" class="btn btn-link" (click)="edit(visua._id)">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template #templatePasDeDashboard>
+      <div>Pas de dashborad, créez s'en</div>
+    </ng-template>
+  </div>
+</div>
+  

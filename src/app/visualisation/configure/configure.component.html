@@ -1,27 +1,20 @@
 <div class="container" *ngIf="nomDiagramme === 'coordonneesmap' || nomDiagramme === 'regionmap';else tempOtherChart">
   <div class="card">
     <div class="row">
-      <div class="col-md-4">
-          <div class="inline">
-            <input type="text" class="form-control-sm" id="customFileLang" lang="fr" placeholder="
-            Nom, Lieux ...">
-            <button class="btn btn-primary btn-sm">Rechercher</button>
-            <!-- <label class="custom-file-label" for="customFileLang">No</label> -->
-          </div>
-      </div>
-      <div class="col-md-8 form-inline">
+      <div class="col-md-12 form-inline">
         <div class="input-group">
           <div class="input-group-prepend-sm">
-            <span class="input-group-text">Long</span>
+            <span class="input-group-text">Longitude</span>
           </div>
           <input type="number" class="form-control form-control-sm" required>
         </div>
         <div class="input-group">
           <div class="input-group-prepend-sm">
-            <span class="input-group-text">La</span>
+            <span class="input-group-text">Latitude</span>
           </div>
           <input type="number" class="form-control form-control-sm" required>
         </div>
+        <button type="button" class="btn btn-primary">Rechercher</button>
       </div>
     </div>
   </div>
@@ -32,6 +25,7 @@
 
   <div #gmap style="width:100%;height:400px"></div>
 </div>
+
 <ng-template #tempOtherChart>
   <!-- <div class="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom"> -->
   <!-- <h1 class="h2">Dashboard</h1> -->
@@ -212,7 +206,6 @@
                           </table>
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </ng-template>

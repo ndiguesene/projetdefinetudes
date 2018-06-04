@@ -1,3 +1,4 @@
+import { DashboardlisteComponent } from './dashboard/dashboardliste.component';
 import { Routes, RouterModule } from '@angular/router';
 
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -15,6 +16,7 @@ const routes: Routes = [
 	{ path: '', component: AccueilComponent, pathMatch: 'full'},
 	{ path: 'accueil', component: AccueilComponent },
 	{ path: 'exploration', component: ExplorationComponent },
+	{ path: 'dashboards', component: DashboardlisteComponent },
 	{ path: 'dashboard', component: DashboardComponent },
 	{ path: 'parametres', component: ParametresComponent },
 	{ path: 'console', component: ConsoleComponent },

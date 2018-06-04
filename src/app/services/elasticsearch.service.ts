@@ -92,6 +92,18 @@ export class ElasticsearchService {
       });
     }
   }
+  getByIdService(_index, id): any {
+    const body = bodybuilder()
+        .query('match', 'type', Config.NAME_FIELD_OF_MAPPING.VISUALIZATION)
+        .filter('term', '_id', id)
+        .build();
+    return this.client.search({
+      index: _index,
+      // type: _type,
+      body: body,
+      filterPath: ['hits.hits']
+    });
+  }
   getAllDocumentsServiceByRequete(_index, query, _size = 20): any {
     return this.client.search({
       index: _index,

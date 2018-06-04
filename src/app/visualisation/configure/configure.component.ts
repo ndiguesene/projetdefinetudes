@@ -22,7 +22,7 @@ import { } from '@types/googlemaps';
   templateUrl: './configure.component.html',
   styleUrls: ['./configure.component.css']
 })
-export class ConfigureComponent implements OnInit {
+export class ConfigureComponent implements OnInit, AfterViewInit {
   nomDiagramme = '';
   nomIndex = '';
   resultatAllForBucket: any;
@@ -112,6 +112,8 @@ export class ConfigureComponent implements OnInit {
   @ViewChild('gmap') gmapElement: any;
   map: google.maps.Map;
 
+  localisation: any;
+
   userSettings = {};
   constructor(private route: ActivatedRoute,
               private chartService: ChartService,
@@ -123,21 +125,32 @@ export class ConfigureComponent implements OnInit {
   }
 
   autoCompleteCallback1(selectedData: any) {
-    // do any necessery stuff.
+    if (selectedData.response === true) {
+      this.localisation = selectedData.data.geometry.location;
+      const mapProp = {
+        center: {lat: this.localisation.lat, lng: this.localisation.lng},
+        position: {lat: this.localisation.lat, lng: this.localisation.lng},
+        zoom: 20,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+      };
+      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    } else {
+      alert('Address Not found');
+    }
   }
   randomColor(opacity: number): string {
     // tslint:disable-next-line:max-line-length
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
-  async ngOnInit() {
+  ngAfterViewInit() {
     const mapProp = {
       center: new google.maps.LatLng(18.5793, 73.8143),
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-
-
+  }
+  async ngOnInit() {
     try {
       this.route.params.subscribe( params => {
         this.nomDiagramme = params.id.toString();
