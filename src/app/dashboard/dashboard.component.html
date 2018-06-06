@@ -9,7 +9,7 @@
                 class="form-control float-right" 
                 placeholder="Rechercher une visualisation" 
                 name="search"
-                (keyup)="recherche($event)"/>
+                [(ngModel)]="searchString"/>
             </div>
             <div class="col-md-2">
               <a role="button" class="btn btn-primary" [routerLink]="['/dashboards']" routerLinkActive="active">
@@ -25,13 +25,14 @@
               <thead class="thead-light">
                 <tr>
                   <th>Titre</th>
-                  <th>Index</th>
+                  <th>Type chart</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let visua of listeVisualisation;let i = index;">
+                {{ listeVisualisation | json }}
+                <tr *ngFor="let visua of listeVisualisation | filter: searchString : 'title';let i = index;">
                   <td>{{ visua['_source'].visualization.title }}</td>
-                  <td>{{ visua['_source'].visualization.visState.index }}</td>
+                  <td>{{ visua['_source'].visualization.visState.name_type_chart }}</td>
                   <td>
                     <button type="button" class="btn btn-link" (click)="addItem(visua._id)">
                       <i class="fa fa-plus-square"></i>
@@ -47,15 +48,15 @@
   </div>
   <div class="row">
     <div class="col-sm-12">
-      <gridster [options]="config">
+      <!-- <gridster [options]="config">
         <gridster-item *ngFor="let item of listeVisualisationInDashboard;index as i" [item]="item">
-          <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value }}</b></p>
+          <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value | number }}</b></p>
           <div class="card-body">
             <p class="card-text text-center">{{ resultatFiltre.title }}</p>
           </div>
         </gridster-item>
         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-      </gridster>
+      </gridster> -->
       </div>
   </div>
 </div>

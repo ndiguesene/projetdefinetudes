@@ -33,7 +33,7 @@ export class BucketsAggregaComponent implements OnInit {
     date_debut: 0,
     date_fin: 0
   };
-  typeOfaggregationSwtich = '';
+  typeOfaggregationSwtich = 'null';
 
   searchByDateHistogrammeRange = false;
   searchByDateHistogrammeAggregation = false;
@@ -57,6 +57,9 @@ export class BucketsAggregaComponent implements OnInit {
   tracerParTypeInterval = false;
   rangeDate = [];
   listeChampForFilter = [];
+
+  // pour le bucket histogram
+  minimal_interval = 1;
 
   pnotify = this.ps.getPNotify();
   constructor(private es: ElasticsearchService,
@@ -114,7 +117,7 @@ export class BucketsAggregaComponent implements OnInit {
           res => this.listFieldString = res
         );
         /**
-         * On recupere la liste des types des champs
+         * On recupere la liste des types des champs de type number
          */
         this.es.getIndexNumFields(index).then(
           respp => this.listFieldNumber = respp
@@ -242,32 +245,38 @@ export class BucketsAggregaComponent implements OnInit {
         if (this.tracerParTypeInterval) {
           let _query;
           if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '') { // cette partie ou il ya pas d'aggrégation
-              _query = bodybuilder()
-                .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+            if (this.intervalDatehistogram.date_debut === 0 && this.intervalDatehistogram.date_fin === 0) {
+              _query = bodybuilder().aggregation('date_histogram', this.fieldBucketsChoiceDate, {
                   format: 'yyyy-MM-dd',
                   interval: this.typeDateFiltre
-                }).query('range', this.fieldBucketsChoiceDate, {
-                    'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
                 }).build();
-                await this.buck.queryDateRangeAggregation(this.index, _query, 10000).then(
-                  resp => {
-                    this.changeResultFiltre.emit({
-                      ...{
-                        filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
-                        filter_hits: this.buck.getResultFilterHitsBucket(resp),
-                        size: resp.hits.total,
-                        fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
-                        type_bucket: this.nameBucket,
-                        nom_champ: this.fieldBucketsChoice,
-                        typeDateFiltre: this.typeDateFiltre,
-                        range: this.intervalDatehistogram,
-                        query: _query,
-                        typeOfaggregationSwtich: this.typeOfaggregationSwtich,
-                        filtreAvecMultiChart: true
-                      }
-                    });
-                  }
-                );
+            } else {
+              _query = bodybuilder().query('range', this.fieldBucketsChoiceDate, {
+                  'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
+                }).aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+                  format: 'yyyy-MM-dd',
+                  interval: this.typeDateFiltre
+                }).build();
+            }
+          await this.buck.queryDateRangeAggregation(this.index, _query, 20).then(
+            resp => {
+              this.changeResultFiltre.emit({
+                ...{
+                  filter_aggregation: this.buck.getResultFilterAggregationBucket(resp),
+                  filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                  size: resp.hits.total,
+                  fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
+                  type_bucket: this.nameBucket,
+                  nom_champ: this.fieldBucketsChoice,
+                  typeDateFiltre: this.typeDateFiltre,
+                  range: this.intervalDatehistogram,
+                  query: _query,
+                  typeOfaggregationSwtich: 'null',
+                  filtreAvecMultiChart: true
+                }
+              });
+            }
+          );
           } else { // Cette partie ou il ya une aggrégation
             _query = bodybuilder()
               .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
@@ -353,6 +362,28 @@ export class BucketsAggregaComponent implements OnInit {
               });
             }
           );
+        } else if (this.typeOfaggregationSwtich === 'null' && this.fieldBucketsChoiceForFilter === 'null') {
+          _query = bodybuilder()
+            .query('range', this.fieldBucketsChoiceDate,
+              {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
+            ).build();
+          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+            resp => {
+              this.changeResultFiltre.emit({
+                ...{
+                  filter_aggregation: null,
+                  filter_hits: this.buck.getResultFilterHitsBucket(resp),
+                  type_bucket: this.nameBucket,
+                  nom_champ: this.fieldBucketsChoiceForFilter,
+                  query: _query,
+                  range: this.rangeDate,
+                  size: resp.hits.total,
+                  fieldBucketsChoiceDate: this.fieldBucketsChoiceDate,
+                  typeOfaggregationSwtich: this.typeOfaggregationSwtich
+                }
+              });
+            }
+          );
         } else {
             _query = bodybuilder()
               .query('range', this.fieldBucketsChoiceDate,
@@ -374,16 +405,13 @@ export class BucketsAggregaComponent implements OnInit {
               });
             }
           );
-          this.typeOfaggregationSwtich = 'null';
         }
       } else if (this.nameBucket === 'histogram') {
-        let _query;
-          _query = bodybuilder()
-          .aggregation('histogram', this.fieldBucketsChoice, {
-              'field': this.fieldBucketsChoice,
-              'interval': 20
-            }).sort(this.fieldBucketsChoice, 'asc')
-            .build();
+        const _query = bodybuilder()
+          .aggregation('histogram', this.fieldBucketsChoiceForFilter, {
+              field: this.fieldBucketsChoiceForFilter,
+              interval: this.minimal_interval
+            }).build();
 
             await this.es.getSearchWithAgg(this.index, _query).then(
               res => {
@@ -393,7 +421,7 @@ export class BucketsAggregaComponent implements OnInit {
                     filter_hits: this.buck.getResultFilterHitsBucket(res),
                     type_bucket: this.nameBucket,
                     size: res.hits.total,
-                    nom_champ: this.fieldBucketsChoice,
+                    nom_champ: this.fieldBucketsChoiceForFilter,
                     query: _query
                   }
                 });
@@ -408,6 +436,10 @@ export class BucketsAggregaComponent implements OnInit {
   }
   selectTracerParTypeInterval () {
     this.tracerParTypeInterval = ! this.tracerParTypeInterval;
+    if (!this.tracerParTypeInterval) {
+      this.intervalDatehistogram.date_debut = 0;
+      this.intervalDatehistogram.date_fin = 0;
+    }
   }
   dateChangeFormated(date: any) {
     this.rangeDate = [];
@@ -421,12 +453,10 @@ export class BucketsAggregaComponent implements OnInit {
       if (t.length === 0) {
         t = t.replace(new RegExp('-', 'g'), '/');
       }
-      console.log(t);
       // de ce format dd/MM/YYYY à ce format yyyy-MM-dd
       const tab = t.split('-');
       this.rangeDate.push(tab[2] + '-' + tab[1] + '-' + tab[0]);
     });
-    console.log(this.rangeDate);
   }
   selectTypeDateFiltre(event: any) {
     if (event) {

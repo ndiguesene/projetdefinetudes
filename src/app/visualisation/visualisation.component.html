@@ -14,17 +14,17 @@
       </div>
       <div class="modal-body">
         <div class="card">
-          <div class="card-header">
+          <!-- <div class="card-header">
             <div class="input-group">
               <div class="col-md-6">
                 <input type="text" 
                   class="form-control float-right" 
                   placeholder="Rechercher une visualisation" 
                   name="search"
-                  (keyup)="recherche($event)">
+                  [(ngModel)]="searchString">
               </div>
             </div>
-          </div>
+          </div> -->
         
           <div class="card-body">
             <div class="list-group">
@@ -32,7 +32,12 @@
                 *ngFor="let item of listeIndex">
                 {{ item.index }}
               </a> -->
-              <div class="col-md-4">
+              <div class="col-md-*">
+                <div class="card">
+                  index selectionné par défaut : ''
+                </div>
+              </div>
+              <div class="col-md-*">
                 <select 
                   id="index" 
                   class="custom-select" 
@@ -73,8 +78,7 @@
           class="form-control float-right" 
           placeholder="Rechercher une visualisation"
           name="search"
-          (keyup)="recherche($event)"
-          >
+          [(ngModel)]="searchString">
       </div>
       <div class="col-md-6">
         <div class="row">
@@ -281,23 +285,23 @@
   <!-- </div> -->
   <!-- {{ listeVisualisation | json }} -->
   <div class="card-body" *ngIf="listeVisualisation?.length !== 0; else templatePasDeVisualisation">
-    <table class="table" id="table" class="table table-striped table-bordered">
+    <table id="table" class="table table-bordered table-sm">
       <thead class="thead-light">
         <tr>
           <th>#</th>
           <th>Titre</th>
-          <th>Index</th>
+          <!-- <th>Index</th> -->
           <th>Type</th>
-          <th>Détails Visualisation</th>
+          <th>Détails</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let visua of listeVisualisation;let i = index;">
+        <tr *ngFor="let visua of listeVisualisation | filter: searchString : 'title';let i = index;">
           <td>{{ i+1 }}</td>
           <td>{{ visua['_source'].visualization.title }}</td>
-          <td>
+          <!-- <td>
             {{ visua['_source'].visualization.visState.index }}
-          </td>
+          </td> -->
           <td>
             <i class="fa fa-{{visua['_source'].visualization.visState.name_type_chart}}-chart"></i> 
             {{visua['_source'].visualization.visState.name_type_chart | titlecase}}

@@ -12,6 +12,7 @@ export class MetricsService {
     {key: 'max', value: 'Maximum'},
     {key: 'count', value: 'Count'},
     {key: 'sum', value: 'Top Hit'},
+    {key: 'percentiles', value: 'Percentiles'},
     {key: 'sum', value: 'Median'},
     {key: 'extended_stats', value: 'Stat'},
     {key: 'cardinality', value: 'Cardinality'}
@@ -22,9 +23,13 @@ export class MetricsService {
   _getAggResult(response: any, agg: AggregationData): any {
     // const aggResponse = (response.aggregations) ? response.aggregations[agg.id] : response[agg.id] || null;
     // permet de recuprer le nom du key de l'objet
-    const nameAggregation = Object.keys(response.aggregations)[0];
-    const aggResponse =
-      (response.aggregations) ? response.aggregations[nameAggregation] : response[nameAggregation] || null;
+    let nameAggregation;
+    let aggResponse;
+    if (agg.type !== 'count') {
+      nameAggregation = Object.keys(response.aggregations)[0];
+      aggResponse =
+        (response.aggregations) ? response.aggregations[nameAggregation] : response[nameAggregation] || null;
+    }
     switch (agg.type) {
       case 'count':
         return this._getCountResult(response);
@@ -78,7 +83,7 @@ export class MetricsService {
     return aggByIdMap;
   }
 
-  private _getCountResult(response: any): any[] {
+  _getCountResult(response: any): any[] {
     return [{
       label: 'Count',
       result: (response.hits) ? response.hits.total : response.doc_count || '--'

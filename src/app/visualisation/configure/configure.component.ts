@@ -143,12 +143,16 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
   ngAfterViewInit() {
-    const mapProp = {
-      center: new google.maps.LatLng(18.5793, 73.8143),
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    try {
+        const mapProp = {
+        center: new google.maps.LatLng(18.5793, 73.8143),
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    } catch (error) {
+      console.log(error);
+    }
   }
   async ngOnInit() {
     try {
@@ -372,6 +376,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
         if (this.nomDiagramme === 'metrics') {
           this.resultatMetrics();
         } else {
+          let chaineObjectData = '';
           if (resultat['type_bucket'] === 'date_histogram') {
             if (resultat['filtreAvecMultiChart'] === true) {
               this.chartData = [];
@@ -390,7 +395,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
               this.chartData = [];
               if (resultat['typeDateFiltre'] === 'year') {
                 let name_field_aggrega_for_result = '';
-                for (const ite of donnees) {
+
+                for (const ite of resultat['filter_aggregation']) {
                   if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
                     dataTab.push(ite.doc_count);
                     this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
@@ -413,7 +419,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                     label: resultat['nom_champ'], // dans la variable données ai la valeur de l'année comme ID
                     fill: this.params.fill,
                     data : dataTab,
-                    backgroundColor: this.randomColor(1),
+                    backgroundColor: chartColor,
                   }
                 );
               } else { // si le type de filtre en interval est en Mois ou jour
@@ -423,27 +429,26 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                   donnees = resultat['filter_aggregation'];
                 }
                 const name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
-                let chaineObjectData = '';
-                if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
-                  for (const ite of donnees) {
-                    dataTab.push(ite.doc_count);
-                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
-                  }
-                } else {
+                if (resultat['typeOfaggregationSwtich'] === 'null' ||
+                  resultat['typeOfaggregationSwtich'] === 'count') {
+
                   // tslint:disable-next-line:radix
-                  const debut = parseInt(donnees[0].key_as_string.toString().split('-')[0]);
+                  const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
                   for (let i = debut; i <= resultat['range'].date_fin; i++) {
                     // let month;
                     let j = 0;
-                    for (const ite of donnees) {
+                    for (const ite of resultat['filter_aggregation']) {
                       let val = 0;
                       // tslint:disable-next-line:radix
                       val = parseInt(ite.key_as_string.toString().split('-')[0]);
                       if (i === val) {
-                        if (ite[name_field_aggrega_for_result].value === null) {
+                        if (ite.doc_count === null) {
                           dataTab[j] = 0;
                         } else {
-                          dataTab[j] = ite[name_field_aggrega_for_result].value;
+                          dataTab[j] = ite.doc_count;
+                        }
+                        if (val > i) {
+                          break;
                         }
                         // month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
                         this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
@@ -455,15 +460,48 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                       label: i, // dans la variable données ai la valeur de l'année comme ID
                       fill: this.params.fill,
                       data : dataTab,
-                      backgroundColor: this.randomColor(1),
-                      borderColor: 'rgba(148,159,177,1)',
-                      pointBackgroundColor: 'rgba(148,159,177,1)',
-                      pointBorderColor: '#fff',
-                      pointHoverBackgroundColor: '#fff',
-                      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                      backgroundColor: this.randomColor(1)
                     };
                     chaineObjectData += JSON.stringify(objec) + ',';
                   }
+
+                } else {
+                  // tslint:disable-next-line:radix
+                  const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
+                  for (let i = debut; i <= resultat['range'].date_fin; i++) {
+                    // let month;
+                    let j = 0;
+                    for (const ite of resultat['filter_aggregation']) {
+                      let val = 0;
+                      // tslint:disable-next-line:radix
+                      val = parseInt(ite.key_as_string.toString().split('-')[0]);
+                      if (i === val) {
+                        if (ite[name_field_aggrega_for_result].value === null) {
+                          dataTab[j] = 0;
+                        } else {
+                          dataTab[j] = ite[name_field_aggrega_for_result].value;
+                        }
+                        // month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
+                        // this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                        //                     'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                        j++;
+                      }
+                      if (val > i) {
+                        break;
+                      }
+                    }
+                    const objec = {
+                      label: i, // dans la variable données ai la valeur de l'année comme ID
+                      fill: this.params.fill,
+                      data : dataTab,
+                      backgroundColor: this.randomColor(1)
+                    };
+                    chaineObjectData += JSON.stringify(objec) + ',';
+                  }
+                }
+                if (this.nomDiagramme === 'line') {
+                  this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                                            'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
                 }
                 // cette instruction permet d'enlever le dernier ',' de la chaine pour apres le paser en json
                 chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
@@ -476,74 +514,90 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
               let dataTab: number[];
               dataTab = [];
               const donnees = this.resultFilterDateHistogramShowInHtml['data'];
-              for (const ite of donnees) {
+              // for (const ite of donnees) {
                 /**
                  * item_count contient le nombre d'enregistrement de la requete
                  */
-                dataTab.push(ite.doc_count);
+                // dataTab.push(ite.doc_count);
                 /**
                  * Ce permet de ne afficher que l'année au niveau de l'axe des abscisses
                  */
                 // format date: YYYY-MM-DD
                 if (resultat['typeDateFiltre'] === 'year') {
                   // this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
-                  this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
-                } else if (resultat['typeDateFiltre'] === 'month') {
-                  /**
-                   * 'month' contient la valeur du mois ,qui sera convertit en valeur lettrée (ex: 1=Janvier...)
-                   */
-                  const month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
-                  /*this.chartLabels.push(
-                    month + '-' + ite.key_as_string.toString().split('-')[0]
-                  );*/
-                  this.chartLabels.push(month + '-' + ite.key_as_string.toString().split('-')[0]);
-                } else {
-                  this.chartLabels.push(ite.key_as_string.toString().split('-')[2]);
-                }
-              }
-              const chartColor = [];
-              for (const iterator of dataTab) {
-                chartColor.push(this.randomColor(1));
-              }
-              if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
-                || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
-                // tslint:disable-next-line:no-shadowed-variable
-                const chartColor = [];
-                for (const iterator of dataTab) {
-                  chartColor.push(this.randomColor(1));
-                }
-                this.chartData = [
-                  {
-                    label: resultat['nom_champ'],
-                    fill: this.params.fill,
-                    data : dataTab,
-                    backgroundColor: chartColor
+                  for (const ite of donnees) {
+                    dataTab.push(ite.doc_count);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
                   }
-                ];
-              } else {
-                this.chartData = [
-                  {
-                    label: resultat['nom_champ'],
-                    fill: this.params.fill,
-                    data : dataTab,
-                    backgroundColor: this.randomColor(1),
-                    borderColor: 'rgba(148,159,177,1)',
-                    pointBackgroundColor: 'rgba(148,159,177,1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                  if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
+                  || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
+                    // tslint:disable-next-line:no-shadowed-variable
+                    const chartColor = [];
+                    for (const iterator of dataTab) {
+                      chartColor.push(this.randomColor(1));
+                    }
+                    this.chartData = [
+                      {
+                        label: resultat['nom_champ'],
+                        fill: this.params.fill,
+                        data : dataTab,
+                        backgroundColor: chartColor
+                      }
+                    ];
+                  } else {
+                    this.chartData = [
+                      {
+                        label: resultat['nom_champ'],
+                        fill: this.params.fill,
+                        data : dataTab,
+                        backgroundColor: this.randomColor(1)
+                      }
+                    ];
                   }
-                ];
-              }
+                } else { // sinon cest le mois, la semaine ou heure et jour
+                  this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                                            'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+                  // tslint:disable-next-line:radix
+                  const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
+                  // tslint:disable-next-line:max-line-length
+                  // tslint:disable-next-line:radix
+                  const date_fin = parseInt(resultat['filter_aggregation'][resultat['filter_aggregation'].length - 1]
+                    .key_as_string.toString().split('-')[0]);
+                  for (let i = debut; i <= date_fin; i++) {
+                    // let month;
+                    let j = 0;
+                    for (const ite of resultat['filter_aggregation']) {
+                      let val = 0;
+                      // tslint:disable-next-line:radix
+                      val = parseInt(ite.key_as_string.toString().split('-')[0]);
+                      if (i === val) {
+                        dataTab[j] = ite.doc_count;
+                        j++;
+                      }
+                      if (val > i) {
+                        break;
+                      }
+                    }
+                    const objec = {
+                      label: i, // dans la variable données ai la valeur de l'année comme ID
+                      fill: this.params.fill,
+                      data : dataTab,
+                      backgroundColor: this.randomColor(1)
+                    };
+                    chaineObjectData += JSON.stringify(objec) + ',';
+                  }
+                  chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
+                  this.chartData = JSON.parse(chaineObjectData);
+                }
             }
             this.currentChart = this.chartService.tracerChart(
               this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
             );
             // tslint:disable-next-line:max-line-length
             this.currentChart.options.title.text = 'Diagramme ' + this.nomDiagramme + ' du(des) ' + resultat['typeDateFiltre'] + ' du champ << ' + resultat['nom_champ'] + ' >> ';
-            // pour reinitialiser le label vide
-            this.chartLabels = [];
             this.chartData = [];
+            this.chartLabels = [];
           } else if (resultat['type_bucket'] === 'date_range') {
             let dataTab: number[];
             dataTab = [];
@@ -585,12 +639,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                   label: resultat['nom_champ'],
                   fill: this.params.fill,
                   data : dataTab,
-                  backgroundColor: this.randomColor(1),
-                  borderColor: 'rgba(148,159,177,1)',
-                  pointBackgroundColor: 'rgba(148,159,177,1)',
-                  pointBorderColor: '#fff',
-                  pointHoverBackgroundColor: '#fff',
-                  pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+                  backgroundColor: this.randomColor(1)
                 }
               ];
             }
@@ -658,7 +707,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.params.showLabel = !this.params.showLabel;
     this.currentChart.options.title.display = this.params.showLabel;
     this.currentChart.update({
-      duration: 800,
+      duration: 300,
       easing: 'easeOutBounce'
     });
   }
@@ -668,7 +717,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.filtreHitsChangeBucket(this.resultatAllForBucket);
     // this.currentChart.options.legend.display = this.params.showLegend;
     this.currentChart.update({
-      duration: 800,
+      duration: 300,
       easing: 'easeOutBounce'
     });
   }
@@ -676,7 +725,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     this.params.showLegend = !this.params.showLegend;
     this.currentChart.options.legend.display = this.params.showLegend;
     this.currentChart.update({
-      duration: 800,
+      duration: 300,
       easing: 'easeOutBounce'
     });
   }
@@ -685,7 +734,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       this.currentChart.options.title.text = this.params.nomLabel;
       this.params.nomLabel = '';
       this.currentChart.update({
-        duration: 800,
+        duration: 300,
         easing: 'easeOutBounce'
       });
     }
@@ -695,7 +744,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     if (this.params.positionLegend) {
       this.currentChart.options.legend.position = this.params.positionLegend;
       this.currentChart.update({
-      duration: 800,
+      duration: 300,
       easing: 'easeOutBounce'
     });
     }

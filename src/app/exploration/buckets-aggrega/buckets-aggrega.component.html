@@ -37,7 +37,7 @@
     <select  
     class="custom-select form-control form-control-sm"
     (change)="selectFieldBucketsChoiceDate($event)">
-      <option disabled>
+      <option [value]='null' disabled>
         Champ Date
       </option>
       <option *ngFor="let field of listFieldDate" [value]="field">
@@ -61,7 +61,7 @@
   <div class="col-sm" *ngIf="searchByHostogram">
     <select class="custom-select form-control form-control-sm"
           (change)="selectFieldBucketsChoiceForFilter($event)">
-      <option disabled>
+      <option [value]='null' disabled>
       Nom Champ
       </option>
       <option *ngFor="let field of listFieldNumber" [value]="field">
@@ -71,13 +71,13 @@
   </div>
 
   <div class="col-sm" *ngIf="searchByHostogram">
-    <input type="number" class="form-control form-control-sm" placeholder="Minimal interval">
+    <input type="number" class="form-control form-control-sm" [(ngModel)]="minimal_interval" placeholder="Minimal interval">
   </div>
 
   <div class="col-sm" *ngIf="nameBucket === 'date_range'">
     <select class="custom-select form-control form-control-sm"
             (change)="selectFieldBucketsChoiceForFilter($event)">
-      <option disabled>
+      <option [value]='null' disabled>
         Nom Champ
       </option>
       <option *ngFor="let field of listFieldNumber" [value]="field">
@@ -91,7 +91,7 @@
   <div class="col-sm" *ngIf="nameBucket === 'range_aggregation'">
     <select class="custom-select form-control form-control-sm"
             (change)="selectFieldBucketsChoice($event)">
-      <option disabled>
+      <option [value]='null' disabled>
         Nom Champ
       </option>
       <option *ngFor="let field of listFieldNumber" [value]="field">
@@ -128,7 +128,9 @@
       <option value="" disabled>Intervale</option>
       <option value="year">Année</option>
       <option value="month">Mois</option>
+      <option value="week">Semaine</option>
       <option value="day">Jour</option>
+      <option value="hour">Heure</option>
     </select>
   </div>
 
@@ -145,7 +147,7 @@
   <div class="col-sm" *ngIf="tracerParTypeInterval">
     <select class="custom-select form-control form-control-sm"
             (change)="selectFieldBucketsChoice($event)">
-      <option disabled>
+      <option [value]='null' disabled>
         Nom Champ
       </option>
       <option *ngFor="let field of listFieldNumber" [value]="field">

@@ -21,7 +21,6 @@ export class DashboardComponent implements OnInit {
   listeIndex: any;
   dataAllPortail = [];
   listeVisualisation = [];
-  listeVisualisationAll = [];
 
   inputRecherche = 'a';
 
@@ -43,7 +42,7 @@ export class DashboardComponent implements OnInit {
       Config.NAME_FIELD_OF_MAPPING.VISUALIZATION).then(
       async res => {
         this.dataAllPortail = await Object.values(res.hits.hits);
-        this.dataAllPortail.map(async visua => {
+        await this.dataAllPortail.map(async visua => {
           /**
            *  ici vu que le contenu de l'objet enregistré dans la base est un objet qu'on a converti
            * en string , on le parse pour recupérer l'objet en tant que tel
@@ -51,23 +50,22 @@ export class DashboardComponent implements OnInit {
           visua['_source'].visualization.visState = await JSON.parse(visua['_source'].visualization.visState);
         });
         this.listeVisualisation = this.dataAllPortail;
-        this.listeVisualisationAll = this.dataAllPortail;
       }
     );
     this.listeVisualisationInDashboard = [];
     this.config = this.dashboardGridsterConfigService.getConfig();
   }
-  recherche(event: any) {
-    this.inputRecherche = event.target.value;
-    this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, this.inputRecherche).then(
-      res => {
-        this.listeVisualisation = res.hits.hits;
-        if (this.inputRecherche === '') {
-          this.listeVisualisation = this.listeVisualisationAll;
-        }
-      }
-    );
-  }
+  // recherche(event: any) {
+  //   this.inputRecherche = event.target.value;
+  //   this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, this.inputRecherche).then(
+  //     res => {
+  //       this.listeVisualisation = res.hits.hits;
+  //       if (this.inputRecherche === '') {
+  //         this.listeVisualisation = this.listeVisualisationAll;
+  //       }
+  //     }
+  //   );
+  // }
   getAllIndex() {
     this.es.getAllIndexService().then(
       resp => {
@@ -110,7 +108,6 @@ export class DashboardComponent implements OnInit {
               this.listeVisualisationInDashboard.push({});
             }
           );
-          console.log(this.listeVisualisationInDashboard);
         } else {
           alert('non metrics');
         }

@@ -307,6 +307,7 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
           this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
         } else {
+          console.log(resultatFiltre);
           for (const ite of resultatFiltre) {
             this.resultatFiltre.unshift(
               {
@@ -369,13 +370,13 @@ export class ExplorationComponent implements OnInit, OnDestroy {
     try {
       this.loading = true;
       if (this.resultFilterDateHistogram) {
-        if (resultat['type_bucket'] === 'date_histogram') {
+        if (resultat['type_bucket'] === 'date_histogram' || resultat['type_bucket'] === 'histogram') {
           this.resultFilterDateHistogram.push({
             id: this.resultFilterDateHistogram.length + 1,
             dataAggregation: resultat['filter_aggregation'],
             data: resultat['filter_hits'],
             type_bucket: resultat['type_bucket'],
-            nom_champ: resultat['fieldBucketsChoiceForFilter']
+            nom_champ: resultat['nom_champ']
           });
           this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
         } else {
@@ -391,11 +392,23 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           this.resultFilterDateHistogramShowInHtml = this.resultFilterDateHistogram[this.resultFilterDateHistogram.length - 1];
         }
         if (!this.resultFilterDateHistogramShowInHtml['dataAggregation'].value) {
-          let j = 0;
-          for (let i = 0; i < this.resultFilterDateHistogramShowInHtml['dataAggregation'].length; i++) {
-            if (i % 5 === 0) {
-              this.countLineResultByAggregation[j] = i;
-              j++;
+          this.countLineResultByAggregation = [];
+          // 200 est la valeur limite des résultats qui pourront etre afficher
+          if (this.resultFilterDateHistogramShowInHtml['dataAggregation'].length >= 300) {
+            let j = 0;
+            for (let i = 0; i < 300; i++) {
+              if (i % 5 === 0) {
+                this.countLineResultByAggregation[j] = i;
+                j++;
+              }
+            }
+          } else {
+            let j = 0;
+            for (let i = 0; i < this.resultFilterDateHistogramShowInHtml['dataAggregation'].length - 1; i++) {
+              if (i % 5 === 0) {
+                this.countLineResultByAggregation[j] = i;
+                j++;
+              }
             }
           }
           this.showList = this.resultFilterDateHistogramShowInHtml['dataAggregation'];

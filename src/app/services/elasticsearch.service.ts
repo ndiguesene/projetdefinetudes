@@ -72,13 +72,15 @@ export class ElasticsearchService {
         body: body
       });
   }
-  getAllDocumentsService(_index, _type, type_champ_or_filtre: string = ''): any {
+  getAllDocumentsService(_index, _type, type_champ_or_filtre: string = '', from = 0, size = 10): any {
     if (type_champ_or_filtre !== '') {
       const body = bodybuilder()
             .query('match', Config.NAME_FIELD_OF_MAPPING.TYPE, Config.NAME_FIELD_OF_MAPPING.VISUALIZATION)
             .build();
       return this.client.search({
         index: _index,
+        from: from,
+        size: size,
         // type: _type,
         body: body,
         filterPath: ['hits.hits']
@@ -395,7 +397,15 @@ export class ElasticsearchService {
       error => console.log(error)
     );
   }
-
+  count(index: string, type: string): PromiseLike<any> {
+    return this.client.count({
+      index: index,
+      type: type
+    }).then(
+      response => console.log('ELASTICSEARCH - SERVICE - COUNT SUCCESS'),
+      error => console.log(error)
+    );
+  }
   deleteDoc(index: string, type: string, id: string): PromiseLike<any> {
     return this.client.delete({
       index: index,

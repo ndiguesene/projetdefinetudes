@@ -13,12 +13,10 @@ import * as bodybuilder from 'bodybuilder';
 })
 export class VisualisationComponent implements OnInit {
   listeVisualisation = new Array<any>();
-  listeVisualisationAll = new Array<any>();
   dataAllPortail = [];
   listeIndex: Promise<any>;
   nomIndexChoisi: string = this.es.getDefaultIndexService();
   nomChart = '';
-  lastKeypress = 0;
 
   font_size = false;
   showCollapseListChart = false;
@@ -39,7 +37,6 @@ export class VisualisationComponent implements OnInit {
           visua['_source'].visualization.visState = JSON.parse(visua['_source'].visualization.visState);
         });
         this.listeVisualisation = this.dataAllPortail;
-        this.listeVisualisationAll = this.dataAllPortail;
       }
     );
     this.getAllIndex();
@@ -55,20 +52,6 @@ export class VisualisationComponent implements OnInit {
   }
   changeStyleForLienTypeChart(event: any) {
     this.font_size = event.type === 'mouseover' ? true : false;
-  }
-  recherche(event: any) {
-    const inputRecherche = event.target.value;
-    if ((event.timeStamp - this.lastKeypress) > 100) {
-      this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, inputRecherche).then(
-        res => {
-          this.listeVisualisation = res.hits.hits;
-          if (inputRecherche === '') {
-            this.listeVisualisation = this.listeVisualisationAll;
-          }
-        }
-      );
-    }
-    this.lastKeypress = event.timeStamp;
   }
   getAllIndex() {
     this.es.getAllIndexService().then(

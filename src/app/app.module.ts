@@ -48,6 +48,7 @@ import { DatePipe } from '@angular/common';
 
 import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
 import { GridsterModule } from 'angular-gridster2';
+import { FilterPipe } from './pipe/filter.pipe';
 
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
@@ -70,7 +71,8 @@ import { GridsterModule } from 'angular-gridster2';
     ConfigureComponent,
     NotFoundComponent,
     MetricsAggregaComponent,
-    BucketsAggregaComponent
+    BucketsAggregaComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,

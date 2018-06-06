@@ -163,25 +163,51 @@ export class MetricsAggregaComponent implements OnInit {
           }
         );
       } else {
-        const _query = bodybuilder().aggregation(
-          typeOfaggregationSwtich, this.fieldMetricsChoice
-        ).build();
-        const agg = new AggregationData();
-        agg.type = typeOfaggregationSwtich;
-        agg.enabled = true;
-        agg.schema = 'metric';
-        agg.id = '';
-        agg.params = {
-          field: this.fieldMetricsChoice,
-          query: _query
-        };
+        if (typeOfaggregationSwtich === 'count') {
+          const _query = bodybuilder()
+            .query('match_all')
+            .build();
 
-        this.es.getSearchWithAgg(this.index, _query).then(
-          res => {
-            this.resultatFiltre = this.metricsAgg._getAggResult(res, agg);
-            this.change.emit(this.resultatFiltre);
-          }
-        );
+            const agg = new AggregationData();
+            agg.type = typeOfaggregationSwtich;
+            agg.enabled = true;
+            agg.schema = 'metric';
+            agg.id = '';
+            agg.params = {
+              field: null,
+              query: _query,
+              typeDateFiltre: null,
+              fieldBucketsChoiceDate: null
+            };
+
+            this.es.getSearchWithAgg(this.index, _query).then(
+              res => {
+                this.resultatFiltre = this.metricsAgg._getAggResult(res, agg);
+                this.change.emit(this.resultatFiltre);
+              }
+            );
+        } else {
+          const _query = bodybuilder().aggregation(
+            typeOfaggregationSwtich, this.fieldMetricsChoice
+          ).build();
+          console.log(_query);
+
+          const agg = new AggregationData();
+          agg.type = typeOfaggregationSwtich;
+          agg.enabled = true;
+          agg.schema = 'metric';
+          agg.id = '';
+          agg.params = {
+            field: this.fieldMetricsChoice,
+            query: _query
+          };
+          this.es.getSearchWithAgg(this.index, _query).then(
+            res => {
+              this.resultatFiltre = this.metricsAgg._getAggResult(res, agg);
+              this.change.emit(this.resultatFiltre);
+            }
+          );
+        }
       }
     } catch (error) {
       this.pnotify.error({
