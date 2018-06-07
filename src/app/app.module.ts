@@ -49,7 +49,9 @@ import { DatePipe } from '@angular/common';
 import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
 import { GridsterModule } from 'angular-gridster2';
 import { FilterPipe } from './pipe/filter.pipe';
+import { AuthentificationPortailComponent } from './authentification-portail/authentification-portail.component';
 
+import { NgxSelectModule } from 'ngx-select-ex';
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 // };
@@ -72,9 +74,11 @@ import { FilterPipe } from './pipe/filter.pipe';
     NotFoundComponent,
     MetricsAggregaComponent,
     BucketsAggregaComponent,
-    FilterPipe
+    FilterPipe,
+    AuthentificationPortailComponent
   ],
   imports: [
+    NgxSelectModule,
     BrowserModule,
     GridsterModule,
     LocalStorageModule,

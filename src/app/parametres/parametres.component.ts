@@ -25,11 +25,11 @@ export class ParametresComponent implements OnInit {
     }
     return true;
   }
-  removeIndex() {
+  async removeIndex() {
     /**
      * Cette instruction permet de supprimer l'index choisi
     */
-    this.es.removeIndexService(this.indexChoisi);
+    await this.es.removeIndexService(this.indexChoisi);
     /**
      * Apres suppression de l'index je met a jour la liste des index du menu déroulant
      */
@@ -43,8 +43,7 @@ export class ParametresComponent implements OnInit {
     );
   }
   selectionIndex(event: any) {
-    let val;
-    val = event.target.value;
+    const val = event.target.value;
     if (this.verifieSelectIndexMenuDeroulante(val)) {
       /**
        * J'affecte le nom de l'index choisi a la variable 'indexChoisi' pour la suppression de celui ci
@@ -57,22 +56,22 @@ export class ParametresComponent implements OnInit {
   }
   getAllListeIndex() {
     this.es.getAllIndexService().then(
-  		res => {
-  			this.listeIndex = res;
-  		},
-  		error => {
-  			this.listeIndex = error;
-  		}
+      res => {
+        this.listeIndex = res;
+      },
+      error => {
+        this.listeIndex = error;
+      }
     );
   }
   getAllSettings(_index: string = '') {
     this.es.getAllSettings(_index).then(
-  		res => {
-  			this.listeSetting = res;
-  		},
-  		error => {
-  			this.listeSetting = error;
-  		}
+      res => {
+        this.listeSetting = res;
+      },
+      error => {
+        this.listeSetting = error;
+      }
     );
   }
 

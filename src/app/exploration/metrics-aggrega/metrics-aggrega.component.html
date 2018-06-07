@@ -35,9 +35,14 @@
       </ng-template>
     </div>
   </div>
-
-  <div class="checkbox-inline col-sm">
-    <label><input type="checkbox" [(ngModel)]="selectFieldAggregation" (click)="selectAppliedFieldAggregation();">Intervale</label>
+  <div class="col-sm">
+    <!-- <div class="checkbox-inline col-sm">
+      <label><input type="checkbox" [(ngModel)]="selectFieldAggregation" (click)="selectAppliedFieldAggregation();">Intervale</label>
+    </div> -->
+    <label class="checkbox-inline">
+        <input type="checkbox" value=""
+      [(ngModel)]="selectFieldAggregation" (click)="selectAppliedFieldAggregation();">Intervale
+    </label>
   </div>
 
   <div class="col-sm" *ngIf="selectFieldAggregation">
@@ -62,80 +67,65 @@
     </select>
   </div>
 
-  <div class="col-sm">
-    <span class="col-sm">
-      <button class="btn btn-sm btn-primary" (click)="resultatAggregat(typeOfaggregationSwtich)">Filtrer</button>
-    </span>
-    <span class="col-sm">
+  <div class="col-sm button-group">
+      <button class="btn btn-sm btn-primary" (click)="resultatAggregat(typeOfaggregationSwtich)">
+        <i class="fa fa-search"></i>Filtrer
+      </button>
+      <a role="button" data-toggle="modal" class="btn btn-sm btn-info"
+        data-target="#ModalCenterForSwitchField">
+        <i class="fa fa-filter">Add Filter</i>
+      </a>
       <button type="button" class="btn btn-sm btn-danger" (click)="removeMetricsAggregat()">
         <i class="fa fa-remove"></i>
       </button>
-    </span>
   </div>
-  <!-- <ng-template #templateChoiceBuckets class="col-lg-8">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-2">
-          <select id="index" class="custom-select form-control form-control-sm" 
-                  (change)="selectFieldAgg($event)">
-            <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
-              {{ aggrega.value }}
-            </option>
-          </select>
-        </div>
-        <div *ngIf="selectFieldForAggregationAndBucket;else templateForChoiceListFieldShow" class="col-lg-2">
-            <select class="custom-select form-control form-control-sm">
-              <option [value] = "'null'">
-                Nom Champ
-              </option>
-              <option *ngFor="let field of listFieldString" [value]="field">
-                {{ field }}
-              </option>
-            </select>
-          <ng-template #templateForChoiceListFieldShow>
-            <select class="custom-select form-control form-control-sm">
-              <option [value] = "'null'">
-                Nom Champ
-              </option>
-              <option *ngFor="let field of listFieldNumber" [value]="field">
-                {{ field }}
-              </option>
-            </select>
-          </ng-template>
-        </div>
-        <div class="col-lg-2">
-          <select id="index" class="custom-select form-control form-control-sm" (change)="selectBucket($event)">
-            <option *ngFor="let li of listeBuckets" [value]="li.key">
-              {{ li.value }}
-            </option>
-          </select>
-        </div>
-        <div class="col-lg-4" *ngIf="searchByRange">
-          <div class="input-group">
-            <div class="input-group input-daterange">
-              <div class="input-group-addon"> From </div>
-              <input type="number" class="form-control form-control-sm">
-              <div class="input-group-addon"> To </div>
-              <input type="number" class="form-control form-control-sm">
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4" *ngIf="searchByDateHistogramme">
-          <div class="input-group">
-            <div class="input-group input-daterange">
-              <div class="input-group-addon"> From </div>
-              <input type="date" class="form-control form-control-sm">
-              <div class="input-group-addon"> To </div>
-              <input type="date" class="form-control form-control-sm">
-            </div>
-          </div>
-        </div>
-        <div class="row center">
-          <div class="col-lg-2">
-            <button class="btn btn-sm btn-primary" (click)="resultatAggregat()">Filtrer</button>
+</div>
+
+<!-- Modal -->
+<!-- Début configuration choix de l'index -->
+<div class="modal fade" id="ModalCenterForSwitchField" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Filter les données en fonction d'un champ
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+              <ngx-select [items]="listFieldStringAll" 
+              [(ngModel)]="nomFieldForFilter"
+              placeholder="field name"
+              (select)="getNomFieldForFilter($event)">
+
+              </ngx-select>
+              <span *ngIf="nomFieldForFilter">
+                <ngx-select [items]="listeFiltre" 
+                [(ngModel)]="typeFiltreForFilter">
+
+                </ngx-select>
+              </span>
+              <span *ngIf="typeFiltreForFilter">
+                <ngx-select [items]="listFieldValueStringAll" 
+                [(ngModel)]="valueFieldForFilter">
+
+                </ngx-select>
+              </span>
           </div>
         </div>
       </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal"
+          role="button"
+          class="btn btn-primary">
+          <i class="fa fa-"></i>Valider
+        </a>
+      </div>
     </div>
-  </ng-template> -->
+  </div>
 </div>

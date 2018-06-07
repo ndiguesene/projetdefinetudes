@@ -49,32 +49,18 @@ export class DashboardComponent implements OnInit {
            **/
           visua['_source'].visualization.visState = await JSON.parse(visua['_source'].visualization.visState);
         });
-        this.listeVisualisation = this.dataAllPortail;
+        this.listeVisualisation = await this.dataAllPortail;
       }
     );
     this.listeVisualisationInDashboard = [];
     this.config = this.dashboardGridsterConfigService.getConfig();
   }
-  // recherche(event: any) {
-  //   this.inputRecherche = event.target.value;
-  //   this.es.fullTextSearchService(Config.INDEX.NOM_INDEX_FOR_MAPPING, this.inputRecherche).then(
-  //     res => {
-  //       this.listeVisualisation = res.hits.hits;
-  //       if (this.inputRecherche === '') {
-  //         this.listeVisualisation = this.listeVisualisationAll;
-  //       }
-  //     }
-  //   );
-  // }
   getAllIndex() {
     this.es.getAllIndexService().then(
       resp => {
         this.listeIndex = resp;
       }
     );
-  }
-  enregitrerDashboard() {
-    this.router.navigate(['dashboard']);
   }
   // tslint:disable-next-line:member-ordering
   static itemChange(item, itemComponent) {
@@ -105,7 +91,7 @@ export class DashboardComponent implements OnInit {
                 title: this.visuaObject.title,
                 description: this.visuaObject.description
               };
-              this.listeVisualisationInDashboard.push({});
+              this.listeVisualisationInDashboard.push({cols: 2, rows: 1});
             }
           );
         } else {

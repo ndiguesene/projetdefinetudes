@@ -219,9 +219,6 @@ export class ElasticsearchService {
   findClusterInfosService(): any {
     return this.client.cluster.health({});
   }
-  // getRequeteWithSql(requete): any {
-  //   return this.http.get(Config.BASE_URL + '/_sql?sql=' + requete);
-  // }
   existDocument(index: string, type: string, body: any): PromiseLike<any> {
     return this.client.search({
         'index': index,
@@ -363,30 +360,6 @@ export class ElasticsearchService {
       '_source': []
     });
   }
-
-
-  saveDashboard(dashboardOb: any): PromiseLike<any> {
-    // console.log('ELASTICSEARCH - SERVICE - saveDashboard()');
-    // return this._isNewDocument('dashboard', dashboardObj.title).then(isNew => {
-    //   console.log('ELASTICSEARCH - SERVICE - isNew:', isNew);
-    //   if(isNew)
-    // return this._createDoc('dashboard', dashboardOb.title, dashboardOb);
-    //   else
-    //     return this._updateDoc('dashboard', dashboardObj.title, dashboardObj);
-    // });
-    return null;
-  }
-
-  // saveVisualization(visualizationObj: VisualizationObj): PromiseLike<any> {
-  //   // return this._isNewDocument('visualization', visualizationObj.title).then(isNew => {
-  //   //   console.log('ELASTICSEARCH - SERVICE - isNew:', isNew);
-  //   //   if(isNew)
-  //     return this._createDoc('visualization', visualizationObj.title, visualizationObj);
-  //   //   else
-  //   //     return this._updateDoc('visualization', visualizationObj.title, visualizationObj);
-  //   // });
-  // }
-
   createDoc(index: string, type: string, body: any): PromiseLike<any> {
     return this.client.index({
       index: index,
@@ -397,10 +370,10 @@ export class ElasticsearchService {
       error => console.log(error)
     );
   }
-  count(index: string, type: string): PromiseLike<any> {
+  count(index: string, query): PromiseLike<any> {
     return this.client.count({
       index: index,
-      type: type
+      body: query
     }).then(
       response => console.log('ELASTICSEARCH - SERVICE - COUNT SUCCESS'),
       error => console.log(error)

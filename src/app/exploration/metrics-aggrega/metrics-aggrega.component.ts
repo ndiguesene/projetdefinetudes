@@ -48,6 +48,14 @@ export class MetricsAggregaComponent implements OnInit {
   listeBuckets = this.buck.listeBuckets;
 
   pnotify = this.ps.getPNotify();
+  // pour la séléction du filtre
+  valueFieldForFilter = '';
+  nomFieldForFilter = '';
+  typeFiltreForFilter = '';
+
+  listFieldValueStringAll: string[];
+  listFieldAllNotFilter = [];
+  listeFiltre = [ 'is' , 'is not' , 'exist' , 'not exist'];
   /**
    * Ce champ permet de filtrer la liste des champ qui va etre afficher
    * soit de type number(integer, float, long ...), string, text
@@ -75,6 +83,45 @@ export class MetricsAggregaComponent implements OnInit {
       // }
     }
   }
+  async getNomFieldForFilter(event: any) {
+    // this.es.count(this.index, _query).then(
+    //   re => console.log(re)
+    // );
+    if (this.nomFieldForFilter) {
+      const _query = await bodybuilder()
+          .aggregation('terms', this.nomFieldForFilter + '.keyword', {
+            size: 100
+          }).size(0).build();
+      await this.es.getSearchWithAgg(this.index, _query).then(
+        async res => {
+          this.listFieldValueStringAll = await this.buck.getResultFilterAggregationBucket(res);
+        }
+      );
+      console.log(this.listFieldValueStringAll);
+      this.listFieldValueStringAll = await this.listFieldValueStringAll.map(r => r['key']);
+    }
+    // if (this.nomFieldForFilter) {
+    //   let nomType;
+    //   let count = 0;
+    //   // await this.es.getNameType(this.index).then(async res => nomType = await res);
+    //   const _query = await bodybuilder().aggregation('terms', this.nomFieldForFilter)
+    //   .build();
+    //   this.es.count(this.index, _query).then(
+    //     re => console.log(re)
+    //   );
+    //   this.es.getSearchWithAgg(this.index, _query).then(
+    //     res => console.log(res)
+    //   );
+    // this.valueFieldForFilter = event.target.value;
+    // }
+  }
+  getValueNomFieldForFilter(event: any) {
+    alert(event.target.value);
+    const _query = bodybuilder()
+        .filter('query', 'Nom', 'GILLOT-AEROPORT')
+        .build();
+    this.valueFieldForFilter = event.target.value;
+  }
   async loadListFieldOnView(index: string) {
     try {
       let type;
@@ -89,10 +136,20 @@ export class MetricsAggregaComponent implements OnInit {
           // this.extractAllFieldJSON(this.listFieldString);
           this.listFieldStringAll = res[index].mappings;
           /**
+           * On recupere la liste des types des champs
+           */
+          this.es.getIndexNumFields(index).then(
+            respp => this.listFieldNumber = respp
+          );
+          this.es.getIndexDateFields(index).then(
+            resp => this.listFieldDate = resp
+          );
+          /**
            * Cette instruction en bas permet de recupérer la liste des clé de l'objets
            * qui constituer la liste de mes champs de l'index choisi
            */
           this.listFieldStringAll = Object.keys(this.listFieldStringAll[type]);
+          this.listFieldAllNotFilter = this.listFieldStringAll;
           // Ici on applique un filtre pour ne sélectionner que les champs qui nous intéressent
           // en enlevant les champs commencant par '_' et terminant par .keyword
           this.listFieldStringAll = this.listFieldStringAll.filter(
@@ -104,17 +161,11 @@ export class MetricsAggregaComponent implements OnInit {
             // tslint:disable-next-line:no-shadowed-variable
             res => this.listFieldString = res
           );
-          /**
-           * On recupere la liste des types des champs
-           */
-          this.es.getIndexNumFields(index).then(
-            respp => this.listFieldNumber = respp
-          );
-          this.es.getIndexDateFields(index).then(
-            resp => this.listFieldDate = resp
-          );
           // this.loading = true;
         }
+      );
+      this.listFieldAllNotFilter.map(
+        (re, inc) => { this.listFieldAllNotFilter.push({id: inc, name: re}); }
       );
     // this.contentArray = this.listFieldStringAll.map(
     //   (field: string, i: number) => field

@@ -284,7 +284,7 @@
     </div>
   <!-- </div> -->
   <!-- {{ listeVisualisation | json }} -->
-  <div class="card-body" *ngIf="listeVisualisation?.length !== 0; else templatePasDeVisualisation">
+  <div class="card-body" *ngIf="listeVisualisation;else templatePasDeVisualisation">
     <table id="table" class="table table-bordered table-sm">
       <thead class="thead-light">
         <tr>

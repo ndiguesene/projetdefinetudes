@@ -75,7 +75,6 @@
   </div>
   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
     <div class="card">
-      {{ listeSetting | json }}
       <div class="d-flex flex-column" *ngFor="let setting of listeSetting">
         <ul class="list-group list-group-flush">
           <li style="border-right: 1px dashed blue;" class="list-group-item">Nombre de document : {{ setting.index.create_date }}</li>

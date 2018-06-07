@@ -452,7 +452,6 @@ export class ExplorationComponent implements OnInit, OnDestroy {
          * Comparé si idComposant donné en parametre est le meme qu'un id dans le tableau
          * resultFilterDateHistogram
          */
-        console.log(el);
         if (idComposant === el.id) {
           /**
            * Supprimer l'objet correspondant avec splice

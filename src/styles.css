@@ -9,6 +9,7 @@ body{
 }
 .nav-link:hover ,.active {
   text-decoration: none;
+  border-left: 2px solid white;
 }
 .navbar-expand-lg .navbar-nav.side-nav{
   flex-direction: column;

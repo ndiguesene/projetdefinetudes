@@ -29,7 +29,6 @@
                 </tr>
               </thead>
               <tbody>
-                {{ listeVisualisation | json }}
                 <tr *ngFor="let visua of listeVisualisation | filter: searchString : 'title';let i = index;">
                   <td>{{ visua['_source'].visualization.title }}</td>
                   <td>{{ visua['_source'].visualization.visState.name_type_chart }}</td>
