@@ -1,3 +1,4 @@
+import { Config } from './../config/Config';
 import { ElasticsearchService } from './elasticsearch.service';
 import { Injectable } from '@angular/core';
 import * as bodybuilder from 'bodybuilder';
@@ -33,7 +34,7 @@ export class BucketsService {
      */
     return this.es.getSearchWithAgg(_index, _query, size);
   }
-  queryDateRangeAggregation(_index: string, _query: any, size = 20, _format?: string): any {
+  queryDateRangeAggregation(_index: string, _query: any, size = Config.SIZE_MAX_RESULT_QUERY_RETURN, _format?: string): any {
   /**
    * Le 'field' doit etre de type 'Date'
    */

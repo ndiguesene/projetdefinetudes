@@ -72,7 +72,8 @@ export class ElasticsearchService {
         body: body
       });
   }
-  getAllDocumentsService(_index, _type, type_champ_or_filtre: string = '', from = 0, size = 10): any {
+  getAllDocumentsService(_index, _type, type_champ_or_filtre: string = '', from = 0,
+  size = Config.SIZE_MAX_RESULT_QUERY_RETURN): any {
     if (type_champ_or_filtre !== '') {
       const body = bodybuilder()
             .query('match', Config.NAME_FIELD_OF_MAPPING.TYPE, Config.NAME_FIELD_OF_MAPPING.VISUALIZATION)
@@ -89,6 +90,7 @@ export class ElasticsearchService {
       return this.client.search({
         index: _index,
         // type: _type,
+        size: size,
         body: this.queryalldocs,
         filterPath: ['hits.hits']
       });
@@ -106,7 +108,7 @@ export class ElasticsearchService {
       filterPath: ['hits.hits']
     });
   }
-  getAllDocumentsServiceByRequete(_index, query, _size = 20): any {
+  getAllDocumentsServiceByRequete(_index, query, _size = Config.SIZE_MAX_RESULT_QUERY_RETURN): any {
     return this.client.search({
       index: _index,
       // type: _type,
@@ -115,7 +117,7 @@ export class ElasticsearchService {
       size: _size
     });
   }
-  getSearchWithAgg(_index, _query, size = 20): any {
+  getSearchWithAgg(_index, _query, size = Config.SIZE_MAX_RESULT_QUERY_RETURN): any {
     return this.client.search({
       index: _index,
       // type: _type,
@@ -221,9 +223,9 @@ export class ElasticsearchService {
   }
   existDocument(index: string, type: string, body: any): PromiseLike<any> {
     return this.client.search({
-        'index': index,
-        'type': type,
-        'body': body
+        index: index,
+        type: type,
+        body: body
     }).then(res => {
       let isNew;
       isNew = (res.hits.hits.length === 0) ? false : true;

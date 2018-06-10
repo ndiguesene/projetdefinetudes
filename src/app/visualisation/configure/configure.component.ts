@@ -143,16 +143,16 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
   ngAfterViewInit() {
-    try {
-        const mapProp = {
-        center: new google.maps.LatLng(18.5793, 73.8143),
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //     const mapProp = {
+    //     center: new google.maps.LatLng(18.5793, 73.8143),
+    //     zoom: 15,
+    //     mapTypeId: google.maps.MapTypeId.ROADMAP
+    //   };
+    //   this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
   async ngOnInit() {
     try {
@@ -178,27 +178,28 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                 if (resp[0].isExist === true) {
                   const visState = JSON.parse(resp[0].data[0]._source.visualization.visState);
                   this.aggs = visState.aggregation;
+
                   // vérifie si le type de traitement qu'on doit faire est de type metrics ou buckets
                   if (this.nomDiagramme !== 'metrics') {
                     this.buck.queryDateHistoGrammAggregation(
-                      visState.index, this.aggs.aggreg, 100
+                      visState.index, this.aggs.aggreg, Config.SIZE_MAX_RESULT_QUERY_RETURN
                     ).then(
                       async res => {
+                        console.log(this.buck.getResultFilterAggregationBucket(res));
                           const resultat = {
                             filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
                             filter_hits: this.buck.getResultFilterHitsBucket(res),
                             type_bucket: this.aggs.params.type_bucket,
                             nom_champ: this.aggs.params.nom_champ,
                             typeDateFiltre: this.aggs.params.typeDateFiltre,
-                            chartLabels: this.aggs.params.chartLabels
+                            chartLabels: this.aggs.params.chartLabels,
+                            query: this.aggs.aggreg,
+                            typeOfaggregationSwtich: visState.aggregation.typeOfaggregationSwtich
                           };
                         this.filtreHitsChangeBucket(resultat);
                       }
                     );
                   } else {
-                    // this.aggs.type = [0].objectResult.aggregation
-                    // console.log(this.aggs);
-
                     this.es.getSearchWithAgg(visState.index, this.aggs.aggreg).then(
                       async res => {
                         this.indexChangeFiltreMetrics(
@@ -281,24 +282,14 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   onChartHovered(event) {
     console.log(event);
   }
-  newDataPoint(label) {
-    // this.chartData.forEach((dataset, index) => {
-    //   this.chartData[index] = Object.assign({}, this.chartData[index], {
-    //     data: [...this.chartData[index].data, this.dataTab[index]]
-    //   });
-    // });
-    // this.chartLabels = [...this.chartLabels, label];
-  }
   indexChangeFiltreMetrics(resultat: any) {
     // Ici on recupere juste les objets de type Array Array qui contient nos resultats
-    console.log(resultat);
     // if (resultatFiltre['metricsAggregationRangeDate']) {
     //   this.resultatFiltreWithAggregation = resultatFiltre;
     //   this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
     //   this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
     // }
     if (resultat['metricsAggregationRangeDate'] === true) {
-      console.log(resultat['result']);
       this.resultatFiltreWithAggregation = resultat;
       this.aggregation = this.resultatFiltreWithAggregation['aggregation'];
       this.name_field_aggrega_for_result = 'agg_' + this.aggregation.type + '_' + this.aggregation.params.field;
@@ -386,21 +377,18 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                */
               let dataTab;
               dataTab = [];
-              let donnees;
-              if (resultat['typeOfaggregationSwtich'] === 'null') {
-                donnees = resultat['filter_hits'];
-              } else {
-                donnees = resultat['filter_aggregation'];
-              }
               this.chartData = [];
               if (resultat['typeDateFiltre'] === 'year') {
                 let name_field_aggrega_for_result = '';
-
                 for (const ite of resultat['filter_aggregation']) {
+                  console.log(resultat['typeOfaggregationSwtich']);
+
                   if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
                     dataTab.push(ite.doc_count);
                     this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
                   } else {
+                    console.log('Aggrégation OK');
+
                     name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
                     if (ite[name_field_aggrega_for_result].value === null) {
                       dataTab.push(0);
@@ -423,11 +411,6 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                   }
                 );
               } else { // si le type de filtre en interval est en Mois ou jour
-                if (resultat['typeOfaggregationSwtich'] === 'null') {
-                  donnees = resultat['filter_hits'];
-                } else {
-                  donnees = resultat['filter_aggregation'];
-                }
                 const name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
                 if (resultat['typeOfaggregationSwtich'] === 'null' ||
                   resultat['typeOfaggregationSwtich'] === 'count') {
@@ -481,9 +464,6 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
                         } else {
                           dataTab[j] = ite[name_field_aggrega_for_result].value;
                         }
-                        // month = this.convertValueMonthInLetter(ite.key_as_string.toString().split('-')[1]);
-                        // this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
-                        //                     'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
                         j++;
                       }
                       if (val > i) {
@@ -675,6 +655,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
         index: this.nomIndex,
         aggregation: {
           aggreg: this.resultatAllForBucket['query'],
+          typeOfaggregationSwtich: this.resultatAllForBucket['typeOfaggregationSwtich'],
           params: this.params
         }
       };
@@ -713,9 +694,7 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   }
   selectShowFeelChart() {
     this.params.fill = !this.params.fill;
-    console.log(this.currentChart.data.datasets[0]);
     this.filtreHitsChangeBucket(this.resultatAllForBucket);
-    // this.currentChart.options.legend.display = this.params.showLegend;
     this.currentChart.update({
       duration: 300,
       easing: 'easeOutBounce'

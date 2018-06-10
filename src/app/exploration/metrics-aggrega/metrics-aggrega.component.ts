@@ -1,3 +1,4 @@
+import { Config } from './../../config/Config';
 import { PnotifyService } from './../../services/pnotify.service';
 import { MetricsService } from './../../services/metrics.service';
 import { AggregationData } from './../../entities/aggregationData';
@@ -29,6 +30,8 @@ export class MetricsAggregaComponent implements OnInit {
   listFieldNumber: string[];
   listFieldDate: string[];
   listFieldStringAll: string[];
+  listAllFieldWithType = [];
+
   typeDateFiltre: string;
 
   typeChampSelected = '';
@@ -55,7 +58,14 @@ export class MetricsAggregaComponent implements OnInit {
 
   listFieldValueStringAll: string[];
   listFieldAllNotFilter = [];
-  listeFiltre = [ 'is' , 'is not' , 'exist' , 'not exist'];
+
+  editByQueryDSL = true;
+  listeFiltre = [
+    {id: 'is', value: 'term'},
+    {id: 'is not', value: ''},
+    {id: 'exist', value: ''},
+    {id: 'not exist', value: ''}
+  ];
   /**
    * Ce champ permet de filtrer la liste des champ qui va etre afficher
    * soit de type number(integer, float, long ...), string, text
@@ -90,14 +100,13 @@ export class MetricsAggregaComponent implements OnInit {
     if (this.nomFieldForFilter) {
       const _query = await bodybuilder()
           .aggregation('terms', this.nomFieldForFilter + '.keyword', {
-            size: 100
+            size: Config.SIZE_MAX_RESULT_QUERY_RETURN
           }).size(0).build();
       await this.es.getSearchWithAgg(this.index, _query).then(
         async res => {
           this.listFieldValueStringAll = await this.buck.getResultFilterAggregationBucket(res);
         }
       );
-      console.log(this.listFieldValueStringAll);
       this.listFieldValueStringAll = await this.listFieldValueStringAll.map(r => r['key']);
     }
     // if (this.nomFieldForFilter) {
@@ -114,13 +123,6 @@ export class MetricsAggregaComponent implements OnInit {
     //   );
     // this.valueFieldForFilter = event.target.value;
     // }
-  }
-  getValueNomFieldForFilter(event: any) {
-    alert(event.target.value);
-    const _query = bodybuilder()
-        .filter('query', 'Nom', 'GILLOT-AEROPORT')
-        .build();
-    this.valueFieldForFilter = event.target.value;
   }
   async loadListFieldOnView(index: string) {
     try {
@@ -144,6 +146,9 @@ export class MetricsAggregaComponent implements OnInit {
           this.es.getIndexDateFields(index).then(
             resp => this.listFieldDate = resp
           );
+          this.es.getIndexTextFields(index).then(
+            re => this.listFieldString = re
+          );
           /**
            * Cette instruction en bas permet de recupérer la liste des clé de l'objets
            * qui constituer la liste de mes champs de l'index choisi
@@ -156,11 +161,6 @@ export class MetricsAggregaComponent implements OnInit {
             el => (!el.startsWith('_')) && (!el.endsWith('.keyword')
             && (el !== '_index') && (el !== '_type') && (el !== '_id'))
           ).sort();
-
-          this.es.getIndexTextFields(index).then(
-            // tslint:disable-next-line:no-shadowed-variable
-            res => this.listFieldString = res
-          );
           // this.loading = true;
         }
       );
@@ -171,11 +171,33 @@ export class MetricsAggregaComponent implements OnInit {
     //   (field: string, i: number) => field
     // );
     // this.returnedArray = this.contentArray.slice(0, this.nombreItemShowForPaggination);
+      await this.listFieldString.map(async str => {
+        await this.listAllFieldWithType.push(
+            {id: 'string', nameType: str}
+          );
+        }
+      );
+      await this.listFieldNumber.map(async str => {
+        await this.listAllFieldWithType.push(
+            {id: 'number', nameType: str}
+          );
+        }
+      );
+      await this.listFieldDate.map(async str => {
+        await this.listAllFieldWithType.push(
+            {id: 'date', nameType: str}
+          );
+        }
+      );
+      console.log(this.listAllFieldWithType);
     } catch (error) {
       this.pnotify.error({
         text: error
       });
     }
+  }
+  removeFilterForMetric(id) {
+
   }
   resultatAggregat(typeOfaggregationSwtich: string) {
     try {
@@ -183,13 +205,25 @@ export class MetricsAggregaComponent implements OnInit {
         this.fieldMetricsChoice = this.listFieldNumber[0];
       }
       if (this.selectFieldAggregation) {
-        const _query = bodybuilder()
+        let _query;
+        if (this.valueFieldForFilter) {
+          _query = bodybuilder()
+          .filter('term', this.nomFieldForFilter + '.keyword', this.valueFieldForFilter)
           .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
             format: 'yyyy-MM-dd',
             interval: this.typeDateFiltre
           }, (a) => {
             return a.aggregation(typeOfaggregationSwtich, this.fieldMetricsChoice);
           }).build();
+        } else {
+          _query = bodybuilder()
+          .aggregation('date_histogram', this.fieldBucketsChoiceDate, {
+            format: 'yyyy-MM-dd',
+            interval: this.typeDateFiltre
+          }, (a) => {
+            return a.aggregation(typeOfaggregationSwtich, this.fieldMetricsChoice);
+          }).build();
+        }
 
         const agg = new AggregationData();
         agg.type = typeOfaggregationSwtich;
@@ -215,9 +249,17 @@ export class MetricsAggregaComponent implements OnInit {
         );
       } else {
         if (typeOfaggregationSwtich === 'count') {
-          const _query = bodybuilder()
+          let _query;
+          if (this.valueFieldForFilter) {
+            _query = bodybuilder()
+            .filter('term', this.nomFieldForFilter + '.keyword', this.valueFieldForFilter)
             .query('match_all')
             .build();
+          } else {
+            _query = bodybuilder()
+            .query('match_all')
+            .build();
+          }
 
             const agg = new AggregationData();
             agg.type = typeOfaggregationSwtich;
@@ -238,10 +280,19 @@ export class MetricsAggregaComponent implements OnInit {
               }
             );
         } else {
-          const _query = bodybuilder().aggregation(
-            typeOfaggregationSwtich, this.fieldMetricsChoice
-          ).build();
-          console.log(_query);
+          let _query;
+          if (this.valueFieldForFilter) {
+            _query = bodybuilder()
+            .filter('term', this.nomFieldForFilter + '.keyword', this.valueFieldForFilter)
+            .aggregation(
+              typeOfaggregationSwtich, this.fieldMetricsChoice
+            ).build();
+          } else {
+            _query = bodybuilder()
+            .aggregation(
+              typeOfaggregationSwtich, this.fieldMetricsChoice
+            ).build();
+          }
 
           const agg = new AggregationData();
           agg.type = typeOfaggregationSwtich;

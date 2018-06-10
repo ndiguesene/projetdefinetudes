@@ -1,3 +1,4 @@
+import { Config } from './../../config/Config';
 import { MetricsService } from './../../services/metrics.service';
 import { BucketsService } from './../../services/buckets.service';
 import { AggregationData } from './../../entities/aggregationData';
@@ -194,7 +195,7 @@ export class BucketsAggregaComponent implements OnInit {
               {'gte': this.rangeValeurDe, 'lte': this.rangeValeurA }
             ).build();
 
-            await this.es.getSearchWithAgg(this.index, _query).then(
+            await this.es.getSearchWithAgg(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
               res => {
                 this.changeResultFiltre.emit({
                   ...{
@@ -221,7 +222,7 @@ export class BucketsAggregaComponent implements OnInit {
             .aggregation(this.typeOfaggregationSwtich, this.fieldBucketsChoice)
             .sort(this.fieldBucketsChoice, 'asc')
             .build();
-            await this.es.getSearchWithAgg(this.index, _query).then(
+            await this.es.getSearchWithAgg(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
               res => {
                 this.changeResultFiltre.emit({
                   ...{
@@ -258,7 +259,8 @@ export class BucketsAggregaComponent implements OnInit {
                   interval: this.typeDateFiltre
                 }).build();
             }
-          await this.buck.queryDateRangeAggregation(this.index, _query, 20).then(
+
+          await this.buck.queryDateRangeAggregation(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
             resp => {
               this.changeResultFiltre.emit({
                 ...{
@@ -287,7 +289,7 @@ export class BucketsAggregaComponent implements OnInit {
               }).query('range', this.fieldBucketsChoiceDate, {
                   'gte': this.intervalDatehistogram.date_debut, 'lte': this.intervalDatehistogram.date_fin
               }).build();
-              await this.buck.queryDateRangeAggregation(this.index, _query, 10000).then(
+              await this.buck.queryDateRangeAggregation(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
                 resp => {
                   this.changeResultFiltre.emit({
                     ...{
@@ -314,7 +316,7 @@ export class BucketsAggregaComponent implements OnInit {
                   interval: this.typeDateFiltre
                 }).build();
           await this.buck.queryDateHistoGrammAggregation(
-            this.index, _query).then(
+            this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
               resp => {
                 /**
                  * J'envoi ici la un objet au lieu de la référence de l'objet en
@@ -345,7 +347,7 @@ export class BucketsAggregaComponent implements OnInit {
             ).aggregation(
               this.typeOfaggregationSwtich, this.fieldBucketsChoiceForFilter
             ).build();
-          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+          await this.buck.queryDateRangeAggregation(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
             resp => {
               this.changeResultFiltre.emit({
                 ...{
@@ -367,7 +369,7 @@ export class BucketsAggregaComponent implements OnInit {
             .query('range', this.fieldBucketsChoiceDate,
               {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
             ).build();
-          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+          await this.buck.queryDateRangeAggregation(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
             resp => {
               this.changeResultFiltre.emit({
                 ...{
@@ -389,7 +391,7 @@ export class BucketsAggregaComponent implements OnInit {
               .query('range', this.fieldBucketsChoiceDate,
                 {'gte': this.rangeDate[0], 'lte': this.rangeDate[1] }
               ).build();
-          await this.buck.queryDateRangeAggregation(this.index, _query).then(
+          await this.buck.queryDateRangeAggregation(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
             resp => {
               this.changeResultFiltre.emit({
                 ...{
@@ -413,7 +415,7 @@ export class BucketsAggregaComponent implements OnInit {
               interval: this.minimal_interval
             }).build();
 
-            await this.es.getSearchWithAgg(this.index, _query).then(
+            await this.es.getSearchWithAgg(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
               res => {
                 this.changeResultFiltre.emit({
                   ...{

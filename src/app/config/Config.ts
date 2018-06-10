@@ -13,5 +13,6 @@ export const Config = {
 		VISTATE: 'visState',
 		TITLE: 'title',
 		INDEX_PATTERN: 'index-pattern'
-	}
+	},
+	SIZE_MAX_RESULT_QUERY_RETURN: 100
 };

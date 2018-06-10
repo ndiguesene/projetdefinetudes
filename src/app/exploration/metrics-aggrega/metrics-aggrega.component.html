@@ -89,35 +89,46 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">
-          Filter les données en fonction d'un champ
+          Ajouté un filtre
+          {{ listAllFieldWithType | json }}
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      <hr>
       <div class="modal-body">
-        <div class="container">
-          <div class="row">
+          <div class="col-sm">
+            <button type="button" 
+                class="btn btn-link justify-content-end"
+                (click)="editByQueryDSL = !editByQueryDSL">Editer en Query DSL</button>
+          </div>
+          <div class="col-sm" *ngIf="editByQueryDSL;else templateEditByQueryDSL">
               <ngx-select [items]="listFieldStringAll" 
-              [(ngModel)]="nomFieldForFilter"
-              placeholder="field name"
-              (select)="getNomFieldForFilter($event)">
-
+                [(ngModel)]="nomFieldForFilter"
+                placeholder="Choisir Nom champ"
+                (select)="getNomFieldForFilter($event)">
               </ngx-select>
+              
               <span *ngIf="nomFieldForFilter">
-                <ngx-select [items]="listeFiltre" 
+                <ngx-select [items]="listeFiltre"
                 [(ngModel)]="typeFiltreForFilter">
-
                 </ngx-select>
               </span>
+              
               <span *ngIf="typeFiltreForFilter">
-                <ngx-select [items]="listFieldValueStringAll" 
+                <ngx-select [items]="listFieldValueStringAll"
                 [(ngModel)]="valueFieldForFilter">
-
                 </ngx-select>
               </span>
           </div>
-        </div>
+          <ng-template #templateEditByQueryDSL>
+            <div class="col-sm">
+              <textarea cols="50" rows="3">
+
+              </textarea>
+            </div>
+          </ng-template>
       </div>
       <div class="modal-footer">
         <a data-dismiss="modal"
@@ -126,6 +137,13 @@
           <i class="fa fa-"></i>Valider
         </a>
       </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <div div class="col-sm">
+      
     </div>
   </div>
 </div>
