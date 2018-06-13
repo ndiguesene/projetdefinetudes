@@ -45,17 +45,13 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-12">
-      <!-- <gridster [options]="config">
-        <gridster-item *ngFor="let item of listeVisualisationInDashboard;index as i" [item]="item">
-          <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value | number }}</b></p>
-          <div class="card-body">
-            <p class="card-text text-center">{{ resultatFiltre.title }}</p>
-          </div>
-        </gridster-item>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-      </gridster> -->
-      </div>
-  </div>
 </div>
+<gridster [options]="config">
+  <gridster-item [item]="item" *ngFor="let item of listeVisualisationInDashboard;index as i">
+    <!-- <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value | number }}</b></p>
+    <div class="card-body">
+      <p class="card-text text-center">{{ resultatFiltre.title }}</p>
+    </div> -->
+    <h1>{{ i }}</h1>
+  </gridster-item>
+</gridster>

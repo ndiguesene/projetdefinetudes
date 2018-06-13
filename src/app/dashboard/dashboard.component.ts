@@ -36,6 +36,20 @@ export class DashboardComponent implements OnInit {
               private met: MetricsService) {}
 
   async ngOnInit() {
+    this.config = this.dashboardGridsterConfigService.getConfig();
+    this.listeVisualisationInDashboard = [
+      {cols: 2, rows: 1, y: 0, x: 0},
+      {cols: 2, rows: 2, y: 0, x: 2},
+      {cols: 1, rows: 1, y: 0, x: 4},
+      {cols: 3, rows: 2, y: 1, x: 4},
+      {cols: 1, rows: 1, y: 4, x: 5},
+      {cols: 1, rows: 1, y: 2, x: 1},
+      {cols: 2, rows: 2, y: 5, x: 5},
+      {cols: 2, rows: 2, y: 3, x: 2},
+      {cols: 2, rows: 1, y: 2, x: 2},
+      {cols: 1, rows: 1, y: 3, x: 4},
+      {cols: 1, rows: 1, y: 0, x: 6}
+    ];
     await this.es.getAllDocumentsService(
       Config.INDEX.NOM_INDEX_FOR_MAPPING,
       Config.INDEX.TYPE,
@@ -52,8 +66,6 @@ export class DashboardComponent implements OnInit {
         this.listeVisualisation = await this.dataAllPortail;
       }
     );
-    this.listeVisualisationInDashboard = [];
-    this.config = this.dashboardGridsterConfigService.getConfig();
   }
   getAllIndex() {
     this.es.getAllIndexService().then(
@@ -73,7 +85,9 @@ export class DashboardComponent implements OnInit {
   changedOptions() {
     this.config.api.optionsChanged();
   }
-  removeItem(item) {
+  removeItem($event, item) {
+    $event.preventDefault();
+    $event.stopPropagation();
     this.listeVisualisationInDashboard.splice(this.listeVisualisationInDashboard.indexOf(item), 1);
   }
   addItem(id) {
@@ -91,7 +105,7 @@ export class DashboardComponent implements OnInit {
                 title: this.visuaObject.title,
                 description: this.visuaObject.description
               };
-              this.listeVisualisationInDashboard.push({cols: 2, rows: 1});
+              this.listeVisualisationInDashboard.push({});
             }
           );
         } else {

@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-user-plus"> Créer un nouveau compte</i></h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="form-horizontal">
+              <div class="form-group row">
+                <label for="inputEmail" class="col-form-label">Nouveau Email</label>
+                <div class="col-sm-10">
+                  <input type="email" class="form-control" id="inputEmail" placeholder="Email"
+                    formControlName="email">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputPassword" class="col-form-label">Nouveau Mot de passe</label>
+                <div class="col-sm-10">
+                  <input type="password" class="form-control" id="inputPassword" placeholder="Password"
+                    formControlName="motdepasse">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-10">
+                  <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-users"> Liste des utilisateurs</i></h5>
+        </div>
+        <div class="card-body">
+          <table class="table">
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

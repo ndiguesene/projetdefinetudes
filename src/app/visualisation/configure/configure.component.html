@@ -56,12 +56,17 @@
     </button>
   </div> -->
   <div class="collapse card card-body" id="optionsVisualisationSave">
-    <div class="well">
-    </div>
-    <input type="text" name="save" id="" [(ngModel)]="objectVisualizationSave.visualization.title">
-    <button (click)="saveVisualisation()" class="btn btn-success">
-      <i class="fa fa-save"></i> Enregistrer
-    </button>
+    <form class="form-inline" >
+      <label for="email">Title : </label>
+      <input type="text" name="title" [(ngModel)]="objectVisualizationSave.visualization.title"
+        placeholder="Title" required class="form-control"> 
+      <label for="email">Description : </label>
+      <input type="text" name="description" [(ngModel)]="objectVisualizationSave.visualization.description"
+        placeholder="Description (Optionnel)" class="form-control"> 
+      <button (click)="saveVisualisation()" class="btn btn-success">
+        <i class="fa fa-save"></i> Enregistrer
+      </button>
+    </form>
   </div>
   <div class="collapse card card-body" id="optionsVisualisationShare">
     <h1>Share</h1>

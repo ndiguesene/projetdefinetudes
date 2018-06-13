@@ -36,7 +36,7 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PaginationModule } from 'ngx-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
@@ -52,6 +52,7 @@ import { FilterPipe } from './pipe/filter.pipe';
 import { AuthentificationPortailComponent } from './authentification-portail/authentification-portail.component';
 
 import { NgxSelectModule } from 'ngx-select-ex';
+import { CreercompteComponent } from './creercompte/creercompte.component';
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 // };
@@ -75,14 +76,16 @@ import { NgxSelectModule } from 'ngx-select-ex';
     MetricsAggregaComponent,
     BucketsAggregaComponent,
     FilterPipe,
-    AuthentificationPortailComponent
+    AuthentificationPortailComponent,
+    CreercompteComponent
   ],
   imports: [
+    FormsModule,
+    ReactiveFormsModule,
     NgxSelectModule,
     BrowserModule,
     GridsterModule,
     LocalStorageModule,
-    FormsModule,
     Ng4GeoautocompleteModule.forRoot(),
     BrowserAnimationsModule,
     AngularFontAwesomeModule,
@@ -90,9 +93,6 @@ import { NgxSelectModule } from 'ngx-select-ex';
     HttpModule,
     HttpClientModule,
     ChartsModule,
-    HttpClientModule,
-    HttpClientModule,
-    FormsModule,
     SlimLoadingBarModule.forRoot(),
     NgMultiSelectDropDownModule.forRoot(),
     PaginationModule.forRoot(),

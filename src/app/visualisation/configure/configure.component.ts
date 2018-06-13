@@ -54,12 +54,11 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
   pnotify = this.ps.getPNotify();
 
   objectVisualizationSave = {
-    type: 'visualization',
+    type: Config.NAME_FIELD_OF_MAPPING.VISUALIZATION,
     visualization:  {
       description: '',
       title: '',
       uiStateJSON: {},
-      version: 1,
       visState: {}
     }
   };
@@ -661,7 +660,6 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       };
       this.objectVisualizationSave.type = Config.NAME_FIELD_OF_MAPPING.VISUALIZATION;
       this.objectVisualizationSave.visualization.visState = JSON.stringify(visState);
-      this.objectVisualizationSave.visualization.version = 1;
       this.objectVisualizationSave.visualization.uiStateJSON = '';
 
       this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);
@@ -678,7 +676,6 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
       };
       this.objectVisualizationSave.type = Config.NAME_FIELD_OF_MAPPING.VISUALIZATION;
       this.objectVisualizationSave.visualization.visState = JSON.stringify(visState);
-      this.objectVisualizationSave.visualization.version = 1;
       this.objectVisualizationSave.visualization.uiStateJSON = '';
 
       this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);

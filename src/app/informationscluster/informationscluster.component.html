@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    <h5>Appercu du Cluster</h5>
+    <h5><i class="fa fa-server"> Appercu du Cluster</i></h5>
   </div>
   <div class="card-body">
   <!-- {{ infoscluster | json }} -->
@@ -8,8 +8,7 @@
       <div class="col">
         <div class="card bg-light mb-3" style="max-width: 18rem;">
           <div class="card-body">
-            <i class="fa fa-home"></i>
-            <div><b><u>Nom Cluster</u></b>: {{ infoscluster.cluster_name }}</div>
+            <div><i class="fa fa-server"></i> <b><u>Nom Cluster</u></b>: {{ infoscluster.cluster_name }}</div>
           </div>
         </div>
       </div>
@@ -17,16 +16,14 @@
       <div class="col">
         <div class="card text-white bg-{{ couleurSanteCluster }} mb-3" style="max-width: 18rem;">
           <div class="card-body">
-            <i class="fa fa-heart"></i>
-            <div><b><u>Santé</u></b>: {{ infoscluster.status }}</div>
+            <div><i class="fa fa-heart"></i> <b><u>Santé</u></b>: {{ infoscluster.status }}</div>
           </div>
         </div>
       </div>
       <div class="col">
         <div class="card bg-light mb-3" style="max-width: 18rem;">
           <div class="card-body">
-            <i class="fa fa-home"></i>
-            <div><b><u>Nombre de noeud</u></b>: {{ infoscluster.number_of_nodes }}</div>
+            <div><i class="fa fa-home"></i> <b><u>Nombre de noeud</u></b>: {{ infoscluster.number_of_nodes }}</div>
           </div>
         </div>
       </div>

@@ -9,7 +9,8 @@
         "tableauDeBord": "Dashboard",
         "console": "Console",
         "parametres": "Settings",
-        "informations": "Informations"
+        "informations": "Informations",
+        "creercompte": "Create account"
     },
     "page": {
         "dashboard": {

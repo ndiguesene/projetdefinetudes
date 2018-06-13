@@ -263,60 +263,64 @@ export class ElasticsearchService {
                     'description': {
                       'type': 'text'
                     },
-                    'hits': {
-                      'type': 'integer'
-                    },
+                    // 'hits': {
+                    //   'type': 'integer'
+                    // },
                     'optionsJSON': {
                       'type': 'text'
                     },
                     'panelsJSON': {
                       'type': 'text'
                     },
-                    'refreshInterval': {
-                      'properties': {
-                        'display': {
-                          'type': 'keyword'
-                        },
-                        'pause': {
-                          'type': 'boolean'
-                        },
-                        'section': {
-                          'type': 'integer'
-                        },
-                        'value': {
-                          'type': 'integer'
-                        }
-                      }
-                    },
+                    // 'refreshInterval': {
+                    //   'properties': {
+                    //     'display': {
+                    //       'type': 'keyword'
+                    //     },
+                    //     'pause': {
+                    //       'type': 'boolean'
+                    //     },
+                    //     'section': {
+                    //       'type': 'integer'
+                    //     },
+                    //     'value': {
+                    //       'type': 'integer'
+                    //     }
+                    //   }
+                    // },
                     'title': {
                       'type': 'text'
                     },
                     'uiStateJSON': {
                       'type': 'text'
-                    },
-                    'version': {
-                      'type': 'integer'
                     }
+                    // ,
+                    // 'version': {
+                    //   'type': 'integer'
+                    // }
                   }
                 },
-                'index-pattern': {
-                  'properties': {
-                    'fieldFormatMap': {
-                      'type': 'text'
-                    },
-                    'fields': {
-                      'type': 'text'
-                    },
-                    'title': {
-                      'type': 'text'
-                    }
-                  }
-                },
+                // 'index-pattern': {
+                //   'properties': {
+                //     'fieldFormatMap': {
+                //       'type': 'text'
+                //     },
+                //     'fields': {
+                //       'type': 'text'
+                //     },
+                //     'title': {
+                //       'type': 'text'
+                //     }
+                //   }
+                // },
                 'type': {
                   'type': 'keyword'
                 },
                 'updated_at': {
                   'type': 'date'
+                },
+                'user': {
+                  'type': 'text'
                 },
                 'visualization': {
                   'properties': {
@@ -329,9 +333,9 @@ export class ElasticsearchService {
                     'uiStateJSON': {
                       'type': 'text'
                     },
-                    'version': {
-                      'type': 'integer'
-                    },
+                    // 'version': {
+                    //   'type': 'integer'
+                    // },
                     'visState': {
                       'type': 'text'
                     }
