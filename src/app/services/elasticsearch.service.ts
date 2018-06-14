@@ -320,7 +320,23 @@ export class ElasticsearchService {
                   'type': 'date'
                 },
                 'user': {
-                  'type': 'text'
+                  'properties': {
+                    'email': {
+                      'type': 'text'
+                    },
+                    'mot_de_passe': {
+                      'type': 'text'
+                    },
+                    'role': {
+                      'type': 'text'
+                    },
+                    'enabled': {
+                      'type': 'text'
+                    },
+                    'otherOptions': {
+                      'type': 'text'
+                    }
+                  }
                 },
                 'visualization': {
                   'properties': {

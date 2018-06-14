@@ -1,3 +1,4 @@
+
 import { CreercompteComponent } from './creercompte/creercompte.component';
 import { DashboardlisteComponent } from './dashboard/dashboardliste.component';
 import { Routes, RouterModule } from '@angular/router';
@@ -27,7 +28,11 @@ const routes: Routes = [
 	{ path: 'infoscluster', component: InformationsclusterComponent },
 	{ path: 'visualisation/:id', component: ConfigureComponent },
 	{ path: 'login', component: AuthentificationPortailComponent },
-	{ path: 'creercompte', component: CreercompteComponent },
+	{
+		path: 'creercompte',
+		component: CreercompteComponent
+		// canActivate: [AuthguardService]
+	},
 	{ path: '**', component: NotFoundComponent }
 ];
 
