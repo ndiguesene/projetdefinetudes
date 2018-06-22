@@ -1,3 +1,4 @@
+import { MapService } from './services/map.service';
 import { DashboardGridsterConfigService } from './dashboard/dashboardgridsterconfig.service';
 import { PnotifyService } from './services/pnotify.service';
 import { BucketsService } from './services/buckets.service';
@@ -53,6 +54,7 @@ import { AuthentificationPortailComponent } from './authentification-portail/aut
 
 import { NgxSelectModule } from 'ngx-select-ex';
 import { CreercompteComponent } from './creercompte/creercompte.component';
+import { NguiMapModule } from '@ngui/map';
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 // };
@@ -87,6 +89,7 @@ import { CreercompteComponent } from './creercompte/creercompte.component';
     GridsterModule,
     LocalStorageModule,
     Ng4GeoautocompleteModule.forRoot(),
+    NguiMapModule.forRoot({apiUrl: 'https://maps.google.com/maps/api/js?key=AIzaSyBxN94mGOuGxOWMUsgNHDYm4GNHQJ4wfKg'}),
     BrowserAnimationsModule,
     AngularFontAwesomeModule,
     routing,
@@ -107,7 +110,7 @@ import { CreercompteComponent } from './creercompte/creercompte.component';
   ],
   providers: [
     ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService, DashboardGridsterConfigService,
-    {
+    MapService, {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,
       multi: true,

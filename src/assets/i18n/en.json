@@ -10,7 +10,7 @@
         "console": "Console",
         "parametres": "Settings",
         "informations": "Informations",
-        "creercompte": "Create account"
+        "creerutilisateur": "Create user"
     },
     "page": {
         "dashboard": {

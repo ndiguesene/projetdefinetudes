@@ -1,3 +1,4 @@
+import { MapService } from './../../services/map.service';
 import { PnotifyService } from './../../services/pnotify.service';
 import { DatePipe } from '@angular/common';
 import { AggregationData } from './../../entities/aggregationData';
@@ -15,14 +16,13 @@ import { VisualizationObj } from '../../entities/visualizationObj';
 import * as bodybuilder from 'bodybuilder';
 import { BucketsService } from '../../services/buckets.service';
 import { ViewChild } from '@angular/core';
-import { } from '@types/googlemaps';
 
 @Component({
   selector: 'app-configure',
   templateUrl: './configure.component.html',
   styleUrls: ['./configure.component.css']
 })
-export class ConfigureComponent implements OnInit, AfterViewInit {
+export class ConfigureComponent implements OnInit {
   nomDiagramme = '';
   nomIndex = '';
   resultatAllForBucket: any;
@@ -113,6 +113,8 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
 
   localisation: any;
 
+  positions = [];
+
   userSettings = {};
   constructor(private route: ActivatedRoute,
               private chartService: ChartService,
@@ -120,40 +122,41 @@ export class ConfigureComponent implements OnInit, AfterViewInit {
               private metr: MetricsService,
               private buck: BucketsService,
               private datePipe: DatePipe,
-              private ps: PnotifyService) {
-  }
-
-  autoCompleteCallback1(selectedData: any) {
-    if (selectedData.response === true) {
-      this.localisation = selectedData.data.geometry.location;
-      const mapProp = {
-        center: {lat: this.localisation.lat, lng: this.localisation.lng},
-        position: {lat: this.localisation.lat, lng: this.localisation.lng},
-        zoom: 20,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-      };
-      this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-    } else {
-      alert('Address Not found');
-    }
+              private ps: PnotifyService,
+              private mapservice: MapService) {
   }
   randomColor(opacity: number): string {
     // tslint:disable-next-line:max-line-length
     return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
   }
-  ngAfterViewInit() {
-    // try {
-    //     const mapProp = {
-    //     center: new google.maps.LatLng(18.5793, 73.8143),
-    //     zoom: 15,
-    //     mapTypeId: google.maps.MapTypeId.ROADMAP
-    //   };
-    //   this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  onMapReady(map) {
+    console.log('map', map);
+    console.log('markers', map.markers);  // to get all markers as an array 
+  }
+  onIdle(event) {
+    console.log('map', event.target);
+  }
+  onMarkerInit(marker) {
+    console.log('marker', marker);
+  }
+  onMapClick(event) {
+    this.positions.push(event.latLng);
+    event.target.panTo(event.latLng);
+  }
+  appliquerMarketOnMap() {
+    this.es.getAllDocumentsService(this.nomIndex, '').then(
+      re => console.log(re)
+    );
+    this.mapservice.getDecodeAddress('gandiaye').subscribe(
+      res => console.log(res)
+    );
   }
   async ngOnInit() {
+    // if (navigator.geolocation) {
+    //   navigator.geolocation.getCurrentPosition(re => {
+    //     this.positions.push([re.coords.latitude, re.coords.longitude]);
+    //   });
+    // }
     try {
       this.route.params.subscribe( params => {
         this.nomDiagramme = params.id.toString();

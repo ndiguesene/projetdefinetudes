@@ -18,12 +18,23 @@
       </div>
     </div>
   </div>
-  <ng4geo-autocomplete 
-    [userSettings]="userSettings" 
-    (componentCallback)="autoCompleteCallback1($event)">
-  </ng4geo-autocomplete>
 
-  <div #gmap style="width:100%;height:400px"></div>
+  <div class="card">
+    <div class="row">
+      <div class="col-md-12 form-inline">
+          <button type="button" class="btn btn-primary"
+          (click)="appliquerMarketOnMap()">Appliquer Markers</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <ngui-map zoom="8">
+    <custom-marker *ngFor="let pos of positions;let i = index" [position]="pos">
+      <div class="custom-icon">{{ i }}</div>
+    </custom-marker>
+  </ngui-map>
+  <!-- <ngui-map center="Senegal, Dakar, Mbao villeneuve"></ngui-map> -->
 </div>
 
 <ng-template #tempOtherChart>
@@ -33,7 +44,7 @@
     <div class="btn-toolbar mb-2 mb-md-0 justify-content-end">
       <div class="btn-group">
         <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationSave">
-          Enregitrer
+          Enregistrer
           <i class="fa fa-save"></i>
         </button>
         <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationShare">

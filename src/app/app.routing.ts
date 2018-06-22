@@ -17,7 +17,8 @@ import { AuthentificationPortailComponent } from './authentification-portail/aut
 
 const routes: Routes = [
 	// { path: '', redirectTo: '/login', pathMatch : 'full'},
-	{ path: '', component: AccueilComponent, pathMatch: 'full'},
+	// { path: '', component: AccueilComponent, pathMatch: 'full'},
+	{ path: '', component: AuthentificationPortailComponent, pathMatch: 'full'},
 	{ path: 'accueil', component: AccueilComponent },
 	{ path: 'exploration', component: ExplorationComponent },
 	{ path: 'dashboards', component: DashboardlisteComponent },
@@ -29,7 +30,7 @@ const routes: Routes = [
 	{ path: 'visualisation/:id', component: ConfigureComponent },
 	{ path: 'login', component: AuthentificationPortailComponent },
 	{
-		path: 'creercompte',
+		path: 'creerutilisateur',
 		component: CreercompteComponent
 		// canActivate: [AuthguardService]
 	},

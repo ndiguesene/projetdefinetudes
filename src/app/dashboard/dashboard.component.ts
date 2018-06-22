@@ -2,13 +2,10 @@ import { DashboardGridsterConfigService } from './dashboardgridsterconfig.servic
 import { Config } from './../config/Config';
 import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
 import { ElasticsearchService } from '../services/elasticsearch.service';
 
-import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
+import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { BucketsService } from '../services/buckets.service';
-import { MetricsService } from '../services/metrics.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,26 +26,36 @@ export class DashboardComponent implements OnInit {
   visuaObject: any;
   resultatFiltre: any;
 
+  public lineChartData: Array<any> = [
+    [65, 59, 80, 81, 56, 55, 40],
+    [28, 48, 40, 19, 86, 27, 90]
+  ];
+  public lineChartLabels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public lineChartType = 'line';
+  public pieChartType = 'pie';
+
+  // Pie
+  public pieChartLabels: string[] = ['Download Sales', 'In-Store Sales', 'Mail Sales'];
+  public pieChartData: number[] = [300, 500, 100];
+
   constructor(private es: ElasticsearchService,
-              private router: Router,
               private dashboardGridsterConfigService: DashboardGridsterConfigService,
-              private buck: BucketsService,
-              private met: MetricsService) {}
+              private buck: BucketsService) {}
 
   async ngOnInit() {
     this.config = this.dashboardGridsterConfigService.getConfig();
     this.listeVisualisationInDashboard = [
-      {cols: 2, rows: 1, y: 0, x: 0},
-      {cols: 2, rows: 2, y: 0, x: 2},
-      {cols: 1, rows: 1, y: 0, x: 4},
-      {cols: 3, rows: 2, y: 1, x: 4},
-      {cols: 1, rows: 1, y: 4, x: 5},
-      {cols: 1, rows: 1, y: 2, x: 1},
-      {cols: 2, rows: 2, y: 5, x: 5},
-      {cols: 2, rows: 2, y: 3, x: 2},
-      {cols: 2, rows: 1, y: 2, x: 2},
-      {cols: 1, rows: 1, y: 3, x: 4},
-      {cols: 1, rows: 1, y: 0, x: 6}
+      {cols: 3, rows: 2},
+      {cols: 3, rows: 2},
+      {cols: 3, rows: 2},
+      {cols: 3, rows: 2},
+      // {cols: 1, rows: 1, y: 4, x: 5},
+      // {cols: 1, rows: 1, y: 2, x: 1},
+      // {cols: 2, rows: 2, y: 5, x: 5},
+      // {cols: 2, rows: 2, y: 3, x: 2},
+      // {cols: 2, rows: 1, y: 2, x: 2},
+      // {cols: 1, rows: 1, y: 3, x: 4},
+      // {cols: 1, rows: 1, y: 0, x: 6}
     ];
     await this.es.getAllDocumentsService(
       Config.INDEX.NOM_INDEX_FOR_MAPPING,

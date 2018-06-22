@@ -52,6 +52,13 @@
     <div class="card-body">
       <p class="card-text text-center">{{ resultatFiltre.title }}</p>
     </div> -->
-    <h1>{{ i }}</h1>
+    <canvas baseChart
+      [data]="lineChartData"
+      [labels]="lineChartLabels"
+      [options]="lineChartOptions"
+      [chartType]="lineChartType"
+      (chartHover)="chartHovered($event)"
+      (chartClick)="chartClicked($event)"></canvas>
   </gridster-item>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </gridster>
