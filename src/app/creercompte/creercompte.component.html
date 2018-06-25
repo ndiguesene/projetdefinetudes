@@ -1,30 +1,44 @@
 <div class="container">
   <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-8 col-xs-offset-2">
       <div class="card">
         <div class="card-header">
           <h5><i class="fa fa-user-plus"> Créer un nouveau utilisateur</i></h5>
         </div>
         <div class="card-body">
-          <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="form-horizontal">
+          <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()">
               <div class="form-group row">
-                <label for="inputEmail" class="col-form-label">Nouveau Email</label>
-                <div class="col-sm-10">
-                  <input type="email" class="form-control" id="inputEmail" placeholder="Email"
+                <label for="inputPrenom" class="col-sm-3 col-form-label">Prénom</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="inputPrenom" placeholder="Prénom"
+                    formControlName="prenom">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputNom" class="col-sm-3 col-form-label">Nom</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="inputNom" placeholder="Nom"
+                    formControlName="nom">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="Edit" class="col-sm-3 col-form-label">Email</label>
+                <div class="col-sm-8">
+                  <input type="email" class="form-control" id="Edit" placeholder="Email"
                     formControlName="email">
                 </div>
               </div>
               <div class="form-group row">
-                <label for="inputPassword" class="col-form-label">Nouveau Mot de passe</label>
-                <div class="col-sm-10">
+                <label for="inputPassword" class="col-sm-3 col-form-label">Mot de passe</label>
+                <div class="col-sm-8">
                   <input type="password" class="form-control" id="inputPassword" placeholder="Password"
                     formControlName="motdepasse">
                 </div>
               </div>
               <div class="form-group row">
-                <div class="col-sm-10">
+                <div class="col-sm-8">
                   <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
-                    Submit
+                    Enregistrer
                   </button>
                 </div>
               </div>
@@ -32,91 +46,107 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-8">
-      
-      <div class="card">
-        <div class="card-header">
-          <div class="input-group">
-            <div class="col-md-6 ">
-              <input type="text" 
-                class="form-control float-right" 
-                placeholder="Rechercher un utilisateur" 
-                name="search"
-                [(ngModel)]="searchString"/>
+    <!-- <div class="col-sm-7">
+        <div class="card">
+            <div class="card-header">
+              <h5><i class="fa fa-user-plus"> Modifier Infos</i></h5>
             </div>
-            <div class="col-md-2">
-              <a role="button" class="btn btn-primary" [routerLink]="['/dashboards']" routerLinkActive="active">
-                <i class="fa fa-search-plus"></i> 
-                <span>Rechercher</span>
-              </a>
+            <div class="card-body">
+              <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="form-horizontal">
+                  <div class="form-group row">
+                    <label for="inputPrenom" class="col-sm-3 col-form-label">Prénom</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="inputPrenomedit" placeholder="Prénom"
+                        formControlName="prenom">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="inputNom" class="col-sm-3 col-form-label">Nom</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control" id="inputNomedit" placeholder="Nom"
+                        formControlName="nom">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="inputEmailEditedit" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-8">
+                      <input type="email" class="form-control" id="inputEmailEditedit" placeholder="Email"
+                        formControlName="email" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="ancieninputPasswordedit" class="col-sm-3 col-form-label">Ancien Mot de passe</label>
+                    <div class="col-sm-8">
+                      <input type="password" class="form-control" id="ancieninputPasswordedit" placeholder="Current Password">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="inputPasswordedit" class="col-sm-3 col-form-label">Nouveau Mot de passe</label>
+                    <div class="col-sm-8">
+                      <input type="password" class="form-control" id="inputPasswordedit" placeholder="Password"
+                        formControlName="motdepasse">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-sm-8">
+                      <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </form>
             </div>
           </div>
-        </div>
-        <div class="card-body">
-          <table class="table">
-            <tr>
-              <th>#</th>
-              <th>Email</th>
-              <th>Mot de passe</th>
-              <th>Date Création</th>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>ndigue@live.fr</td>
-              <td>12345678</td>
-              <td>2018/16/19</td>
-              <td>
-                <a><i class="fa fa-trash-o"></i></a>
-              </td>
-              <td>
-                <a><i class="fa fa-edit"></i></a>
-              </td>
-              <td>
-                <a><i class="fa fa-crop"></i></a>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div>
-    </div>
+    </div> -->
   </div>
 
   <div class="row" *ngIf="true">
     <div class="card">
       <div class="card-header">
-        <h5><i class="fa fa-user-plus"> Modifier Infos</i></h5>
+        <div class="input-group">
+          <div class="col-md-6 ">
+            <input type="text" 
+              class="form-control float-right" 
+              placeholder="Rechercher un utilisateur" 
+              name="search"
+              [(ngModel)]="searchString"/>
+          </div>
+          <div class="col-md-2">
+            <a role="button" class="btn btn-primary" [routerLink]="['/dashboards']" routerLinkActive="active">
+              <i class="fa fa-search-plus"></i> 
+              <span>Rechercher</span>
+            </a>
+          </div>
+        </div>
       </div>
       <div class="card-body">
-        <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="form-horizontal">
-            <div class="form-group row">
-              <label for="inputEmail" class="col-form-label">Email</label>
-              <div class="col-sm-10">
-                <input type="email" class="form-control" id="inputEmail" placeholder="Email"
-                  formControlName="email" disabled>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="ancieninputPassword" class="col-form-label">Ancien Mot de passe</label>
-              <div class="col-sm-10">
-                <input type="password" class="form-control" id="ancieninputPassword" placeholder="Password"
-                  formControlName="ancienmotdepasse">
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-form-label">Nouveau Mot de passe</label>
-              <div class="col-sm-10">
-                <input type="password" class="form-control" id="inputPassword" placeholder="Password"
-                  formControlName="motdepasse">
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
-                  Submit
-                </button>
-              </div>
-            </div>
-          </form>
+        <table class="table">
+          <tr>
+            <th>#</th>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Mot de passe</th>
+            <th>Date Création</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Abdoulaye Ndigue</td>
+            <td>Sene</td>
+            <td>ndigue@live.fr</td>
+            <td>12345678</td>
+            <td>2018/16/19</td>
+            <td>
+              <a><i class="fa fa-trash-o"></i></a>
+            </td>
+            <td>
+              <a><i class="fa fa-edit"></i></a>
+            </td>
+            <td>
+              <a><i class="fa fa-crop"></i></a>
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   </div>

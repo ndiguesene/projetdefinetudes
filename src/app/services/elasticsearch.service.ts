@@ -56,13 +56,10 @@ export class ElasticsearchService {
     });
   }
   getAllStatIndexOnCluster(filtrePath?: string[]): any {
-    this.getDefaultIndexService().then(
-      resp => console.log(resp)
-    );
-    return this.client.indices.stats({
-      index: 'donneessynop',
-      filterPath: filtrePath
-    });
+    // this.getDefaultIndexService().then(
+    //   resp => console.log(resp)
+    // );
+    return this.client.nodes.stats({});
   }
   getIfIndexExist(nameIndex: string): any {
     const body = bodybuilder()
@@ -324,6 +321,12 @@ export class ElasticsearchService {
                     'email': {
                       'type': 'text'
                     },
+                    'prenom': {
+                      'type': 'text'
+                    },
+                    'nom': {
+                      'type': 'text'
+                    },
                     'mot_de_passe': {
                       'type': 'text'
                     },
@@ -331,11 +334,14 @@ export class ElasticsearchService {
                       'type': 'text'
                     },
                     'enabled': {
-                      'type': 'text'
+                      'type': 'boolean'
                     },
                     'otherOptions': {
                       'type': 'text'
-                    }
+                    },
+                    'date_creation': {
+                      'type': 'date'
+                    },
                   }
                 },
                 'visualization': {

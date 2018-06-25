@@ -1,6 +1,5 @@
 import { PnotifyService } from './../services/pnotify.service';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import { ElasticsearchService } from './../services/elasticsearch.service';
 
@@ -12,6 +11,8 @@ import { ElasticsearchService } from './../services/elasticsearch.service';
 })
 export class InformationsclusterComponent implements OnInit {
   infoscluster: Promise<any>;
+  infosclusterAll: Promise<any>;
+  listObjectOnNoeud: any;
   couleurSanteCluster = '';
   listeIndexAndInfos: any;
   pnotify = this.ps.getPNotify();
@@ -32,6 +33,13 @@ export class InformationsclusterComponent implements OnInit {
           } else {
             this.couleurSanteCluster = '';
           }
+          this.es.getAllStatIndexOnCluster().then(
+            r => {
+              this.infosclusterAll = r.nodes;
+              this.listObjectOnNoeud = Object.keys(this.infosclusterAll[Object.keys(this.infosclusterAll)[0]]);
+              this.infosclusterAll = this.infosclusterAll[Object.keys(this.infosclusterAll)[0]];
+            }
+          );
         }, error => {
           this.pnotify.error({
             text: error

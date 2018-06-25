@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" *ngIf="infoscluster && infosclusterAll">
   <div class="card-header">
     <h5><i class="fa fa-server"> Appercu du Cluster</i></h5>
   </div>
@@ -28,24 +28,35 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="card">
-      <!-- <div class="card-header">
-        <h5>Cluster</h5>
-      </div> -->
-      <div class="card-body">
-        <!-- {{ infoscluster | json }} -->
-        <div class="row" *ngIf="(couleurSanteCluster.length !== 0)">
-          <div class="col">
-            <div class="card bg-light mb-3" style="max-width: 18rem;">
-              <div class="card-body">
-                <!-- <div *ngFor="let li of listeIndexAndInfos"> -->
-                <!-- </div> -->
-                {{ listeIndexAndInfos | json }}
-              </div>
-            </div>
-          </div>
+    <div class="row">
+      <div class="col">
+        <div class="card-header text-center">
+          <h3>OS System</h3>
+        </div>
+        <div class="card">
+          {{ infosclusterAll['os'] | json }}
         </div>
       </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card-header text-center">
+          <h3>JVM</h3>
+        </div>
+        <div class="card">
+          {{ infosclusterAll['jvm'] | json }}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="card-header text-center">
+          <h3>ROLES</h3>
+        </div>
+        <div class="card">
+          {{ infosclusterAll['roles'] | json }}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
