@@ -4,33 +4,42 @@
         <div class="col-md-6">
             <div class="card">
               <div class="card-header">
-                Requete :
+                <div class="row">
+                  <div class="col-md-8"> 
+                    <input
+                    [(ngModel)]="index"
+                    type="text"
+                    placeholder="URL"
+                    class="form-control" 
+                    id="basic-url" aria-describedby="basic-addon3">
+                  </div>
+                  <div class="col-md-*"> 
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <select name="verbeMethode" id="verbeMethode"
+                        class="custom-select">
+                          <option value="get">GET</option>
+                          <option value="post">POST</option>
+                          <option value="put">PUT</option>
+                          <option value="delete">DELETE</option>
+                        </select>
+                      </div>
+                      <div class="input-group-prepend">
+                        <a class="btn btn-primary" role="button" (click)="envoyerRequete();">
+                          <i class="fa fa-arrow-circle-right"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div> 
               </div>
               <div class="card-body">
                 <div class="row">
-                  <div class="col-md-7">
-                    <input placeholder="Votre requete..." type="text" name="" class="form-control">          
-                  </div>
-                  <div class="col-md-4">
-                    <select name="verbeMethode" id="verbeMethode"
-                    class="custom-select">
-                      <option value="get">GET</option>
-                      <option value="post">POST</option>
-                      <option value="put">PUT</option>
-                      <option value="delete">DELETE</option>
-                      <option value="head">HEAD</option>
-                      <option value="option">OPTION</option>
-                    </select>
-                  </div>
-                  <div class="col-md-1">
-                    <a class="btn btn-primary" href="#" role="button">
-                      <i class="fa fa-arrow-circle-right"></i>
-                    </a>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group">
-                    <textarea class="form-control" rows="15"></textarea>
+                  <div class="col-md-12">
+                    <ace-editor
+                      [(text)]="query"
+                      #editor
+                      style="height: 400px;overflow: auto;"></ace-editor>
                   </div>
                 </div>
             </div>
@@ -39,12 +48,20 @@
         <div class="col-md-6">
           <div class="card">
               <div class="card-header">
-                Réponse :
+                <h4 class="text-center">
+                  Réponse
+                </h4>
               </div>
               <div class="card-body">
                 <div class="row">
-                  <div class="form-group">
-                    <textarea class="form-control" rows="15"></textarea>
+                  <div class="col-md-12" style="overflow-y: scroll;height: 400px;">
+                    <ngx-json-viewer [json]="reponse"></ngx-json-viewer>
+                    <!-- <ace-editor
+                      [(text)]="reponse"
+                      #editor
+                      theme="'github'" mode="'json'"
+                      [readOnly]="true"
+                      style="height: 400px;overflow-y: auto;"></ace-editor> -->
                   </div>
                 </div>
               </div>

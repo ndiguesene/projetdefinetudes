@@ -3,7 +3,6 @@ import { LocalStorage } from '@ngx-pwa/local-storage';
 import { MetricsService } from './../services/metrics.service';
 import { AggregationData } from './../entities/aggregationData';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import { ElasticsearchService } from '../services/elasticsearch.service';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 

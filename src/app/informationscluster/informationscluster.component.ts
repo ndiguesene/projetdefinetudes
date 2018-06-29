@@ -10,9 +10,27 @@ import { ElasticsearchService } from './../services/elasticsearch.service';
   styleUrls: ['./informationscluster.component.css']
 })
 export class InformationsclusterComponent implements OnInit {
-  infoscluster: Promise<any>;
-  infosclusterAll: Promise<any>;
-  listObjectOnNoeud: any;
+  infoscluster = new Promise(
+    (resolve, reject) => {
+      setInterval(
+        () => {
+          this.loadInfos();
+          resolve(this.infoscluster);
+        }, 5000
+      );
+    }
+  );
+
+  infosclusterAll = new Promise(
+    (resolve, reject) => {
+      setInterval(
+        () => {
+          this.loadInfos();
+          resolve(this.infosclusterAll);
+        }, 5000
+      );
+    }
+  );
   couleurSanteCluster = '';
   listeIndexAndInfos: any;
   pnotify = this.ps.getPNotify();
@@ -21,30 +39,7 @@ export class InformationsclusterComponent implements OnInit {
 
   ngOnInit() {
     try {
-      this.es.findClusterInfosService().then(
-        resp => {
-          this.infoscluster = resp;
-          if (this.infoscluster['status'] === 'yellow') {
-            this.couleurSanteCluster = 'warning';
-          } else if (this.infoscluster['status'] === 'red') {
-            this.couleurSanteCluster = 'danger';
-          } else if (this.infoscluster['status'] === 'green') {
-            this.couleurSanteCluster = 'success';
-          } else {
-            this.couleurSanteCluster = '';
-          }
-          this.es.getAllStatIndexOnCluster().then(
-            r => {
-              this.infosclusterAll = r.nodes;
-              this.listObjectOnNoeud = Object.keys(this.infosclusterAll[Object.keys(this.infosclusterAll)[0]]);
-              this.infosclusterAll = this.infosclusterAll[Object.keys(this.infosclusterAll)[0]];
-            }
-          );
-        }, error => {
-          this.pnotify.error({
-            text: error
-          });
-        });
+      this.loadInfos();
       /**
        * permet de charger les informations de l'ensemble du cluster
        */
@@ -54,6 +49,36 @@ export class InformationsclusterComponent implements OnInit {
         text: error
       });
     }
+  }
+  loadInfos() {
+    this.es.findClusterInfosService().then(
+      resp => {
+        this.infoscluster = resp;
+        if (this.infoscluster['status'] === 'yellow') {
+          this.couleurSanteCluster = 'warning';
+        } else if (this.infoscluster['status'] === 'red') {
+          this.couleurSanteCluster = 'danger';
+          this.pnotify.error({
+            text: 'ATTENTION !!! Votre cluster est en de santé rouge.'
+          });
+        } else if (this.infoscluster['status'] === 'green') {
+          this.couleurSanteCluster = 'success';
+        } else {
+          this.couleurSanteCluster = '';
+        }
+      }, error => {
+        this.pnotify.error({
+          text: error
+        });
+      });
+
+      this.es.getAllStatIndexOnCluster().then(
+        r => {
+          this.infosclusterAll = r.nodes;
+          const listObjectOnNoeud = Object.keys(this.infosclusterAll[Object.keys(this.infosclusterAll)[0]]);
+          this.infosclusterAll = this.infosclusterAll[Object.keys(this.infosclusterAll)[0]];
+        }
+      );
   }
   getListIndexStat(): any {
     return this.es.getAllStatIndexOnCluster(['indices']).then(

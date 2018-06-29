@@ -1,18 +1,15 @@
-import { DashboardGridsterConfigService } from './dashboardgridsterconfig.service';
 import { Config } from './../config/Config';
-import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
-
 import { ElasticsearchService } from '../services/elasticsearch.service';
 
-import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 import { BucketsService } from '../services/buckets.service';
+
+import { Component, OnInit, ViewChildren, QueryList, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { GridStackItem, GridStackOptions, GridStackItemComponent, GridStackComponent} from 'ng4-gridstack';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
   listeIndex: any;
@@ -20,11 +17,14 @@ export class DashboardComponent implements OnInit {
   listeVisualisation = [];
 
   inputRecherche = 'a';
-
-  config: GridsterConfig;
-  listeVisualisationInDashboard: Array<GridsterItem>;
+  listeVisualisationInDashboard: Array<any>;
   visuaObject: any;
   resultatFiltre: any;
+
+  @ViewChildren(GridStackItemComponent) items: QueryList<GridStackItemComponent>;
+  @ViewChild('gridStackMain') gridStackMain: GridStackComponent;
+  area: GridStackOptions = new GridStackOptions();
+  widgets: GridStackItem[] = [];
 
   public lineChartData: Array<any> = [
     [65, 59, 80, 81, 56, 55, 40],
@@ -39,24 +39,10 @@ export class DashboardComponent implements OnInit {
   public pieChartData: number[] = [300, 500, 100];
 
   constructor(private es: ElasticsearchService,
-              private dashboardGridsterConfigService: DashboardGridsterConfigService,
-              private buck: BucketsService) {}
+              private buck: BucketsService,
+              private cd: ChangeDetectorRef) {}
 
   async ngOnInit() {
-    this.config = this.dashboardGridsterConfigService.getConfig();
-    this.listeVisualisationInDashboard = [
-      {cols: 3, rows: 2},
-      {cols: 3, rows: 2},
-      {cols: 3, rows: 2},
-      {cols: 3, rows: 2},
-      // {cols: 1, rows: 1, y: 4, x: 5},
-      // {cols: 1, rows: 1, y: 2, x: 1},
-      // {cols: 2, rows: 2, y: 5, x: 5},
-      // {cols: 2, rows: 2, y: 3, x: 2},
-      // {cols: 2, rows: 1, y: 2, x: 2},
-      // {cols: 1, rows: 1, y: 3, x: 4},
-      // {cols: 1, rows: 1, y: 0, x: 6}
-    ];
     await this.es.getAllDocumentsService(
       Config.INDEX.NOM_INDEX_FOR_MAPPING,
       Config.INDEX.TYPE,
@@ -74,6 +60,13 @@ export class DashboardComponent implements OnInit {
       }
     );
   }
+  AddWidget() {
+    const widget = new GridStackItem();
+    this.widgets.push(widget);
+    this.cd.detectChanges();
+    const arr = this.items.toArray();
+    this.gridStackMain.AddWidget(arr[this.items.length - 1]);
+  }
   getAllIndex() {
     this.es.getAllIndexService().then(
       resp => {
@@ -90,7 +83,7 @@ export class DashboardComponent implements OnInit {
     console.log('itemResized', item, itemComponent);
   }
   changedOptions() {
-    this.config.api.optionsChanged();
+    
   }
   removeItem($event, item) {
     $event.preventDefault();

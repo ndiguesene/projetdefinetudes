@@ -1,5 +1,4 @@
 import { MapService } from './services/map.service';
-import { DashboardGridsterConfigService } from './dashboard/dashboardgridsterconfig.service';
 import { PnotifyService } from './services/pnotify.service';
 import { BucketsService } from './services/buckets.service';
 import { MetricsService } from './services/metrics.service';
@@ -48,13 +47,17 @@ import { LocalStorageModule } from '@ngx-pwa/local-storage';
 import { DatePipe } from '@angular/common';
 
 import { Ng4GeoautocompleteModule } from 'ng4-geoautocomplete';
-import { GridsterModule } from 'angular-gridster2';
 import { FilterPipe } from './pipe/filter.pipe';
 import { AuthentificationPortailComponent } from './authentification-portail/authentification-portail.component';
 
 import { NgxSelectModule } from 'ngx-select-ex';
 import { CreercompteComponent } from './creercompte/creercompte.component';
 import { NguiMapModule } from '@ngui/map';
+
+import { AceEditorModule } from 'ng2-ace-editor';
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
+
+import { GridStackModule } from 'ng4-gridstack';
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 // };
@@ -83,10 +86,12 @@ import { NguiMapModule } from '@ngui/map';
   ],
   imports: [
     FormsModule,
+    AceEditorModule,
+    GridStackModule,
+    NgxJsonViewerModule,
     ReactiveFormsModule,
     NgxSelectModule,
     BrowserModule,
-    GridsterModule,
     LocalStorageModule,
     Ng4GeoautocompleteModule.forRoot(),
     NguiMapModule.forRoot({apiUrl: 'https://maps.google.com/maps/api/js?key=AIzaSyBxN94mGOuGxOWMUsgNHDYm4GNHQJ4wfKg'}),
@@ -109,13 +114,13 @@ import { NguiMapModule } from '@ngui/map';
     })
   ],
   providers: [
-    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService, DashboardGridsterConfigService,
+    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService,
     MapService, {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,
       multi: true,
     },
-    DatePipe
+    DatePipe,
   ],
   bootstrap: [AppComponent]
 })

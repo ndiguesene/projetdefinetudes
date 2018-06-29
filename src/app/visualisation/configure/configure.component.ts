@@ -576,6 +576,7 @@ export class ConfigureComponent implements OnInit {
             this.currentChart = this.chartService.tracerChart(
               this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
             );
+
             // tslint:disable-next-line:max-line-length
             this.currentChart.options.title.text = 'Diagramme ' + this.nomDiagramme + ' du(des) ' + resultat['typeDateFiltre'] + ' du champ << ' + resultat['nom_champ'] + ' >> ';
             this.chartData = [];
