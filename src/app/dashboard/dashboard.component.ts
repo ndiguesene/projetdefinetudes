@@ -83,7 +83,6 @@ export class DashboardComponent implements OnInit {
     console.log('itemResized', item, itemComponent);
   }
   changedOptions() {
-    
   }
   removeItem($event, item) {
     $event.preventDefault();
