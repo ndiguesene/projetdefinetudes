@@ -301,8 +301,17 @@
             </a>
           </td>
           <td>
+            <button type="button" class="btn btn-outline-danger btn-sm"
+              (click)="removeVisualisation($event, visua._id)">
+                <i class="fa fa-remove"></i>
+            </button>
+            <!-- <button type="button" class="btn btn-outline-danger btn-sm" data-id="{{visua._id}}"
+              data-toggle="modal" data-target="#ModalCenterForDeleteIndex"
+              (click)="removeVisualisation($event, visua._id)">
+                <i class="fa fa-remove"></i>
+            </button> -->
             <!-- Modal pour confirmer la suppression d'un index avec toutes ses données -->
-            <div class="modal fade" id="ModalCenterForDeleteIndex" 
+            <!-- <div class="modal fade" id="ModalCenterForDeleteIndex" 
                 tabindex="-1"
                 role="dialog" 
                 aria-labelledby="exampleModalCenterTitle" 
@@ -325,20 +334,17 @@
                     <button 
                         type="button"
                         id="visua._id"
+                        data-id="visua._id"
                         class="btn btn-primary"
-                        (click)="removeVisualisation($event, visua._id)"
+                        
                         data-dismiss="modal">
                         Oui
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <!-- Fin du modal -->
-            <button type="button" class="btn btn-outline-danger btn-sm" 
-              data-toggle="modal" data-target="#ModalCenterForDeleteIndex">
-                <i class="fa fa-remove"></i>
-            </button>
           </td>
         </tr>
         

@@ -291,12 +291,20 @@
                   <div class="row">
                     <div class="col-md-6 card text-center" 
                       *ngFor="let resul of resultatFiltre">
-                      <div>
-                        <button type="button" class="close" aria-label="Close"
-                          (click)="removeMetrics(resul.id)">
-                          <span aria-hidden="true">&times;</span>
-                        </button>
+                      <div class="d-flex justify-content-between">
+                        <div class="p-2 bd-highlight">
+                          <button type="button" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-save"></i>
+                          </button>
+                        </div>
+                        <div class="p-2 bd-highlight">
+                          <button type="button" class="btn btn-outline-danger btn-sm"
+                            (click)="removeMetrics(resul.id)">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
                       </div>
+                      <hr>
                       <p style="font-size: 50px;"><b>{{ resul.objectResult.result | number }}</b></p>
                       <div class="card-body">
                         <p class="card-text text-center">{{ resul.objectResult.label }}</p>
@@ -307,11 +315,19 @@
               </div>
               
               <div *ngIf="resultatFiltreWithAggregation" class="card">
-                <div>
-                  <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                    Metrics Aggrégation
-                  </button>
+                <div class="d-flex justify-content-between">
+                  <div class="p-2 bd-highlight">
+                    <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                      Réduire
+                    </button>
+                  </div>
+                  <div class="p-2 bd-highlight">
+                    <button class="btn btn-primary btn-block btn-sm">
+                      Enregistrer
+                    </button>
+                  </div>
                 </div>
+                <hr>
                 <div *ngIf="masquerresultatFiltreWithAggregation" class="collapse" id="collapseExample">
                   <h3>{{ aggregation.type | titlecase }} of {{ aggregation.params.field }}</h3>
                   <table class="table table-striped table-sm">
@@ -351,17 +367,24 @@
                 <!-- {{ resultFilterDateHistogram[resultFilterDateHistogram.length-1] | json }} -->
                 
                 <div *ngIf="resultFilterDateHistogram.length > 0" class="card">
-                  <div>
-                    <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseDataAggregation" aria-expanded="false" aria-controls="collapseDataAggregation">
-                        Buckets Aggrégation
-                    </button>
+                  <div class="d-flex justify-content-between">
+                    <div class="p-2 bd-highlight">
+                      <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseDataAggregation" aria-expanded="false" aria-controls="collapseDataAggregation">
+                        Réduire
+                      </button>
+                    </div>
+                    <div class="p-2 bd-highlight">
+                      <button class="btn btn-primary btn-block btn-sm">
+                        Enregistrer
+                      </button>
+                    </div>
                   </div>
+                  <hr>
                   <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram' 
                               || resultFilterDateHistogramShowInHtml.type_bucket === 'histogram'"
                     class="collapse show form-control" id="collapseDataAggregation">
-                    <div class="card"><b>Count number : {{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}</b></div>
-                    <div class="card">
-                      <label for="showByNumber" class="">Nombre de ligne : </label>
+                    <div><b>Count number : {{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}</b></div>
+                    <div>
                       <select name="showByNumber" id="showByNumber" (change)="showResult($event)"
                         class="custom-select form-control form-control-sm">
                         <option value="{{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}" selected>Tout</option>

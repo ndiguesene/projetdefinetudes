@@ -10,8 +10,6 @@ import { ActivatedRoute } from '@angular/router';
 import { ChartService } from '../../services/chart.service';
 
 import 'rxjs/add/operator/map';
-import { Chart } from 'chart.js';
-import { VisualizationObj } from '../../entities/visualizationObj';
 
 import * as bodybuilder from 'bodybuilder';
 import { BucketsService } from '../../services/buckets.service';
@@ -55,7 +53,8 @@ export class ConfigureComponent implements OnInit {
 
   objectVisualizationSave = {
     type: Config.NAME_FIELD_OF_MAPPING.VISUALIZATION,
-    visualization:  {
+    updated_at: new Date(),
+    visualization: {
       description: '',
       title: '',
       uiStateJSON: {},
@@ -663,10 +662,20 @@ export class ConfigureComponent implements OnInit {
         }
       };
       this.objectVisualizationSave.type = Config.NAME_FIELD_OF_MAPPING.VISUALIZATION;
+      this.objectVisualizationSave.updated_at = new Date();
       this.objectVisualizationSave.visualization.visState = JSON.stringify(visState);
       this.objectVisualizationSave.visualization.uiStateJSON = '';
 
-      this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);
+      // permet de recupérer l'id au niveau du URL
+      let idForModif = null;
+      this.route.queryParamMap.subscribe(async params => {
+        idForModif = params.get('idVisualisation') ? params.get('idVisualisation') : null;
+      });
+      if (idForModif !== null) {
+        this.es.updateDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, idForModif, this.objectVisualizationSave);
+      } else {
+        this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);
+      }
     } else {
       // si c'est un metrics
       const visState = {
@@ -679,10 +688,19 @@ export class ConfigureComponent implements OnInit {
         }
       };
       this.objectVisualizationSave.type = Config.NAME_FIELD_OF_MAPPING.VISUALIZATION;
+      this.objectVisualizationSave.updated_at = new Date();
       this.objectVisualizationSave.visualization.visState = JSON.stringify(visState);
       this.objectVisualizationSave.visualization.uiStateJSON = '';
-
-      this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);
+      // permet de recupérer l'id au niveau du URL
+      let idForModif = null;
+      this.route.queryParamMap.subscribe(async params => {
+        idForModif = params.get('idVisualisation') ? params.get('idVisualisation') : null;
+      });
+      if (idForModif !== null) {
+        this.es.updateDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, idForModif, this.objectVisualizationSave);
+      } else {
+        this.es.createDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, this.objectVisualizationSave);
+      }
     }
   }
   selectShowLabelChart() {

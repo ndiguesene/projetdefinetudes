@@ -398,6 +398,17 @@ export class ElasticsearchService {
       error => console.log(error)
     );
   }
+  updateDoc(index: string, type: string, id: any, body: any): PromiseLike<any> {
+    return this.client.index({
+      id: id,
+      index: index,
+      type: type,
+      body: body
+    }).then(
+      response => console.log('ELASTICSEARCH - SERVICE - UPDATE SUCCESS'),
+      error => console.log(error)
+    );
+  }
   count(index: string, query): PromiseLike<any> {
     return this.client.count({
       index: index,

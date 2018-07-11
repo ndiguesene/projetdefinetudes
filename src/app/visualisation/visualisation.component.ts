@@ -67,9 +67,12 @@ export class VisualisationComponent implements OnInit {
       this.nomIndexChoisi = element.value;
     }
   }
-  removeVisualisation(event: any, item) {
-    console.log(event.target.value);
-    console.log(event);
-    alert(item);
+  removeVisualisation(event: any, id) {
+    if (confirm('Are you sure to delete ' + id)) {
+      console.log('Implement delete functionality here');
+    }
+    // console.log(id);
+    // console.log(event);
+    // this.es.deleteDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, id);
   }
 }
