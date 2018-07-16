@@ -1,10 +1,10 @@
 <div class="card" *ngIf="infoscluster">
-  afficher liste des plugins installé dans élasticearch
+  <!-- afficher liste des plugins installé dans élasticearch -->
   <div class="card-header">
     <h5><i class="fa fa-server"> Appercu du Cluster</i></h5>
   </div>
   <div class="card-body">
-  <!-- {{ infoscluster | json }} -->
+  <!-- {{ infosclusterAll | json }} -->
     <div class="row">
       <div class="col">
         <div class="card bg-light mb-3" style="max-width: 18rem;">
@@ -30,36 +30,89 @@
       </div>
     </div>
     <div class="container" *ngIf="infosclusterAll">
-    <div class="row">
-      <div class="col">
+      <hr>
+      <div class="card">
         <div class="card-header text-center">
-          <h3>OS System</h3>
+          <h5>OS System</h5>
         </div>
-        <div class="card">
-          {{ infosclusterAll['os'] | json }}
+        <div class="card-body row">
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['os'].cpu['percent'] | number}}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">CPU (%)</p>
+            </div>
+          </div>
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['os'].swap['free_in_bytes']/1000000000 | number:'1.1-3' }}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">SWAP (Free in GigaBytes)</p>
+            </div>
+          </div>
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['os'].mem['free_in_bytes']/1000000000 | number:'1.1-3' }}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Memory (Free in GigaBytes)</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
+      <div class="card">
         <div class="card-header text-center">
-          <h3>JVM</h3>
+          <h5>JVM</h5>
         </div>
-        <div class="card">
-          {{ infosclusterAll['jvm'] | json }}
+        <div class="card-body row">
+          <div class="col-md-3 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['jvm'].uptime_in_millis/1000 | number:'1.1-3'}}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Uptime (in second)</p>
+            </div>
+          </div>
+          <div class="col-md-3 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['jvm'].mem.heap_used_percent }}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Using (%)</p>
+            </div>
+          </div>
+          <div class="col-md-3 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['jvm'].mem.heap_used_in_bytes/1000000000 | number:'1.1-3' }}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Heap Used Memory (Free in GigaBytes)</p>
+            </div>
+          </div>
+          <div class="col-md-3 card text-center">
+            <p style="font-size: 30px;"><b>{{ infosclusterAll['jvm'].mem.non_heap_used_in_bytes/1000000000 | number:'1.1-3' }}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Non Heap used Memory (Free in GigaBytes)</p>
+            </div>
+          </div>
+          
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
+      <div class="card">
         <div class="card-header text-center">
-          <h3>ROLES</h3>
+          <h5>Infos</h5>
         </div>
-        <div class="card">
-          {{ infosclusterAll['roles'] | json }}
+        <div class="card-body row">
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{infosclusterAll['adaptive_selection'][nameNoeud].avg_queue_size | number:'1.1-3'}}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Avg queue size</p>
+            </div>
+          </div>
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{infosclusterAll['adaptive_selection'][nameNoeud].avg_response_time_ns | number:'1.1-3'}}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Avg response time</p>
+            </div>
+          </div>
+          <div class="col-md-4 card text-center">
+            <p style="font-size: 30px;"><b>{{infosclusterAll['adaptive_selection'][nameNoeud].avg_service_time_ns | number:'1.1-3'}}</b></p>
+            <div class="card-body">
+              <p class="card-text text-center">Avg service time</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   </div>
 </div>
 </div>

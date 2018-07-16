@@ -1,10 +1,8 @@
 import { Config } from './../config/Config';
-import { VisualizationObj } from './../entities/visualizationObj';
 import { Component, OnInit } from '@angular/core';
 import { ElasticsearchService } from '../services/elasticsearch.service';
 import 'rxjs/add/operator/map';
 import { ActivatedRoute } from '@angular/router';
-import * as bodybuilder from 'bodybuilder';
 
 @Component({
   selector: 'app-visualisation',
@@ -70,6 +68,7 @@ export class VisualisationComponent implements OnInit {
   removeVisualisation(event: any, id) {
     if (confirm('Are you sure to delete ' + id)) {
       console.log('Implement delete functionality here');
+      this.es.deleteDoc(Config.INDEX.NOM_INDEX_FOR_MAPPING, Config.INDEX.TYPE, id);
     }
     // console.log(id);
     // console.log(event);

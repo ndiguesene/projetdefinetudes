@@ -34,6 +34,7 @@ export class InformationsclusterComponent implements OnInit {
   couleurSanteCluster = '';
   listeIndexAndInfos: any;
   pnotify = this.ps.getPNotify();
+  nameNoeud = '';
   constructor(private es: ElasticsearchService,
               private ps: PnotifyService) { }
 
@@ -77,6 +78,7 @@ export class InformationsclusterComponent implements OnInit {
           this.infosclusterAll = r.nodes;
           const listObjectOnNoeud = Object.keys(this.infosclusterAll[Object.keys(this.infosclusterAll)[0]]);
           this.infosclusterAll = this.infosclusterAll[Object.keys(this.infosclusterAll)[0]];
+          this.nameNoeud = Object.keys(r.nodes)[0];
         }
       );
   }
