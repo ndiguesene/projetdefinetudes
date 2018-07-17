@@ -57,7 +57,8 @@ import { NguiMapModule } from '@ngui/map';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
-import { GridStackModule } from 'ng4-gridstack';
+import { GridsterModule } from 'angular-gridster2';
+
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
 // };
@@ -85,9 +86,9 @@ import { GridStackModule } from 'ng4-gridstack';
     CreercompteComponent
   ],
   imports: [
+    GridsterModule,
     FormsModule,
     AceEditorModule,
-    GridStackModule,
     NgxJsonViewerModule,
     ReactiveFormsModule,
     NgxSelectModule,

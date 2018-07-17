@@ -184,12 +184,21 @@
                     <div class="row">
                       <div class="col-md-6 card text-center" 
                         *ngFor="let result of resultatAggregationMetrics">
-                        <div>
-                          <button type="button" class="close" aria-label="Close"
-                            (click)="removeMetrics(result.id)">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+
+                        <div class="d-flex justify-content-between">
+                          <div class="p-2 bd-highlight">
+                            <button type="button" class="btn btn-outline-success btn-sm">
+                              <i class="fa fa-save"></i>
+                            </button>
+                          </div>
+                          <div class="p-2 bd-highlight">
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                              (click)="removeMetrics(result.id)">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
                         </div>
+                        <hr>
                         <p style="font-size: 50px;"><b>{{ result.objectResult.result | number }}</b></p>
                         <div class="card-body">
                           <p class="card-text text-center">{{ result.objectResult.label }}</p>

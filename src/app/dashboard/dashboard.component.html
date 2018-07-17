@@ -46,25 +46,6 @@
     </div>
   </div>
 </div>
-{{ widgets | json }}
-<!-- You can now use your library component in app.component.html -->  
-<button (click)="AddWidget()">Add Widget</button>
-<grid-stack #gridStackMain id="gridStackMain" class="grid-stack" [options]="area">
-    <grid-stack-item *ngFor="let widget of widgets" class="grid-stack-item">
-      <div class="widget-header">
-        <div class="widget-header-text">dfdsfs</div>
-      </div>
-      <div class="widget-content">
-        <canvas baseChart
-          [data]="lineChartData"
-          [labels]="lineChartLabels"
-          [options]="lineChartOptions"
-          [chartType]="lineChartType"
-          (chartHover)="chartHovered($event)"
-          (chartClick)="chartClicked($event)"></canvas>
-      </div>
-	</grid-stack-item>
-</grid-stack>
 <!-- <gridster [options]="config">
   <gridster-item [item]="item" *ngFor="let item of listeVisualisationInDashboard;index as i">
     <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value | number }}</b></p>
@@ -81,3 +62,9 @@
   </gridster-item>
   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </gridster> -->
+
+<gridster [options]="options">
+  <gridster-item [item]="item" *ngFor="let item of dashboard">
+    <!-- your content here -->ndigue sene
+  </gridster-item>
+</gridster>

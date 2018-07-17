@@ -382,21 +382,18 @@ export class ConfigureComponent implements OnInit {
               if (resultat['typeDateFiltre'] === 'year') {
                 let name_field_aggrega_for_result = '';
                 for (const ite of resultat['filter_aggregation']) {
-                  console.log(resultat['typeOfaggregationSwtich']);
 
                   if (resultat['typeOfaggregationSwtich'] === 'null' || resultat['typeOfaggregationSwtich'] === 'count') {
                     dataTab.push(ite.doc_count);
-                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0] + ' : ' + ite.doc_count);
                   } else {
-                    console.log('Aggrégation OK');
-
                     name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
                     if (ite[name_field_aggrega_for_result].value === null) {
                       dataTab.push(0);
                     } else {
                       dataTab.push(ite[name_field_aggrega_for_result].value);
                     }
-                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0] + ' : ' + ite[name_field_aggrega_for_result].value);
                   }
                 }
                 const chartColor = [];
@@ -472,7 +469,7 @@ export class ConfigureComponent implements OnInit {
                       }
                     }
                     const objec = {
-                      label: i, // dans la variable données ai la valeur de l'année comme ID
+                      label: i, // dans la variable données i a  la valeur de l'année comme ID
                       fill: this.params.fill,
                       data : dataTab,
                       backgroundColor: this.randomColor(1)
@@ -508,7 +505,7 @@ export class ConfigureComponent implements OnInit {
                   // this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
                   for (const ite of donnees) {
                     dataTab.push(ite.doc_count);
-                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0]);
+                    this.chartLabels.push(ite.key_as_string.toString().split('-')[0] + ' : ' + ite.doc_count);
                   }
                   if (this.nomDiagramme === 'pie' || this.nomDiagramme === 'radar'
                   || this.nomDiagramme === 'polarArea' || this.nomDiagramme === 'doughnut') {
@@ -742,7 +739,7 @@ export class ConfigureComponent implements OnInit {
     if (this.params.positionLegend) {
       this.currentChart.options.legend.position = this.params.positionLegend;
       this.currentChart.update({
-      duration: 300,
+      duration: 200,
       easing: 'easeOutBounce'
     });
     }

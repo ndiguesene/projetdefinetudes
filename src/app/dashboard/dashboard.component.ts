@@ -2,9 +2,10 @@ import { Config } from './../config/Config';
 import { ElasticsearchService } from '../services/elasticsearch.service';
 
 import { BucketsService } from '../services/buckets.service';
-
 import { Component, OnInit, ViewChildren, QueryList, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { GridStackItem, GridStackOptions, GridStackItemComponent, GridStackComponent} from 'ng4-gridstack';
+
+
+import { GridsterConfig, GridsterItem } from 'angular-gridster2';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,11 +22,6 @@ export class DashboardComponent implements OnInit {
   visuaObject: any;
   resultatFiltre: any;
 
-  @ViewChildren(GridStackItemComponent) items: QueryList<GridStackItemComponent>;
-  @ViewChild('gridStackMain') gridStackMain: GridStackComponent;
-  area: GridStackOptions = new GridStackOptions();
-  widgets: GridStackItem[] = [];
-
   public lineChartData: Array<any> = [
     [65, 59, 80, 81, 56, 55, 40],
     [28, 48, 40, 19, 86, 27, 90]
@@ -37,6 +33,10 @@ export class DashboardComponent implements OnInit {
   // Pie
   public pieChartLabels: string[] = ['Download Sales', 'In-Store Sales', 'Mail Sales'];
   public pieChartData: number[] = [300, 500, 100];
+
+
+  options: GridsterConfig;
+  dashboard: Array<GridsterItem>;
 
   constructor(private es: ElasticsearchService,
               private buck: BucketsService,
@@ -59,13 +59,10 @@ export class DashboardComponent implements OnInit {
         this.listeVisualisation = await this.dataAllPortail;
       }
     );
-  }
-  AddWidget() {
-    const widget = new GridStackItem();
-    this.widgets.push(widget);
-    this.cd.detectChanges();
-    const arr = this.items.toArray();
-    this.gridStackMain.AddWidget(arr[this.items.length - 1]);
+    this.dashboard = [
+      {cols: 2, rows: 1, y: 0, x: 0},
+      {cols: 2, rows: 2, y: 0, x: 2}
+    ];
   }
   getAllIndex() {
     this.es.getAllIndexService().then(
@@ -74,6 +71,7 @@ export class DashboardComponent implements OnInit {
       }
     );
   }
+
   // tslint:disable-next-line:member-ordering
   static itemChange(item, itemComponent) {
     console.log('itemChanged', item, itemComponent);
@@ -83,6 +81,7 @@ export class DashboardComponent implements OnInit {
     console.log('itemResized', item, itemComponent);
   }
   changedOptions() {
+
   }
   removeItem($event, item) {
     $event.preventDefault();
