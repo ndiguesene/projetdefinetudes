@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Client } from 'elasticsearch';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Config } from '../config/Config';
 import * as bodybuilder from 'bodybuilder';
 
@@ -8,6 +9,8 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class ElasticsearchService {
+  email: string;
+  motdepasse = 'wSQ4RPnwQEB4PdzlV8aB';
 
   private client: Client;
   queryalldocs = {
@@ -24,15 +27,26 @@ export class ElasticsearchService {
       }
     }
   };
-  private connect() {
+  public connect(email, motdepasse) {
     this.client = new Client({
-      host: Config.BASE_URL,
-      log: 'error'
+      /* host: Config.BASE_URL,
+      log: 'error',
+      auth: 'elastic:wSQ4RPnwQEB4PdzlV8aB', */
+      // motdepasse
+      host: 'http://elastic:' + this.motdepasse + '@localhost:9200'
     });
+    if (this.client) {
+      return true;
+    }
   }
-  constructor(private http: HttpClient) {
-    if (!this.client) {
-      this.connect();
+  constructor(private http: HttpClient, private router: Router) {
+    try {
+      if (!this.client) {
+        this.connect(this.email, this.motdepasse);
+      }
+    } catch (error) {
+      console.log(error);
+      this.router.navigate(['login']);
     }
     // création de l'index '.portail'
     // this.client.exists({
