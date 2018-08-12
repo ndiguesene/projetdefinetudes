@@ -1,5 +1,5 @@
 export const Config = {
-	BASE_URL: 'http://localhost:9200',
+	BASE_URL: 'localhost:9200',
 	INDEX: {
 		NOM_INDEX_FOR_MAPPING: '.portail',
 		TYPE: 'doc'

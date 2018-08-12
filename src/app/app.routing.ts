@@ -1,4 +1,5 @@
-
+import { DeconnexionComponent } from './deconnexion/deconnexion.component';
+import { AuthGuard } from './auth/auth.guard';
 import { CreercompteComponent } from './creercompte/creercompte.component';
 import { DashboardlisteComponent } from './dashboard/dashboardliste.component';
 import { Routes, RouterModule } from '@angular/router';
@@ -18,21 +19,22 @@ import { AuthentificationPortailComponent } from './authentification-portail/aut
 const routes: Routes = [
 	// { path: '', redirectTo: '/login', pathMatch : 'full'},
 	// { path: '', component: AccueilComponent, pathMatch: 'full'},
-	{ path: '', component: AuthentificationPortailComponent, pathMatch: 'full'},
-	{ path: 'accueil', component: AccueilComponent },
-	{ path: 'exploration', component: ExplorationComponent },
-	{ path: 'dashboards', component: DashboardlisteComponent },
-	{ path: 'dashboard', component: DashboardComponent },
-	{ path: 'parametres', component: ParametresComponent },
-	{ path: 'console', component: ConsoleComponent },
-	{ path: 'visualisation', component: VisualisationComponent },
-	{ path: 'infoscluster', component: InformationsclusterComponent },
-	{ path: 'visualisation/:id', component: ConfigureComponent },
+	{ path: '', component: AuthentificationPortailComponent, pathMatch: 'full' },
+	{ path: 'accueil', component: AccueilComponent, canActivate: [AuthGuard] },
+	{ path: 'exploration', component: ExplorationComponent, canActivate: [AuthGuard] },
+	{ path: 'dashboards', component: DashboardlisteComponent, canActivate: [AuthGuard] },
+	{ path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
+	{ path: 'parametres', component: ParametresComponent, canActivate: [AuthGuard]},
+	{ path: 'console', component: ConsoleComponent, canActivate: [AuthGuard]},
+	{ path: 'visualisation', component: VisualisationComponent, canActivate: [AuthGuard]},
+	{ path: 'infoscluster', component: InformationsclusterComponent, canActivate: [AuthGuard]},
+	{ path: 'visualisation/:id', component: ConfigureComponent, canActivate: [AuthGuard]},
 	{ path: 'login', component: AuthentificationPortailComponent },
+	{ path: 'logout', component: DeconnexionComponent, canActivate: [AuthGuard] },
 	{
 		path: 'creerutilisateur',
-		component: CreercompteComponent
-		// canActivate: [AuthguardService]
+		component: CreercompteComponent,
+		canActivate: [AuthGuard]
 	},
 	{ path: '**', component: NotFoundComponent }
 ];

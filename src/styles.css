@@ -7,13 +7,13 @@ body{
 #wrapper{
   padding:90px 15px;
 }
-.nav-link:hover ,.active {
+/* .nav-link:hover ,.active {
   text-decoration: none;
   border-left: 2px solid white;
 }
 .navbar-expand-lg .navbar-nav.side-nav{
   flex-direction: column;
-}
+} */
 .card {
   margin-bottom: 15px; 
   border-radius:0; 
@@ -26,6 +26,9 @@ body{
   #wrapper{
     margin-left: 200px;
     padding: 90px 15px 15px;
+  }
+  #navbarEdit {
+    align-content: center;
   }
   .navbar-nav.side-nav{
     background: #585f66;

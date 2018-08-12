@@ -87,21 +87,27 @@ export class ConfigureComponent implements OnInit {
       display: true,
       text: this.nomDiagramme
     },
+    plugins: {
+      datalabels: {
+        color: 'white',
+        display: function(context) {
+          return context.dataset.data[context.dataIndex] > 15;
+        },
+        font: {
+          weight: 'bold'
+        },
+        formatter: Math.round,
+        title: false
+      }
+    },
     scales: {
+      xAxes: [{
+        stacked: true
+      }],
       yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
+        stacked: true
       }]
     },
-    pan: {
-      enabled: true,
-      mode: 'xy'
-    },
-    zoom: {
-      enabled: true,
-      mode: 'xy'
-    }
   };
   name_field_aggrega_for_result = '';
   resultatFiltreWithAggregation: any;

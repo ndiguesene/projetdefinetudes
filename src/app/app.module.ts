@@ -1,3 +1,4 @@
+import { AuthGuard } from './auth/auth.guard';
 import { MapService } from './services/map.service';
 import { PnotifyService } from './services/pnotify.service';
 import { BucketsService } from './services/buckets.service';
@@ -58,6 +59,7 @@ import { AceEditorModule } from 'ng2-ace-editor';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 import { GridsterModule } from 'angular-gridster2';
+import { DeconnexionComponent } from './deconnexion/deconnexion.component';
 
 // export const createTranslateLoader = (http: HttpClient) => {
 //   return new TranslateHttpLoader(http, './../assets/i18n/', '.json');
@@ -83,7 +85,8 @@ import { GridsterModule } from 'angular-gridster2';
     BucketsAggregaComponent,
     FilterPipe,
     AuthentificationPortailComponent,
-    CreercompteComponent
+    CreercompteComponent,
+    DeconnexionComponent
   ],
   imports: [
     GridsterModule,
@@ -115,13 +118,13 @@ import { GridsterModule } from 'angular-gridster2';
     })
   ],
   providers: [
-    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService,
+    ElasticsearchService, ChartService, MetricsService, BucketsService, PnotifyService, AuthGuard,
     MapService, {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,
       multi: true,
     },
-    DatePipe,
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

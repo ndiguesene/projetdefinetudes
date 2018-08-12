@@ -9,7 +9,7 @@ export class AccueilComponent implements OnInit {
     constructor() { }
 
   ngOnInit() {
-
+    // d3.select('body').style('background-color', 'black');
   }
 
 }

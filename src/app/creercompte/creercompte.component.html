@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-8 col-xs-offset-2">
+    <div class="col-sm-4">
       <div class="card">
         <div class="card-header">
           <h5><i class="fa fa-user-plus"> Créer un nouveau utilisateur</i></h5>
@@ -19,6 +19,16 @@
                 <div class="col-sm-8">
                   <input type="text" class="form-control" id="inputNom" placeholder="Nom"
                     formControlName="nom">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputNom" class="col-sm-3 col-form-label">Roles</label>
+                <div class="col-sm-8">
+                    <select class="form-control" name="role" id="role" formControlName="role">
+                      <option value="">Selectionner Role</option>
+                      <option value="superuser">Administrateur</option>
+                      <option value="kibana_system">Utilisateur Simple</option>
+                    </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -46,61 +56,8 @@
         </div>
       </div>
     </div>
-    <!-- <div class="col-sm-7">
-        <div class="card">
-            <div class="card-header">
-              <h5><i class="fa fa-user-plus"> Modifier Infos</i></h5>
-            </div>
-            <div class="card-body">
-              <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="form-horizontal">
-                  <div class="form-group row">
-                    <label for="inputPrenom" class="col-sm-3 col-form-label">Prénom</label>
-                    <div class="col-sm-8">
-                      <input type="text" class="form-control" id="inputPrenomedit" placeholder="Prénom"
-                        formControlName="prenom">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="inputNom" class="col-sm-3 col-form-label">Nom</label>
-                    <div class="col-sm-8">
-                      <input type="text" class="form-control" id="inputNomedit" placeholder="Nom"
-                        formControlName="nom">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="inputEmailEditedit" class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-8">
-                      <input type="email" class="form-control" id="inputEmailEditedit" placeholder="Email"
-                        formControlName="email" disabled>
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="ancieninputPasswordedit" class="col-sm-3 col-form-label">Ancien Mot de passe</label>
-                    <div class="col-sm-8">
-                      <input type="password" class="form-control" id="ancieninputPasswordedit" placeholder="Current Password">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="inputPasswordedit" class="col-sm-3 col-form-label">Nouveau Mot de passe</label>
-                    <div class="col-sm-8">
-                      <input type="password" class="form-control" id="inputPasswordedit" placeholder="Password"
-                        formControlName="motdepasse">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <div class="col-sm-8">
-                      <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
-                        Submit
-                      </button>
-                    </div>
-                  </div>
-                </form>
-            </div>
-          </div>
-    </div> -->
-  </div>
 
-  <div class="row" *ngIf="true">
+    <div class="col-sm-8">
     <div class="card">
       <div class="card-header">
         <div class="input-group">
@@ -120,34 +77,41 @@
         </div>
       </div>
       <div class="card-body">
-        <table class="table">
-          <tr>
-            <th>#</th>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Mot de passe</th>
-            <th>Date Création</th>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td>Abdoulaye Ndigue</td>
-            <td>Sene</td>
-            <td>ndigue@live.fr</td>
-            <td>12345678</td>
-            <td>2018/16/19</td>
-            <td>
-              <a><i class="fa fa-trash-o"></i></a>
-            </td>
-            <td>
-              <a><i class="fa fa-edit"></i></a>
-            </td>
-            <td>
-              <a><i class="fa fa-crop"></i></a>
-            </td>
-          </tr>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm table-striped">
+            <tr>
+              <th>Nom Utilisateur</th>
+              <th>Email</th>
+              <th>Role(s)</th>
+              <th>Nom Complet</th>
+              <th>Actif</th>
+            </tr>
+            <tr *ngFor="let item of listeChamp">
+              <td> {{ item.username }}</td>
+              <td> {{ item.email }}</td>
+              <td> {{ item.roles }}</td>
+              <td> {{ item.full_name }}</td>
+              <td>
+                <label class="switch" *ngIf="item.enabled">
+                  <input type="checkbox" (click)="enabledUser(item.username)" checked>
+                  <span class="slider round"></span>
+                </label>
+                <label class="switch" *ngIf="!item.enabled">
+                  <input type="checkbox" (click)="enabledUser(item.username)">
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td>
+                <button class="btn btn-danger" (click)="removeUser(item.username);"><i class="fa fa-trash-o"></i></button>
+              </td>
+              <td>
+                <button class="btn btn-info"><i class="fa fa-edit"></i></button>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
     </div>
   </div>
+</div>
 </div>

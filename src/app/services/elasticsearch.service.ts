@@ -1,16 +1,16 @@
-import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Client } from 'elasticsearch';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Config } from '../config/Config';
 import * as bodybuilder from 'bodybuilder';
 
-import 'rxjs/add/operator/map';
-
 @Injectable()
 export class ElasticsearchService {
-  email: string;
-  motdepasse = 'wSQ4RPnwQEB4PdzlV8aB';
+  public email = '';
+  public motdepasse = '';
+  public full_name = '';
 
   private client: Client;
   queryalldocs = {
@@ -27,25 +27,29 @@ export class ElasticsearchService {
       }
     }
   };
-  public connect(email, motdepasse) {
+  public connect(email = 'elastic', motdepasse = 'elastic') {
+    this.email = email;
+    this.motdepasse = motdepasse;
+    const host = 'http://' + email + ':' + motdepasse + '@' + Config.BASE_URL;
+    // console.log(host);
+    // admin:admin@
     this.client = new Client({
-      /* host: Config.BASE_URL,
-      log: 'error',
-      auth: 'elastic:wSQ4RPnwQEB4PdzlV8aB', */
-      // motdepasse
-      host: 'http://elastic:' + this.motdepasse + '@localhost:9200'
+      // host: 'http://' + email + ':' + motdepasse + '@localhost:9200',
+      host: host,
+      // host: host,
+      log: 'error'
     });
     if (this.client) {
       return true;
     }
+    return false;
   }
   constructor(private http: HttpClient, private router: Router) {
     try {
       if (!this.client) {
-        this.connect(this.email, this.motdepasse);
+        this.connect();
       }
     } catch (error) {
-      console.log(error);
       this.router.navigate(['login']);
     }
     // création de l'index '.portail'
@@ -128,15 +132,65 @@ export class ElasticsearchService {
       size: _size
     });
   }
-  getSearchWithAgg(_index, _query, size = Config.SIZE_MAX_RESULT_QUERY_RETURN): any {
+  getSearchWithAgg(_index, _query, size = Config.SIZE_MAX_RESULT_QUERY_RETURN, _type?): any {
     return this.client.search({
       index: _index,
-      // type: _type,
+      type: _type,
       body: _query,
       size: size
       // filterPath: ['aggregations'],
     });
   }
+  create(body, newUsernameForCreattion, login, motdepasse): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(login + ':' + motdepasse));
+    headers = headers.append('Content-Type', 'application/json');
+
+    return this.http.post(Config.BASE_URL + '/_xpack/security/user/' + newUsernameForCreattion, body, { headers });
+  }
+  removeUser(username) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.delete(Config.BASE_URL + '/_xpack/security/user/' + username, { headers });
+  }
+  enabledUser(username): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
+    headers = headers.append('Content-Type', 'application/json');
+    // if (!userActif === false) {
+    let etat;
+    let data = [];
+    this.getAllUser()
+        .subscribe((dat) => {
+          const key = Object.keys(dat);
+          for (const prop of key) {
+            data.push(dat[prop]);
+          }
+          data = data.filter(c => c.username === username);
+          etat = data[0].enabled;
+          // console.log(etat);
+        if (etat) {
+          return this.http.put(Config.BASE_URL + '/_xpack/security/user/' + username + '/_disable', { headers });
+        }
+        });
+      return this.http.put(Config.BASE_URL + '/_xpack/security/user/' + username + '/_enable', { headers });
+  }
+  getAllUser(): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
+    headers = headers.append('Content-Type', 'application/json');
+
+    return this.http.get(Config.BASE_URL + '/_xpack/security/user/', { headers });
+  }
+  getUserAuthentificate(): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
+    headers = headers.append('Content-Type', 'application/json');
+
+    return this.http.get(Config.BASE_URL + '/_xpack/security/user/' + this.email, { headers });
+  }
+
   fullTextSearchService(index, chaine): any {
     return this.client.search({
       index: index,
@@ -330,7 +384,7 @@ export class ElasticsearchService {
                 'updated_at': {
                   'type': 'date'
                 },
-                'user': {
+                /* 'user': {
                   'properties': {
                     'email': {
                       'type': 'text'
@@ -357,7 +411,7 @@ export class ElasticsearchService {
                       'type': 'date'
                     },
                   }
-                },
+                }, */
                 'visualization': {
                   'properties': {
                     'description': {

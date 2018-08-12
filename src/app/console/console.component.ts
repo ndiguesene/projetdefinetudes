@@ -37,7 +37,7 @@ export class ConsoleComponent implements OnInit, AfterViewInit {
   ngOnInit() {
   }
   async envoyerRequete() {
-    await this.es.getSearchWithAgg(this.index, this.query, 10).then(
+    await this.es.getSearchWithAgg(this.index, this.query).then(
       async response => this.reponse = await response,
       async error => this.reponse = await error
     );

@@ -100,7 +100,7 @@ export class ExplorationComponent implements OnInit, OnDestroy {
   resultFilterDateHistogramShowInHtml = [];
   resultFilterRangeAggregration = [];
 
-  private _subscriptions: Subscription;
+  // private _subscriptions: Subscription;
   countLineResultByAggregation = [];
 
   aggregation: AggregationData;
@@ -139,34 +139,35 @@ export class ExplorationComponent implements OnInit, OnDestroy {
     try {
       this.getAllIndex();
       // permet de recupérer le contenu du variable stocké dans une variable de stockage qu niveau du navigateur
-      // if (!!localStorage.getItem('resultatFiltre')) {
-      //   await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
-      //     this.resultatFiltre = await JSON.parse(res);
-      //   });
-      // }
-      // if (!!localStorage.getItem('resultFilterDateHistogramShowInHtml')) {
-      //   await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
-      //     this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
-      //   });
-      // }
-      // if (!!localStorage.getItem('listeMetrics')) {
-      //   await this.localStorage.getItem('listeMetrics').subscribe(async res => {
-      //     this.listeMetrics = await JSON.parse(res);
-      //   });
-      // }
-      // if (!!localStorage.getItem('listeBucketsAggrega')) {
-      //   await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
-      //     this.listeBucketsAggrega = await JSON.parse(res);
-      //   });
-      // }
-      // // if(!!localStorage.getItem)
-      // if (!!localStorage.getItem('indexParDefaut')) {
-      //   await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
-      //     this.listeBucketsAggrega = await JSON.parse(res);
-      //   });
-      // } else {
-      //   alert('indexpardefaut non');
-      // }
+       if (!!localStorage.getItem('resultatFiltre')) {
+         await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
+           this.resultatFiltre = await JSON.parse(res);
+         });
+       }
+       if (!!localStorage.getItem('resultFilterDateHistogramShowInHtml')) {
+         await this.localStorage.getItem('resultFilterDateHistogramShowInHtml').subscribe(async res => {
+           this.resultFilterDateHistogramShowInHtml = await JSON.parse(res);
+         });
+       }
+       if (!!localStorage.getItem('listeMetrics')) {
+         await this.localStorage.getItem('listeMetrics').subscribe(async res => {
+           this.listeMetrics = await JSON.parse(res);
+         });
+       }
+       if (!!localStorage.getItem('listeBucketsAggrega')) {
+         await this.localStorage.getItem('listeBucketsAggrega').subscribe(async res => {
+           this.listeBucketsAggrega = await JSON.parse(res);
+         });
+       }
+       if (!!localStorage.getItem) {
+          if (!!localStorage.getItem('indexParDefaut')) {
+            await this.localStorage.getItem('indexParDefaut').subscribe(async res => {
+              this.listeBucketsAggrega = await JSON.parse(res);
+            });
+          } else {
+            // alert('indexpardefaut non');
+          }
+        }
       /**
        *  await permet de d'attendre jusqu'à la fin de l'instruction indiqué pour contiuner
        *  les instructions
@@ -220,10 +221,10 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           id: this.listeBucketsAggrega.length + 1
         });
       }
-      // this.localStorage.setItem('listeBucketsAggrega', JSON.stringify(this.listeBucketsAggrega))
-      //   .subscribe(() => {});
-      // this.localStorage.setItem('listeMetrics', JSON.stringify(this.listeMetrics))
-      //   .subscribe(() => {});
+       this.localStorage.setItem('listeBucketsAggrega', JSON.stringify(this.listeBucketsAggrega))
+         .subscribe(() => {});
+       this.localStorage.setItem('listeMetrics', JSON.stringify(this.listeMetrics))
+         .subscribe(() => {});
     }
   }
   pageChanged(event: PageChangedEvent): void {
@@ -421,10 +422,10 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           ];
         }
 
-        // this.localStorage.setItem('resultFilterDateHistogramShowInHtml',
-        //               JSON.stringify(this.resultFilterDateHistogramShowInHtml))
-        //   .subscribe((r) => {console.log(r);
-        //   });
+        this.localStorage.setItem('resultFilterDateHistogramShowInHtml',
+                       JSON.stringify(this.resultFilterDateHistogramShowInHtml))
+           .subscribe((r) => {console.log(r);
+           });
       }
       this.loading = false;
     } catch (error) {
