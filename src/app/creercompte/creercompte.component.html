@@ -41,14 +41,21 @@
               <div class="form-group row">
                 <label for="inputPassword" class="col-sm-3 col-form-label">Mot de passe</label>
                 <div class="col-sm-8">
-                  <input type="password" class="form-control" id="inputPassword" placeholder="Password"
-                    formControlName="motdepasse">
+                  <input type="password" class="form-control" id="inputPassword" placeholder="Mot de passe"
+                    formControlName="password" [(ngModel)]="user.password">
+                  <button type="button" (click)="genererPassword()" class="btn btn-primary">Générer mot de passe</button>
                 </div>
               </div>
+              <hr>
               <div class="form-group row">
-                <div class="col-sm-8">
+                <div class="col-sm-4">
                   <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">
                     Enregistrer
+                  </button>
+                </div>
+                <div class="col-sm-4">
+                  <button type="reset" class="btn btn-danger">
+                    Vider
                   </button>
                 </div>
               </div>

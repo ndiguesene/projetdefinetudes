@@ -25,6 +25,9 @@ export class ParametresComponent implements OnInit {
     }
     return true;
   }
+  definirIndexPardefaut() {
+    alert(this.indexChoisi);
+  }
   async removeIndex() {
     /**
      * Cette instruction permet de supprimer l'index choisi
@@ -35,10 +38,10 @@ export class ParametresComponent implements OnInit {
      */
     this.getAllListeIndex();
   }
-  getStatIndex() {
-    this.es.getStatIndexService(this.indexChoisi).then(
-      resp => {
-        this.statIndex = resp._all.primaries;
+  async getStatIndex() {
+    await this.es.getStatIndexService(this.indexChoisi).then(
+      async resp => {
+        this.statIndex = await resp._all.primaries;
       }
     );
   }

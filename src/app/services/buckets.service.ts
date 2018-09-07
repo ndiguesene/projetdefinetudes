@@ -1,7 +1,6 @@
 import { Config } from './../config/Config';
 import { ElasticsearchService } from './elasticsearch.service';
 import { Injectable } from '@angular/core';
-import * as bodybuilder from 'bodybuilder';
 
 @Injectable()
 export class BucketsService {
@@ -26,9 +25,7 @@ export class BucketsService {
    * @param _typeInterval le type de l'interval soit en 'jour',mois' ou 'année'
    * @param _format el format de la date (Ex: "yyyy-MM-dd")
    */
-  queryDateHistoGrammAggregation(
-        _index: string,
-        _query: any, size = 20): any {
+  queryDateHistoGrammAggregation(_index: string,_query: any, size = 20): any {
     /**
      * Le 'field' doit etre de type 'Date'
      */

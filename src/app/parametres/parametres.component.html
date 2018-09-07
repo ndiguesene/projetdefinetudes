@@ -25,10 +25,11 @@
           <div class="col">
             <div class="btn-group mr-4">
               <button [disabled]="!buttonDisabledSetIndex"
-              class="btn btn-xd btn-outline-success" id="btnSetIndex">
+              class="btn btn-xd btn-outline-success" id="btnSetIndex"
+              (click)="definirIndexPardefaut()">
                 <i class="fa fa-star"></i>
               </button>
-              <button [disabled]="!buttonDisabledSetIndex"
+             <button [disabled]="!buttonDisabledSetIndex"
               class="btn btn-xd btn-outline-danger" id="btnSetIndex" (click)="removeIndex()">
                 <i class="fa fa-remove"></i>
               </button>

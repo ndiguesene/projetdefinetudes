@@ -15,6 +15,8 @@ import * as bodybuilder from 'bodybuilder';
 import { BucketsService } from '../../services/buckets.service';
 import { ViewChild } from '@angular/core';
 
+import html2canvas from 'html2canvas';
+
 @Component({
   selector: 'app-configure',
   templateUrl: './configure.component.html',
@@ -418,7 +420,6 @@ export class ConfigureComponent implements OnInit {
                 const name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
                 if (resultat['typeOfaggregationSwtich'] === 'null' ||
                   resultat['typeOfaggregationSwtich'] === 'count') {
-
                   // tslint:disable-next-line:radix
                   const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
                   for (let i = debut; i <= resultat['range'].date_fin; i++) {
@@ -538,41 +539,83 @@ export class ConfigureComponent implements OnInit {
                       }
                     ];
                   }
-                } else { // sinon cest le mois, la semaine ou heure et jour
-                  this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
-                                            'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                } else {
+                  if (this.nomDiagramme === 'line' ||
+                  this.nomDiagramme === 'bar' ||
+                  this.nomDiagramme === 'horizontalBar') {
+                    // sinon cest le mois, la semaine ou heure et jour
+                    this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                                              'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-                  // tslint:disable-next-line:radix
-                  const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
-                  // tslint:disable-next-line:max-line-length
-                  // tslint:disable-next-line:radix
-                  const date_fin = parseInt(resultat['filter_aggregation'][resultat['filter_aggregation'].length - 1]
-                    .key_as_string.toString().split('-')[0]);
-                  for (let i = debut; i <= date_fin; i++) {
-                    // let month;
-                    let j = 0;
-                    for (const ite of resultat['filter_aggregation']) {
-                      let val = 0;
-                      // tslint:disable-next-line:radix
-                      val = parseInt(ite.key_as_string.toString().split('-')[0]);
-                      if (i === val) {
-                        dataTab[j] = ite.doc_count;
-                        j++;
+                    // tslint:disable-next-line:radix
+                    const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
+                    // tslint:disable-next-line:max-line-length
+                    // tslint:disable-next-line:radix
+                    const date_fin = parseInt(resultat['filter_aggregation'][resultat['filter_aggregation'].length - 1]
+                      .key_as_string.toString().split('-')[0]);
+                    for (let i = debut; i <= date_fin; i++) {
+                      // let month;
+                      let j = 0;
+                      for (const ite of resultat['filter_aggregation']) {
+                        let val = 0;
+                        // tslint:disable-next-line:radix
+                        val = parseInt(ite.key_as_string.toString().split('-')[0]);
+                        if (i === val) {
+                          dataTab[j] = ite.doc_count;
+                          j++;
+                        }
+                        if (val > i) {
+                          break;
+                        }
                       }
-                      if (val > i) {
-                        break;
-                      }
+                      const objec = {
+                        label: i, // dans la variable données ai la valeur de l'année comme ID
+                        fill: this.params.fill,
+                        data : dataTab,
+                        backgroundColor: this.randomColor(1)
+                      };
+                      chaineObjectData += JSON.stringify(objec) + ',';
                     }
-                    const objec = {
-                      label: i, // dans la variable données ai la valeur de l'année comme ID
-                      fill: this.params.fill,
-                      data : dataTab,
-                      backgroundColor: this.randomColor(1)
-                    };
-                    chaineObjectData += JSON.stringify(objec) + ',';
+                    chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
+                    this.chartData = JSON.parse(chaineObjectData);
+                  } else {
+                    alert('Ne peuvent pas etre représenter dans un seul et meme diagramme');
+                    this.chartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet',
+                                              'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+                    // tslint:disable-next-line:radix
+                    const debut = parseInt(resultat['filter_aggregation'][0].key_as_string.toString().split('-')[0]);
+                    // tslint:disable-next-line:max-line-length
+                    // tslint:disable-next-line:radix
+                    const date_fin = parseInt(resultat['filter_aggregation'][resultat['filter_aggregation'].length - 1]
+                      .key_as_string.toString().split('-')[0]);
+
+                    /* for (let i = debut; i <= date_fin; i++) {
+                      // let month;
+                      let j = 0;
+                      for (const ite of resultat['filter_aggregation']) {
+                        let val = 0;
+                        // tslint:disable-next-line:radix
+                        val = parseInt(ite.key_as_string.toString().split('-')[0]);
+                        if (i === val) {
+                          dataTab[j] = ite.doc_count;
+                          j++;
+                        }
+                        if (val > i) {
+                          break;
+                        }
+                      }
+                      const objec = {
+                        label: i, // dans la variable données ai la valeur de l'année comme ID
+                        fill: this.params.fill,
+                        data : dataTab,
+                        backgroundColor: this.randomColor(1)
+                      };
+                      chaineObjectData += JSON.stringify(objec) + ',';
+                    }
+                    chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
+                    this.chartData = JSON.parse(chaineObjectData); */
                   }
-                  chaineObjectData = '[' + chaineObjectData.substring(0, chaineObjectData.length - 1) + ']';
-                  this.chartData = JSON.parse(chaineObjectData);
                 }
             }
             this.currentChart = this.chartService.tracerChart(
@@ -641,6 +684,11 @@ export class ConfigureComponent implements OnInit {
         text: error
       });
     }
+  }
+  exporter() {
+    html2canvas(document.querySelector('#myChart')).then(canvas => {
+      document.body.appendChild(canvas);
+    });
   }
   async saveVisualisation() {
     let type;

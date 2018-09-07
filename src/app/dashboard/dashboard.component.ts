@@ -33,8 +33,9 @@ export class DashboardComponent implements OnInit {
   listeBucketsAggrega = [];
 
   inputRecherche = 'a';
-  listeVisualisationInDashboard = Array<GridsterData>();
-  gridster: GridsterData;
+  listeVisualisationInDashboard = [];
+
+  data: any;
   visuaObject: any;
   resultatFiltre: any;
 
@@ -89,6 +90,8 @@ export class DashboardComponent implements OnInit {
   };
   currentChart: any;
 
+  iterationIdListeDashboard = 0;
+
   constructor(private es: ElasticsearchService,
               private buck: BucketsService,
               private cd: ChangeDetectorRef,
@@ -113,58 +116,6 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.options = {
-      gridType: GridType.Fit,
-      compactType: CompactType.None,
-      margin: 10,
-      outerMargin: true,
-      outerMarginTop: null,
-      outerMarginRight: null,
-      outerMarginBottom: null,
-      outerMarginLeft: null,
-      mobileBreakpoint: 640,
-      minCols: 1,
-      maxCols: 100,
-      minRows: 1,
-      maxRows: 100,
-      maxItemCols: 100,
-      minItemCols: 1,
-      maxItemRows: 100,
-      minItemRows: 1,
-      maxItemArea: 2500,
-      minItemArea: 1,
-      defaultItemCols: 1,
-      defaultItemRows: 1,
-      fixedColWidth: 105,
-      fixedRowHeight: 105,
-      keepFixedHeightInMobile: false,
-      keepFixedWidthInMobile: false,
-      scrollSensitivity: 10,
-      scrollSpeed: 20,
-      enableEmptyCellClick: false,
-      enableEmptyCellContextMenu: false,
-      enableEmptyCellDrop: false,
-      enableEmptyCellDrag: false,
-      emptyCellDragMaxCols: 50,
-      emptyCellDragMaxRows: 50,
-      ignoreMarginInRow: false,
-      draggable: {
-        enabled: true,
-      },
-      resizable: {
-        enabled: true,
-      },
-      swap: false,
-      pushItems: true,
-      disablePushOnDrag: false,
-      disablePushOnResize: false,
-      pushDirections: {north: true, east: true, south: true, west: true},
-      pushResizeItems: false,
-      displayGrid: DisplayGrid.Always,
-      disableWindowResize: false,
-      disableWarnings: false,
-      scrollToNewItems: false
-    };
     this.es.getAllDocumentsService(
       Config.INDEX.NOM_INDEX_FOR_MAPPING,
       Config.INDEX.TYPE,
@@ -182,14 +133,17 @@ export class DashboardComponent implements OnInit {
   changedOptions() {
     this.options.api.optionsChanged();
   }
-  removeItem($event, item) {
+  removeItem($event, id) {
     $event.preventDefault();
     $event.stopPropagation();
-    this.listeVisualisationInDashboard.splice(this.listeVisualisationInDashboard.indexOf(item), 1);
+    this.listeVisualisationInDashboard.splice(this.listeVisualisationInDashboard.indexOf(id), 1);
   }
   addItem(id) {
+    let taille_card = 6;
+    this.iterationIdListeDashboard = this.iterationIdListeDashboard + 1;
     this.es.getByIdService(Config.INDEX.NOM_INDEX_FOR_MAPPING, id).then(
       res => {
+        console.log(res);
         this.visuaObject = res.hits.hits[0]._source.visualization;
         this.visuaObject.visState = JSON.parse(this.visuaObject.visState);
         if (this.visuaObject.visState.name_type_chart === 'metrics') {
@@ -198,16 +152,21 @@ export class DashboardComponent implements OnInit {
           ).then(
             async resp => {
               this.resultatFiltre =  {
+                id: this.iterationIdListeDashboard,
                 value: this.buck.getResultFilterAggregationBucket(resp).value,
                 title: this.visuaObject.title,
                 description: this.visuaObject.description
               };
-              this.gridster = {
+              this.data = {
                 _idVisualisation: res.hits.hits[0]._id,
-                coordonneeGridster : {x: 0, y: 0, cols: 1, rows: 1},
                 value:  this.resultatFiltre,
+                taille_card: taille_card,
                 addMetricsVisua: 1
               };
+              this.listeVisualisationInDashboard.push(this.data);
+              // this.listeVisualisationInDashboard = this.listeVisualisationInDashboard.filter(
+              //   liste => liste !== undefined
+              // );
             }
           );
         } else {
@@ -225,30 +184,35 @@ export class DashboardComponent implements OnInit {
                   query: this.visuaObject.visState.aggregation.aggreg,
                   typeOfaggregationSwtich: this.visuaObject.visState.aggregation.typeOfaggregationSwtich
                 };
-                this.nomDiagramme = this.visuaObject.visState.name_type_chart;
+                // this.nomDiagramme = this.visuaObject.visState.name_type_chart;
                 resultat.filter_aggregation.map(
                   r => {
                     this.lineChartData.push(r.doc_count);
                     this.lineChartLabels.push(r.key_as_string);
-                  }
-                );
+                  });
               // this.filtreHitsChangeBucket(resultat);
-            }
-          );
-          // this.nomDiagramme = this.visuaObject.visState.name_type_chart;
-          this.gridster = {
-            _idVisualisation: res.hits.hits[0]._id,
-            coordonneeGridster : {x: 0, y: 0, cols: 1, rows: 1, label: 'Informations sur le label'},
-            value:  this.resultatFiltre,
-            addMetricsVisua: 2
-          };
-        }
-      }
-    );
-    this.listeVisualisationInDashboard.push(this.gridster);
-    this.listeVisualisationInDashboard = this.listeVisualisationInDashboard.filter(
-      liste => liste !== undefined
-    );
+              if (this.visuaObject.visState.name_type_chart === 'bar') {
+                taille_card = 12;
+              }
+              this.data = {
+                id: this.iterationIdListeDashboard,
+                _idVisualisation: res.hits.hits[0]._id,
+                // coordonneeGridster : {x: 0, y: 0, cols: 1, rows: 1, label: 'Informations sur le label'},
+                value: resultat,
+                addMetricsVisua: 2,
+                nomDiagramme: this.visuaObject.visState.name_type_chart,
+                taille_card: taille_card
+              };
+              this.listeVisualisationInDashboard.push(this.data);
+              // this.listeVisualisationInDashboard = this.listeVisualisationInDashboard.filter(
+              //   liste => liste !== undefined
+              // );
+            });
+          }
+          this.data = [];
+          this.lineChartData = [];
+          this.lineChartLabels = [];
+      });
   }
 
   randomColor(opacity: number): string {

@@ -9,7 +9,12 @@ import { ElasticsearchService } from '../services/elasticsearch.service';
 })
 export class CreercompteComponent implements OnInit {
   loginForm: any;
-  user: any;
+  user = {
+    password : '',
+    roles : [],
+    full_name : '',
+    email : ''
+  };
   listeChamp = [];
   userActif: boolean;
   /* infosUser: any = {
@@ -22,7 +27,7 @@ export class CreercompteComponent implements OnInit {
         nom: new FormControl('', Validators.required),
         prenom: new FormControl('', Validators.required),
         email: new FormControl('', Validators.required),
-        motdepasse: new FormControl('', Validators.required),
+        password: new FormControl('', Validators.required),
         role: new FormControl('', Validators.required),
     });
   }
@@ -51,19 +56,17 @@ export class CreercompteComponent implements OnInit {
       res => console.log(res)
     );
   }
+  genererPassword() {
+    this.loginForm.value.password = Math.random().toString(36).slice(-8);
+    this.user.password = this.loginForm.value.password;
+  }
   onFormSubmit() {
     if (this.loginForm.valid) {
-      this.user = this.loginForm.value;
-      const obj = {
-        password : this.user.motdepasse,
-        roles : [this.user.role],
-        full_name : this.user.prenom + ' ' + this.user.nom,
-        email : this.user.email,
-        metadata : {
-          intelligence : 7
-        }
-      };
-      this.es.create(obj, this.user.email, this.es.email, this.es.motdepasse).subscribe(
+      this.user.password = this.loginForm.value.password,
+      this.user.roles = [this.loginForm.value.role];
+      this.user.full_name = this.loginForm.value.prenom + ' ' + this.loginForm.value.nom;
+      this.user.email = this.loginForm.value.email;
+      this.es.create(this.user, this.user.email, this.es.email, this.es.motdepasse).subscribe(
         q => {
           console.log(q);
           this.init();

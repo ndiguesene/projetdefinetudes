@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Client } from 'elasticsearch';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router } from '@angular/router';
 import { Config } from '../config/Config';
 import * as bodybuilder from 'bodybuilder';
 
@@ -146,13 +146,13 @@ export class ElasticsearchService {
     headers = headers.append('Authorization', 'Basic ' + btoa(login + ':' + motdepasse));
     headers = headers.append('Content-Type', 'application/json');
 
-    return this.http.post(Config.BASE_URL + '/_xpack/security/user/' + newUsernameForCreattion, body, { headers });
+    return this.http.post('http://' + Config.BASE_URL + '/_xpack/security/user/' + newUsernameForCreattion, body, { headers });
   }
   removeUser(username) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.delete(Config.BASE_URL + '/_xpack/security/user/' + username, { headers });
+    return this.http.delete('http://' + Config.BASE_URL + '/_xpack/security/user/' + username, { headers });
   }
   enabledUser(username): Observable<any> {
     let headers = new HttpHeaders();
@@ -171,24 +171,24 @@ export class ElasticsearchService {
           etat = data[0].enabled;
           // console.log(etat);
         if (etat) {
-          return this.http.put(Config.BASE_URL + '/_xpack/security/user/' + username + '/_disable', { headers });
+          return this.http.put('http://' + Config.BASE_URL + '/_xpack/security/user/' + username + '/_disable', { headers });
         }
         });
-      return this.http.put(Config.BASE_URL + '/_xpack/security/user/' + username + '/_enable', { headers });
+      return this.http.put('http://' + Config.BASE_URL + '/_xpack/security/user/' + username + '/_enable', { headers });
   }
   getAllUser(): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
     headers = headers.append('Content-Type', 'application/json');
 
-    return this.http.get(Config.BASE_URL + '/_xpack/security/user/', { headers });
+    return this.http.get('http://' + Config.BASE_URL + '/_xpack/security/user/', { headers });
   }
   getUserAuthentificate(): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa(this.email + ':' + this.motdepasse));
     headers = headers.append('Content-Type', 'application/json');
 
-    return this.http.get(Config.BASE_URL + '/_xpack/security/user/' + this.email, { headers });
+    return this.http.get('http://' + Config.BASE_URL + '/_xpack/security/user/' + this.email, { headers });
   }
 
   fullTextSearchService(index, chaine): any {
