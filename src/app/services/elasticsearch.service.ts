@@ -141,12 +141,12 @@ export class ElasticsearchService {
       // filterPath: ['aggregations'],
     });
   }
-  create(body, newUsernameForCreattion, login, motdepasse): Observable<any> {
+  create(body, newUsernameForCreation, login, motdepasse): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa(login + ':' + motdepasse));
     headers = headers.append('Content-Type', 'application/json');
 
-    return this.http.post('http://' + Config.BASE_URL + '/_xpack/security/user/' + newUsernameForCreattion, body, { headers });
+    return this.http.post('http://' + Config.BASE_URL + '/_xpack/security/user/' + newUsernameForCreation, body, { headers });
   }
   removeUser(username) {
     let headers = new HttpHeaders();

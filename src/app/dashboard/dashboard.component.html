@@ -51,7 +51,7 @@
     <div class="row">
         <div>
             <button type="button" class="btn btn-primary btn-sm">Exporter</button>&nbsp;
-            <button type="button" class="btn btn-primary btn-sm">Enregistrer</button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="saveDashBoard()">Enregistrer</button>
         </div>
     </div>
     <hr>
@@ -71,27 +71,25 @@
                     <p class="card-text text-center">{{ resultatFiltre.title }}</p>
                 </div> -->
             <div *ngIf="item.addMetricsVisua === 1;">
-                        <div class="card-header">
-                                {{ item.value.title }}
-                        <div class="d-flex justify-content-end">
-                            <div class="p-1 bd-highlight">
-                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                (click)="removeItem($event, item.id)">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- {{ nomDiagramme }} -->
+                <div class="p-1 bd-highlight">
+                    <div class="d-flex justify-content-start">
+                        <b>{{ item.value.title | titlecase }}</b>
                     </div>
-                    <div class="card-body">
-                        <p class="text-center" style="font-size: 50px;"><b>{{ resultatFiltre.value | number }}</b></p>
-                        <div class="card-body">
-                            <p class="card-text text-center">{{ resultatFiltre.title }}</p>
-                        </div>
-                    </div>
-                    <div class="card-footer small text-muted">{{ item.value.title }}</div>
-                
                 </div>
+                <div class="d-flex justify-content-end">
+                    <div class="p-1 bd-highlight">
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                        (click)="removeItem($event, item.id)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <p class="text-center" style="font-size: 70px;"><b>{{ item.value.value | number }}</b></p>
+                <div class="card-body">
+                    <p class="card-text text-center">{{ item.value.title | titlecase }}</p>
+                </div>
+            </div>
                 <!-- <div class="d-flex justify-content-end">
                     <div class="p-1 bd-highlight">
                         <button type="button" class="btn btn-outline-danger btn-sm"
@@ -107,28 +105,29 @@
                     [chartType]="nomDiagramme"
                     (chartHover)="chartHovered($event)"
                     (chartClick)="chartClicked($event)"></canvas> -->
-                    <div *ngIf="item.addMetricsVisua === 2">
-                          <div class="card-header">
-                            <i class="fas fa-chart-{{ nomDiagramme }}"></i> 
-                            {{ item.nomDiagramme }} {{ item.value.title }}
-                            <div class="d-flex justify-content-end">
-                                <div class="p-1 bd-highlight">
-                                    <button type="button" class="btn btn-outline-danger btn-sm"
-                                    (click)="removeItem($event, item.coordonneeGridster)">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                          <div class="card-body">
-                                <canvas baseChart
-                                [data]="lineChartData"
-                                [labels]="lineChartLabels"
-                                [chartType]="item.nomDiagramme"
-                                (chartHover)="chartHovered($event)"
-                                (chartClick)="chartClicked($event)"></canvas>
-                          </div>
-                          <div class="card-footer small text-muted">{{ item.value.title }}</div>
+            <div *ngIf="item.addMetricsVisua === 2">
+                <div class="d-flex justify-content-start">
+                    <div class="p-1 bd-highlight">
+                        <i class="fas fa-chart-{{ nomDiagramme }}"></i> 
+                        <b>Diagramme en {{ item.nomDiagramme | titlecase }} {{ item.value.title | titlecase }}</b>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div class="p-1 bd-highlight">
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                        (click)="removeItem($event, item.coordonneeGridster)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <canvas baseChart
+                    [data]="lineChartData"
+                    [labels]="lineChartLabels"
+                    [options]="options"
+                    [chartType]="item.nomDiagramme"
+                    (chartHover)="chartHovered($event)"
+                    (chartClick)="chartClicked($event)"></canvas>
             </div>
         </div>
     </div>

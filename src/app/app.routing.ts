@@ -1,3 +1,4 @@
+import { AppComponent } from './app.component';
 import { DeconnexionComponent } from './deconnexion/deconnexion.component';
 import { AuthGuard } from './auth/auth.guard';
 import { CreercompteComponent } from './creercompte/creercompte.component';
@@ -19,7 +20,7 @@ import { AuthentificationPortailComponent } from './authentification-portail/aut
 const routes: Routes = [
 	// { path: '', redirectTo: '/login', pathMatch : 'full'},
 	// { path: '', component: AccueilComponent, pathMatch: 'full'},
-	{ path: '', component: AuthentificationPortailComponent, pathMatch: 'full' },
+	{ path: '', component: AppComponent, pathMatch: 'full' },
 	{ path: 'accueil', component: AccueilComponent, canActivate: [AuthGuard] },
 	{ path: 'exploration', component: ExplorationComponent, canActivate: [AuthGuard] },
 	{ path: 'dashboards', component: DashboardlisteComponent, canActivate: [AuthGuard] },

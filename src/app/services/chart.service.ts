@@ -23,9 +23,6 @@ export class ChartService {
       });
       return chart;
     } catch (error) {
-      this.pnotify.error({
-        text: error
-      });
       return null;
     }
   }

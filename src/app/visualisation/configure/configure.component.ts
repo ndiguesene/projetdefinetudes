@@ -5,7 +5,7 @@ import { AggregationData } from './../../entities/aggregationData';
 import { Config } from './../../config/Config';
 import { MetricsService } from './../../services/metrics.service';
 import { ElasticsearchService } from './../../services/elasticsearch.service';
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChartService } from '../../services/chart.service';
 
@@ -74,7 +74,7 @@ export class ConfigureComponent implements OnInit {
     type_bucket: '',
     nom_champ: '',
     typeDateFiltre: '',
-    fill: false
+    fill: true
   };
     /**
          * Cette  variable permet de faire la configuration de notre chart
@@ -331,15 +331,14 @@ export class ConfigureComponent implements OnInit {
   }
   // le resulat sera traité ici pour le traitement d'un bucket
   filtreHitsChangeBucket(resultat: any) {
+    this.chartData = [];
     try {
       if (this.currentChart) {
         this.currentChart.clear();
         this.currentChart.destroy();
       }
     } catch (error) {
-      this.pnotify.error({
-        text: error
-      });
+
     }
     try {
       this.loading = true;
@@ -384,8 +383,7 @@ export class ConfigureComponent implements OnInit {
               /**
                * C'est dans cette partie qu'on va faire les plusieurs graphes
                */
-              let dataTab;
-              dataTab = [];
+              let dataTab = [];
               this.chartData = [];
               if (resultat['typeDateFiltre'] === 'year') {
                 let name_field_aggrega_for_result = '';
@@ -408,14 +406,12 @@ export class ConfigureComponent implements OnInit {
                 for (const iterator of dataTab) {
                   chartColor.push(this.randomColor(1));
                 }
-                this.chartData.push(
-                  {
+                this.chartData.push({
                     label: resultat['nom_champ'], // dans la variable données ai la valeur de l'année comme ID
                     fill: this.params.fill,
                     data : dataTab,
                     backgroundColor: chartColor,
-                  }
-                );
+                  });
               } else { // si le type de filtre en interval est en Mois ou jour
                 const name_field_aggrega_for_result = 'agg_' + resultat['typeOfaggregationSwtich'] + '_' + resultat['nom_champ'];
                 if (resultat['typeOfaggregationSwtich'] === 'null' ||
@@ -764,10 +760,11 @@ export class ConfigureComponent implements OnInit {
   }
   selectShowFeelChart() {
     this.params.fill = !this.params.fill;
+    this.chartData = [];
     this.filtreHitsChangeBucket(this.resultatAllForBucket);
     this.currentChart.update({
       duration: 300,
-      easing: 'easeOutBounce'
+      easing: 'easeOutBounce',
     });
   }
   selectShowLegendChart() {
