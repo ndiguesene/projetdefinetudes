@@ -1,7 +1,7 @@
 <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Index</a>
-    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Infos</a>
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Infos Index</a>
+    <!-- <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Infos</a> -->
     <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Parametres avancés</a>
   </div>
 </nav>
@@ -29,48 +29,61 @@
               (click)="definirIndexPardefaut()">
                 <i class="fa fa-star"></i>
               </button>
-             <button [disabled]="!buttonDisabledSetIndex"
+             <!-- <button [disabled]="!buttonDisabledSetIndex"
               class="btn btn-xd btn-outline-danger" id="btnSetIndex" (click)="removeIndex()">
                 <i class="fa fa-remove"></i>
-              </button>
+              </button> -->
               <button 
                 type="button" 
                 [disabled]="!buttonDisabledSetIndex"
                 class="btn btn-xd btn-outline-info" id="btnSetIndex"
-                (click)="getStatIndex()"
-                data-toggle="collapse" data-target="#modalStatIndex" 
-                aria-expanded="false" aria-controls="modalStatIndex">
+                (click)="getStatIndex()">
                 <i class="fa fa-file-text"></i>
               </button>
             </div>
           </div>
         </div>
         <hr>
-        <div class="card collapse" id="modalStatIndex" *ngIf="statIndex">
-          <div class="list-group">
-            <ul class="list-group list-group-flush">
-              <li style="border-right: 1px dashed blue;" class="list-group-item">Nombre de documents : {{ statIndex.docs.count }}</li>
-              <li style="border-right: 1px dashed blue;" class="list-group-item">Taille : {{ statIndex.store.size_in_bytes }}</li>
-            </ul>
+        <div *ngIf="statIndex">
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Size in bytes</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.store.size_in_bytes }}</b></div>
+          </div>
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Docs Count</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.docs.count }}</b></div>
+          </div>
+          
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Docs deleted</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.docs.deleted }}</b></div>
+          </div>
+          
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Request Cache Memory size in Bytes</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.request_cache.memory_size_in_bytes }}</b></div>
+          </div>
+          
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Request Cache Count</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.request_cache.hit_count }}</b></div>
+          </div>
+          
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Refresh Listeners </div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.refresh.listeners }}</b></div>
+          </div>
+
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Search Fetch time in millis </div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.refresh.listeners }}</b></div>
+          </div>
+
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Search Fetch total </div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.refresh.listeners }}</b></div>
+          </div>
+
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Search Fetch query time in millis </div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.refresh.listeners }}</b></div>
+          </div>
+
+          <div class="d-flex bd-highlight rounded-left" style="border-left: 6px solid green;border-bottom: 0.5px solid #F1F1F1;border-top: 0.5px solid #F1F1F1">
+            <div class="p-2 w-100 bd-highlight">Search Fetch query total</div><div class="p-2 w-100 bd-highlight"> <b>{{ statIndex.refresh.listeners }}</b></div>
           </div>
         </div>
-        <div class="card">
-            This page lists every field in the .portail index and the field's 
-            associated core type as recorded by Elasticsearch. 
-            While this list allows you to view the core type of each field, 
-            changing field types must be done using Elasticsearch's Mapping API 
-        </div>
-        <!-- <div class="card">
-          <table class="table">
-            <tr>
-              <th></th>
-              <th></th>
-            </tr>
-            <tr *ngFor="let liste of liste">
-              <td>{{}}</td>
-            </tr>  
-          </table>
-        </div> -->
       </div>
     </div>
   </div>

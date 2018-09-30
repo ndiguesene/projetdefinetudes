@@ -139,7 +139,7 @@ export class ExplorationComponent implements OnInit, OnDestroy {
     try {
       this.getAllIndex();
       // permet de recupérer le contenu du variable stocké dans une variable de stockage qu niveau du navigateur
-       if (!!localStorage.getItem('resultatFiltre')) {
+       /* if (!!localStorage.getItem('resultatFiltre')) {
          await this.localStorage.getItem('resultatFiltre').subscribe(async res => {
            this.resultatFiltre = await JSON.parse(res);
          });
@@ -167,7 +167,7 @@ export class ExplorationComponent implements OnInit, OnDestroy {
           } else {
             // alert('indexpardefaut non');
           }
-        }
+        } */
       /**
        *  await permet de d'attendre jusqu'à la fin de l'instruction indiqué pour contiuner
        *  les instructions

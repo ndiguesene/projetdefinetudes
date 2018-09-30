@@ -246,7 +246,7 @@ export class BucketsAggregaComponent implements OnInit {
         if (this.tracerParTypeInterval) {
           let _query;
           if (this.typeOfaggregationSwtich === 'null' || this.typeOfaggregationSwtich === '') { // cette partie ou il ya pas d'aggrégation
-            if (this.intervalDatehistogram.date_debut === 0 && this.intervalDatehistogram.date_fin === 0) {
+            if (this.intervalDatehistogram.date_debut === 0 && this.intervalDatehistogram.date_fin === 0) {alert('null');
               _query = bodybuilder().aggregation('date_histogram', this.fieldBucketsChoiceDate, {
                   format: 'yyyy-MM-dd',
                   interval: this.typeDateFiltre
@@ -429,6 +429,34 @@ export class BucketsAggregaComponent implements OnInit {
                 });
               }
             );
+        } else if (this.nameBucket === 'range') {
+          const _query = bodybuilder()
+            .aggregation('range', this.fieldBucketsChoiceForFilter,
+              aggs => aggs.aggregation(typeOfaggregationSwtich,
+                typeOfaggregationSwtich + 'agg_' + this.fieldBucketsChoiceForFilter, 
+                this.fieldBucketsChoiceForFilter, {
+                  'ranges' : [
+                      { 'from' : this.rangeValeurDe, 'to' : this.rangeValeurA }
+                    ]
+                })).build();
+
+            await this.es.getSearchWithAgg(this.index, _query, Config.SIZE_MAX_RESULT_QUERY_RETURN).then(
+              res => {
+                console.log(res);
+                this.changeResultFiltre.emit({
+                  ...{
+                    filter_aggregation: this.buck.getResultFilterAggregationBucket(res),
+                    filter_hits: this.buck.getResultFilterHitsBucket(res),
+                    type_bucket: this.nameBucket,
+                    size: res.hits.total,
+                    nom_champ: this.fieldBucketsChoiceForFilter,
+                    query: _query
+                  }
+                });
+              }
+            );
+        } else if (this.nameBucket === 'filter') {
+
         }
     } catch (error) {
       this.pnotify.error({

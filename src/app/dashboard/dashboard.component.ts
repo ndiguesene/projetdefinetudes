@@ -45,32 +45,16 @@ export class DashboardComponent implements OnInit {
   public lineChartLabels: Array<any> = [];
   public lineChartType = '';
 
-  options: GridsterConfig;
   addMetricsVisua = 0;
-  option: any = {
+  options: any = {
     responsive: true,
     legend: {
-      position: 'top',
-      display: false
+      display: false,
+      position: 'left'
     },
     title: {
-      display: true,
+      display: false,
       text: this.nomDiagramme
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
-    pan: {
-      enabled: true,
-      mode: 'xy'
-    },
-    zoom: {
-      enabled: true,
-      mode: 'xy'
     }
   };
 
@@ -122,14 +106,16 @@ export class DashboardComponent implements OnInit {
       Config.NAME_FIELD_OF_MAPPING.VISUALIZATION).then(
       res => {
         this.dataAllPortail = Object.values(res.hits.hits);
-        this.dataAllPortail.map(async visua => {
+        this.dataAllPortail.map(visua => {
           visua['_source'].visualization.visState = JSON.parse(visua['_source'].visualization.visState);
         });
         this.listeVisualisation = this.dataAllPortail;
       }
     );
   }
-
+  saveDashBoard() {
+    console.log(this.listeVisualisation);
+  }
   changedOptions() {
     this.options.api.optionsChanged();
   }
@@ -140,10 +126,10 @@ export class DashboardComponent implements OnInit {
   }
   addItem(id) {
     let taille_card = 6;
+    let resultatFiltre: any;
     this.iterationIdListeDashboard = this.iterationIdListeDashboard + 1;
     this.es.getByIdService(Config.INDEX.NOM_INDEX_FOR_MAPPING, id).then(
       res => {
-        console.log(res);
         this.visuaObject = res.hits.hits[0]._source.visualization;
         this.visuaObject.visState = JSON.parse(this.visuaObject.visState);
         if (this.visuaObject.visState.name_type_chart === 'metrics') {
@@ -151,7 +137,7 @@ export class DashboardComponent implements OnInit {
             this.visuaObject.visState.index, this.visuaObject.visState.aggregation.aggreg, Config.SIZE_MAX_RESULT_QUERY_RETURN
           ).then(
             async resp => {
-              this.resultatFiltre =  {
+              resultatFiltre =  {
                 id: this.iterationIdListeDashboard,
                 value: this.buck.getResultFilterAggregationBucket(resp).value,
                 title: this.visuaObject.title,
@@ -159,11 +145,12 @@ export class DashboardComponent implements OnInit {
               };
               this.data = {
                 _idVisualisation: res.hits.hits[0]._id,
-                value:  this.resultatFiltre,
+                value:  resultatFiltre,
                 taille_card: taille_card,
                 addMetricsVisua: 1
               };
               this.listeVisualisationInDashboard.push(this.data);
+              resultatFiltre = {};
               // this.listeVisualisationInDashboard = this.listeVisualisationInDashboard.filter(
               //   liste => liste !== undefined
               // );
@@ -191,9 +178,9 @@ export class DashboardComponent implements OnInit {
                     this.lineChartLabels.push(r.key_as_string);
                   });
               // this.filtreHitsChangeBucket(resultat);
-              if (this.visuaObject.visState.name_type_chart === 'bar') {
+              /* if (this.visuaObject.visState.name_type_chart === 'bar') {
                 taille_card = 12;
-              }
+              } */
               this.data = {
                 id: this.iterationIdListeDashboard,
                 _idVisualisation: res.hits.hits[0]._id,
@@ -204,6 +191,7 @@ export class DashboardComponent implements OnInit {
                 taille_card: taille_card
               };
               this.listeVisualisationInDashboard.push(this.data);
+              resultatFiltre = {};
               // this.listeVisualisationInDashboard = this.listeVisualisationInDashboard.filter(
               //   liste => liste !== undefined
               // );
@@ -509,19 +497,11 @@ export class DashboardComponent implements OnInit {
               ];
             }alert('ok');
             this.currentChart = this.chartService.tracerChart(
-              this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.option
+              this.nomDiagramme, 'myChart', this.chartData, this.chartLabels, this.options
             );
           }
         }
         this.resultatAllForBucket = resultat;
       }
   }
-}
-
-export class GridsterData {
-  constructor(
-    public _idVisualisation: string,
-    public coordonneeGridster: GridsterItem,
-    public value: any,
-    public addMetricsVisua: number) {}
 }

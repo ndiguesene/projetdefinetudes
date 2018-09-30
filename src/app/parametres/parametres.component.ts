@@ -13,6 +13,8 @@ export class ParametresComponent implements OnInit {
   statIndex: Promise<any>;
 
   buttonDisabledSetIndex = false;
+  listeValues = [];
+  listeKeys = [];
 
   constructor(private es: ElasticsearchService) { }
   ngOnInit() {
@@ -42,6 +44,7 @@ export class ParametresComponent implements OnInit {
     await this.es.getStatIndexService(this.indexChoisi).then(
       async resp => {
         this.statIndex = await resp._all.primaries;
+        console.log(this.statIndex);
       }
     );
   }
@@ -53,8 +56,10 @@ export class ParametresComponent implements OnInit {
        */
       this.buttonDisabledSetIndex = true;
       this.indexChoisi = val;
+      this.getStatIndex();
     } else {
       this.buttonDisabledSetIndex = false;
+      this.statIndex = null;
     }
   }
   getAllListeIndex() {

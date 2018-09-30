@@ -37,7 +37,7 @@ import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from '@angular/common
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PaginationModule } from 'ngx-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
