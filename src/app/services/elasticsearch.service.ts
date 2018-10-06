@@ -173,7 +173,7 @@ export class ElasticsearchService {
         if (etat) {
           return this.http.put('http://' + Config.BASE_URL + '/_xpack/security/user/' + username + '/_disable', { headers });
         }
-        });
+      });
       return this.http.put('http://' + Config.BASE_URL + '/_xpack/security/user/' + username + '/_enable', { headers });
   }
   getAllUser(): Observable<any> {
