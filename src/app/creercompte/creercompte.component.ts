@@ -34,6 +34,7 @@ export class CreercompteComponent implements OnInit {
 
   ngOnInit() {
     this.init();
+    console.log(this.listeChamp);
   }
   init() {
     this.es.getAllUser().subscribe(

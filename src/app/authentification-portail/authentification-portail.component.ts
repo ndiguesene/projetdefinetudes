@@ -12,6 +12,7 @@ declare var $: any;
 })
 export class AuthentificationPortailComponent implements OnInit {
   form: any;
+  error = false;
   constructor(private fb: FormBuilder,
               private router: Router,
               protected localStorage: LocalStorage,
@@ -29,23 +30,24 @@ export class AuthentificationPortailComponent implements OnInit {
     }
 
     if (this.es.email === '' && this.es.motdepasse === '') {
-      $('#modalForConnexion').modal('show');
+      // $('#modalForConnexion').modal('show');
+      this.es.isAuth = false;
     } else {
-      $('#modalForConnexion').modal('hide');
+      // $('#modalForConnexion').modal('hide');
+      this.es.isAuth = true;
       this.router.navigate(['/accueil']);
     }
   }
   onSubmit() {
     // this.auth.sendToken('ndigue');
-    if (this.form.value.email === 'ok') {
-      this.es.email = 'elastic';
-      this.es.motdepasse = 'elastic';
-      console.log(this.es.motdepasse);
-      localStorage.setItem('email', 'ndigue');
-      $('#modalForConnexion').modal('hide');
-      this.router.navigate(['/accueil']);
+    if ((this.form.value.email === 'elastic') && (this.form.value.password === 'elastic')) {
+      this.es.email = this.form.value.email;
+      this.es.motdepasse = this.form.value.password;
+      this.es.isAuth = true;
+      this.error = false;
     } else {
-
+      this.es.isAuth = false;
+      this.error = true;
     }
       /* this.es.userAuthentication(userName,password).subscribe((data : any)=>{
        localStorage.setItem('userToken',data.access_token);
@@ -55,8 +57,4 @@ export class AuthentificationPortailComponent implements OnInit {
        this.isLoginError = true;
      }); */
    }
-   onClear() {
-
-   }
-
 }

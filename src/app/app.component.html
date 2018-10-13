@@ -1,7 +1,7 @@
 <ng2-slim-loading-bar></ng2-slim-loading-bar>
-<div id="wrapper">
+<div id="wrapper" *ngIf="isAuthenticated(); else templLogin">
   <nav class="navbar header-top fixed-top navbar-expand-lg  navbar-dark bg-dark">
-    <a class="navbar-brand" 
+    <a class="navbar-brand"
       [routerLink]="['/accueil']">
       <b>{{ 'app.nom_projet' | translate }}</b>
     </a>
@@ -27,9 +27,9 @@
     </div>
   </nav>
   <div class="container-fluid">
-    <div 
-    class="alert alert-warning alert-dismissible fade show" 
-    role="alert" 
+    <div
+    class="alert alert-warning alert-dismissible fade show"
+    role="alert"
     *ngIf="!indexParDefaut">
       <strong>Index</strong> Vueillez choisir un index par défaut dans votre base Elasticsearch.
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -39,3 +39,6 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+<ng-template #templLogin>
+  <app-authentification-portail></app-authentification-portail>
+</ng-template>

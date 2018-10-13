@@ -14,8 +14,8 @@ export class DeconnexionComponent implements OnInit {
   ngOnInit() {
     this.es.email = '';
     this.es.motdepasse = '';
-    console.log('Email vide ' + this.es.email);
     localStorage.clear();
+    this.es.isAuth = false;
     this.router.navigate(['/']);
   }
 

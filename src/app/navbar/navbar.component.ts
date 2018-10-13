@@ -18,7 +18,6 @@ export class NavbarComponent implements OnInit {
         } else {
           this.full_name = p.full_name;
         }
-        console.log('Full Name ' + this.full_name);
       }
     );
   }

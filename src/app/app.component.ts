@@ -29,4 +29,7 @@ export class AppComponent implements OnInit {
   }
   ngOnInit() {
   }
+  isAuthenticated() {
+    return this.es.isAuth;
+  }
 }

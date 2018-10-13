@@ -2,15 +2,15 @@ import { Observable } from 'rxjs/Observable';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Client } from 'elasticsearch';
-import { Router } from '@angular/router';
 import { Config } from '../config/Config';
 import * as bodybuilder from 'bodybuilder';
 
 @Injectable()
 export class ElasticsearchService {
-  public email = '';
-  public motdepasse = '';
+  public email = 'elastic';
+  public motdepasse = 'elastic';
   public full_name = '';
+  public isAuth = false;
 
   private client: Client;
   queryalldocs = {
@@ -44,13 +44,15 @@ export class ElasticsearchService {
     }
     return false;
   }
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
     try {
       if (!this.client) {
         this.connect();
+        this.isAuth = true;
       }
     } catch (error) {
-      this.router.navigate(['login']);
+      this.isAuth = false;
+      // this.router.navigate(['login']);
     }
     // création de l'index '.portail'
     // this.client.exists({
