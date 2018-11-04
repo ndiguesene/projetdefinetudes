@@ -47,6 +47,10 @@
                 </div>
               </div>
               <hr>
+              <div class="form-group row alert alert-danger" *ngIf="alreadyExistUser">
+                Cet email est déjà associé à un utilisateur.
+              </div>
+              <hr *ngIf="alreadyExistUser">
               <div class="form-group row">
                 <div class="col-sm-4">
                   <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">

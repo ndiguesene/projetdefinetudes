@@ -17,6 +17,8 @@ export class CreercompteComponent implements OnInit {
   };
   listeChamp = [];
   userActif: boolean;
+
+  alreadyExistUser = false;
   /* infosUser: any = {
     email: 'elastic',
     motdepasse: 'wSQ4RPnwQEB4PdzlV8aB'
@@ -34,23 +36,37 @@ export class CreercompteComponent implements OnInit {
 
   ngOnInit() {
     this.init();
-    console.log(this.listeChamp);
   }
   init() {
     this.es.getAllUser().subscribe(
       p => {
         this.listeChamp.push(Object.values(p));
-        this.listeChamp = this.listeChamp[0].filter(
-          u => (u.username !== 'elastic' && u.username !== 'logstash' && u.username !== 'logstash_system' && u.username !== 'kibana')
-        );
+        // this.listeChamp = this.listeChamp[0].filter(
+        //   u => (u.username !== 'elastic' && u.username !== 'logstash' && u.username !== 'logstash_system' && u.username !== 'kibana')
+        // );
+      });
+      if (this.listeChamp.length === 0) {
+        this.listeChamp.push({
+        username: "elastic",
+        email: "elastic@admin",
+        roles: "superuser",
+        full_name: "elastic"
+      });
       }
-    );
+      
+  }
+  checkIfEmailExist(username): boolean {
+    return (this.listeChamp.filter(item => item.username === username).length === 0) ? false : true;
   }
   removeUser(username) {
     this.es.removeUser(username).subscribe(
-      q => {console.log(q); this.init(); },
-      error => alert(error)
+      q => {
+        console.log(q); 
+        this.init(); 
+      },
+      error => console.log(error)
     );
+    this.listeChamp = this.listeChamp.filter(item => item.username !== username);
   }
   enabledUser(username) {
     this.es.enabledUser(username).subscribe(
@@ -67,12 +83,24 @@ export class CreercompteComponent implements OnInit {
       this.user.roles = [this.loginForm.value.role];
       this.user.full_name = this.loginForm.value.prenom + ' ' + this.loginForm.value.nom;
       this.user.email = this.loginForm.value.email;
+      console.log(this.checkIfEmailExist(this.user.email.split("@")[0]));
+      console.log(this.user.email.split("@")[0]);
+      if (!this.checkIfEmailExist(this.user.email.split("@")[0])) {
+        this.listeChamp.push({
+          username: this.user.email.split("@")[0],
+          email: this.user.email,
+          roles: this.user.roles,
+          full_name: this.user.full_name
+        });
+        this.alreadyExistUser = false;
+      } else {
+        this.alreadyExistUser = true;
+      }
       this.es.create(this.user, this.user.email, this.es.email, this.es.motdepasse).subscribe(
         q => {
-          console.log(q);
           this.init();
         },
-        error => alert(error)
+        error => console.log(error)
       );
     }
   }
