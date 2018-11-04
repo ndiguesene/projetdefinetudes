@@ -1,0 +1,61 @@
+<div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                  <div class="col-md-10"> 
+                    <input
+                    [(ngModel)]="index"
+                    type="text"
+                    placeholder="Saisir nom index"
+                    class="form-control" 
+                    id="basic-url" aria-describedby="basic-addon3">
+                  </div>
+                  <div class="col-md-2">
+                    <div class="input-group-prepend">
+                      <a class="btn btn-primary" role="button" (click)="envoyerRequete();">
+                        <i class="fa fa-arrow-circle-right"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div> 
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <ace-editor
+                      [(text)]="query"
+                      #editor
+                      style="height: 400px;overflow: auto;"></ace-editor>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+              <div class="card-header">
+                <h4 class="text-center">
+                  Réponse
+                </h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <ngx-json-viewer [json]="reponse"  style="overflow-y: scroll;height: 400px;"></ngx-json-viewer>
+                    <!-- <ace-editor
+                      [(text)]="reponse"
+                      #editor
+                      theme="'github'" mode="'json'"
+                      [readOnly]="true"
+                      style="height: 400px;overflow-y: auto;"></ace-editor> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>

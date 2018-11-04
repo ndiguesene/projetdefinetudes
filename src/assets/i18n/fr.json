@@ -1,0 +1,22 @@
+{
+    "app": {
+        "titre": "Portail Rapport Big Data",
+        "nom_projet": "Portail de Rapport"
+    },
+    "menu": {
+        "exploration": "Exploration",
+        "visualisation": "Visualisation",
+        "tableauDeBord": "Tableau de bord",
+        "console": "Console",
+        "parametres": "Parametres",
+        "informations": "Informations",
+        "creerutilisateur": "Créer un utilisateur"
+    },
+    "page": {
+        "dashboard": {
+            "creer_tableau_de_bord": "Créer un Tableau de bord",
+            "message_dashboard_vide": "Oups !!! On dirait que vous n'avez aucun tableau de bord. Créons-en un peu!"
+        }
+    }
+    
+}

@@ -1,0 +1,142 @@
+<div class="row">
+  <div div class="col-sm">
+    <select id="index" class="custom-select form-control form-control-sm" 
+            (change)="selectTypeOfAggregationSwtich($event)">
+      <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+        {{ aggrega.value }}
+      </option>
+    </select>
+  </div>
+  <div class="col-sm" *ngIf="typeOfaggregationSwtich !== 'count'">
+    <div *ngIf="choiceListeFieldAll;else templateForChoiceListFieldShow">
+      <select 
+        class="custom-select form-control form-control-sm" 
+        (change)="selectFieldMetricsChoice($event)">
+        <option [value] = "'null'">
+          Nom Champ
+        </option>
+        <option *ngFor="let field of listFieldString" [value]="field">
+          {{ field }}
+        </option>
+      </select>
+    </div>
+    <div class="col-sm">
+      <ng-template #templateForChoiceListFieldShow>
+        <select 
+          class="custom-select form-control form-control-sm"
+          (change)="selectFieldMetricsChoice($event)">
+          <option [value] = "'null'">
+            Nom Champ
+          </option>
+          <option *ngFor="let field of listFieldNumber" [value]="field">
+            {{ field }}
+          </option>
+        </select>
+      </ng-template>
+    </div>
+  </div>
+  <div class="col-sm">
+    <!-- <div class="checkbox-inline col-sm">
+      <label><input type="checkbox" [(ngModel)]="selectFieldAggregation" (click)="selectAppliedFieldAggregation();">Intervale</label>
+    </div> -->
+    <label class="checkbox-inline">
+        <input type="checkbox" value=""
+      [(ngModel)]="selectFieldAggregation" (click)="selectAppliedFieldAggregation();">Intervale
+    </label>
+  </div>
+
+  <div class="col-sm" *ngIf="selectFieldAggregation">
+    <select  
+    class="custom-select form-control form-control-sm"
+    (change)="selectFieldBucketsChoiceDate($event)">
+      <option disabled>
+        Champ Date
+      </option>
+      <option *ngFor="let field of listFieldDate" [value]="field">
+        {{ field }}
+      </option>
+    </select>
+  </div>
+
+  <div class="col-sm" *ngIf="selectFieldAggregation">
+    <select (change)="selectTypeDateFiltre($event)" class="custom-select form-control form-control-sm">
+      <option value="" disabled>Intervale</option>
+      <option value="year">Année</option>
+      <option value="month">Mois</option>
+      <option value="day">Jour</option>
+    </select>
+  </div>
+
+  <div class="col-sm button-group">
+      <button class="btn btn-sm btn-primary" (click)="resultatAggregat(typeOfaggregationSwtich)">
+        <i class="fa fa-search"></i>Filtrer
+      </button>
+      <a role="button" data-toggle="modal" class="btn btn-sm btn-info"
+        data-target="#ModalCenterForSwitchField">
+        <i class="fa fa-filter">Add Filter</i>
+      </a>
+      <button type="button" class="btn btn-sm btn-danger" (click)="removeMetricsAggregat()">
+        <i class="fa fa-remove"></i>
+      </button>
+  </div>
+</div>
+
+<!-- Modal -->
+<!-- Début configuration choix de l'index -->
+<div class="modal fade" id="ModalCenterForSwitchField" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Ajouté un filtre
+          {{ listAllFieldWithType | json }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <hr>
+      <div class="modal-body">
+          <div class="col-sm">
+            <button type="button" 
+                class="btn btn-link justify-content-end"
+                (click)="editByQueryDSL = !editByQueryDSL">Editer en Query DSL</button>
+          </div>
+          <div class="col-sm" *ngIf="editByQueryDSL;else templateEditByQueryDSL">
+              <ngx-select [items]="listFieldStringAll" 
+                [(ngModel)]="nomFieldForFilter"
+                placeholder="Choisir Nom champ"
+                (select)="getNomFieldForFilter($event)">
+              </ngx-select>
+              
+              <span *ngIf="nomFieldForFilter">
+                <ngx-select [items]="listeFiltre"
+                [(ngModel)]="typeFiltreForFilter">
+                </ngx-select>
+              </span>
+              
+              <span *ngIf="typeFiltreForFilter">
+                <ngx-select [items]="listFieldValueStringAll"
+                [(ngModel)]="valueFieldForFilter">
+                </ngx-select>
+              </span>
+          </div>
+          <ng-template #templateEditByQueryDSL>
+            <div class="col-sm">
+              <textarea cols="50" rows="3">
+
+              </textarea>
+            </div>
+          </ng-template>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal"
+          role="button"
+          class="btn btn-primary">
+          <i class="fa fa-"></i>Valider
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

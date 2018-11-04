@@ -1,0 +1,22 @@
+{
+    "app": {
+        "titre": "Report Portal Big Data",
+        "nom_projet": "Report Portal"
+    },
+    "menu": {
+        "exploration": "Explore",
+        "visualisation": "Visualization",
+        "tableauDeBord": "Dashboard",
+        "console": "Console",
+        "parametres": "Settings",
+        "informations": "Informations",
+        "creerutilisateur": "Create user"
+    },
+    "page": {
+        "dashboard": {
+            "creer_tableau_de_bord": "Create a dashboard",
+            "message_dashboard_vide": "Oops !!! Looks like you have no dashboard. Let's create some!"
+        }
+    }
+    
+}

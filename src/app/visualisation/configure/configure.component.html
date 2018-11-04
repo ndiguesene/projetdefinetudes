@@ -1,0 +1,246 @@
+<div class="container" *ngIf="nomDiagramme === 'coordonneesmap' || nomDiagramme === 'regionmap';else tempOtherChart">
+  <div class="card">
+    <div class="row">
+      <div class="col-md-12 form-inline">
+        <div class="input-group">
+          <div class="input-group-prepend-sm">
+            <span class="input-group-text">Longitude</span>
+          </div>
+          <input type="number" class="form-control form-control-sm" required>
+        </div>
+        <div class="input-group">
+          <div class="input-group-prepend-sm">
+            <span class="input-group-text">Latitude</span>
+          </div>
+          <input type="number" class="form-control form-control-sm" required>
+        </div>
+        <button type="button" class="btn btn-primary">Rechercher</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="col-md-12 form-inline">
+          <button type="button" class="btn btn-primary"
+          (click)="appliquerMarketOnMap()">Appliquer Markers</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <ngui-map zoom="8">
+    <custom-marker *ngFor="let pos of positions;let i = index" [position]="pos">
+      <div class="custom-icon">{{ i }}</div>
+    </custom-marker>
+  </ngui-map>
+  <!-- <ngui-map center="Senegal, Dakar, Mbao villeneuve"></ngui-map> -->
+</div>
+
+<ng-template #tempOtherChart>
+  <!-- <div class="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom"> -->
+  <!-- <h1 class="h2">Dashboard</h1> -->
+  <div id="accordion">
+    <div class="btn-toolbar mb-2 mb-md-0 justify-content-end">
+      <div class="btn-group">
+        <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationSave">
+          Enregistrer
+          <i class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#optionsVisualisationExport">
+          <i class="fa fa-share-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+
+  <!-- <div *ngIf="errorGlobal" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Une erreur s'est produite !</strong> {{ errorGlobal }}.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div> -->
+  <div class="collapse card card-body" id="optionsVisualisationSave">
+    <form class="form-inline" >
+      <label for="email">Title : </label>
+      <input type="text" name="title" [(ngModel)]="objectVisualizationSave.visualization.title"
+        placeholder="Title" required class="form-control"> 
+      <label for="email">Description : </label>
+      <input type="text" name="description" [(ngModel)]="objectVisualizationSave.visualization.description"
+        placeholder="Description (Optionnel)" class="form-control"> 
+      <button (click)="saveVisualisation()" class="btn btn-success">
+        <i class="fa fa-save"></i> Enregistrer
+      </button>
+    </form>
+    <br>
+    <div class="alert alert-success alert-dismissible fade show form-control" role="alert" *ngIf="saveSuccess || editSuccess">
+      <strong>Parfait !!!</strong> Enregistré(e) avec succes.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div class="collapse card card-body" id="optionsVisualisationShare">
+    <h1>Share</h1>
+  </div>
+  <div class="collapse card card-body" id="optionsVisualisationExport">
+    <h1>Exporter Visualisation : <input type="button" class="btn btn-outline-success" value="Télécharger" (click)="exporter()"></h1>
+  </div>
+
+
+  <div class="card">
+    <div class="card-header">
+      <div class="container">
+        <div class="row card-body" *ngIf="nomDiagramme !== 'metrics';else templateMetric">
+          <app-buckets-aggrega 
+            class="form-inline" 
+            [index]="nomIndex" 
+            [hiddenButRemove]="true" 
+            (changeResultFiltre)="filtreHitsChangeBucket($event)">
+          </app-buckets-aggrega>
+        </div>
+        <ng-template #templateMetric>
+          <div class="row card-body">
+            <app-metrics-aggrega
+              [index]="nomIndex"
+              [hiddenButRemove]="true"
+              (change)="indexChangeFiltreMetrics($event)">
+            </app-metrics-aggrega>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-10">
+                <div class="card text-capitalize text-center bg-dark text-white">
+                  <h5>{{ nomIndex }} - {{ nomDiagramme }}</h5>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <a data-dismiss="modal"
+                  [routerLink]="['/visualisation']"
+                  [queryParams] = "{ showCollapse : 'true' }"
+                  role="button" 
+                  class="btn btn-primary btn-sm">
+                  <i class="fa fa-plus-square"><b> Nouveau Diagramme</b></i>
+                </a>
+              </div>
+            </div>
+            
+            <div class="input-group" *ngIf="nomDiagramme !== 'metrics'">
+              <div>
+                <select (change)="changePositionLegend($event)" class="custom-select form-control">
+                  <option value="top">Top</option>
+                  <option value="right">Right</option>
+                  <option value="left">Left</option>
+                  <option value="bottom">Bottom</option>
+                </select>
+              </div>
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3"> - </span>
+              </div>
+              <span *ngIf="params.showLabel">
+                <input type="text" placeholder="Nom du label" [(ngModel)]="params.nomLabel" class="form-control">
+              </span>
+              <span *ngIf="params.showLabel">
+                <button type="button" class="btn btn-primary" (click)="loadLabelChart()" data-toggle="tooltip" title="Valider la modifier le nom du label du diagramme">
+                  <i class="fa fa-save"></i>
+                </button>
+              </span>
+              <!-- La fonction 'selectShowLabelChart' permet d'afficher le input et button de validation pour
+                le changement du label duc chart -->
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <span> Label </span>
+                  <input type="checkbox" checked (change)="selectShowLabelChart()" data-toggle="tooltip" title="Activer/Desactiver le label du diagramme">
+                </div>
+              </div>
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <span> Légende </span>
+                  <input type="checkbox" checked (change)="selectShowLegendChart()" data-toggle="tooltip" title="Activer/Desactiver la légende du diagramme">
+                </div>
+              </div>
+              <div class="input-group-prepend">
+                <div class="input-group-text">
+                  <span> Feel </span>
+                  <input type="checkbox" (change)="selectShowFeelChart()" data-toggle="tooltip" title="Activer/Desactiver le feel du diagramme">
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div style="display: block;">
+              <div class="">
+                <!-- Pour ne pas répéter le id myChart on utilise la varible nomDiagramme pour générer
+                  automatique le nom de l'id correspondant au type de chart -->
+                <div *ngIf="nomDiagramme !== 'metrics';else templateMetrics">
+                  <canvas id="myChart"></canvas>
+                </div>
+                <ng-template #templateMetrics>
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-md-6 card text-center" 
+                        *ngFor="let result of resultatAggregationMetrics">
+
+                        <div class="d-flex justify-content-between">
+                          <div class="p-2 bd-highlight">
+                            <button type="button" class="btn btn-outline-success btn-sm">
+                              <i class="fa fa-save"></i>
+                            </button>
+                          </div>
+                          <div class="p-2 bd-highlight">
+                            <button type="button" class="btn btn-outline-danger btn-sm"
+                              (click)="removeMetrics(result.id)">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                        </div>
+                        <hr>
+                        <p style="font-size: 50px;"><b>{{ result.objectResult.result | number }}</b></p>
+                        <div class="card-body">
+                          <p class="card-text text-center">{{ result.objectResult.label }}</p>
+                        </div>
+                      </div>
+
+                      <div *ngIf="resultatFiltreWithAggregation" class="col-md-6 card text-center">
+                        <div>
+                          <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseMetrics" aria-expanded="false" aria-controls="collapseExample">
+                            Metrics Aggrégation
+                          </button>
+                        </div>
+                        <div class="collapse" id="collapseMetrics">
+                          <h3>{{ aggregation.type | titlecase }} of {{ aggregation.params.field }}</h3>
+                          <table class="table table-striped table-sm">
+                            <thead class="thead-light">
+                              <tr>
+                                <th>{{ aggregation.params.fieldBucketsChoiceDate }} Interval '{{aggregation.params.typeDateFiltre | titlecase}}'</th>
+                                <th>Nombre enregistrement</th>
+                                <th>{{ aggregation.type | titlecase }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let l of resultatFiltreWithAggregation.result">
+                                <td>{{ l.key_as_string | date }}</td>
+                                <td>{{ l.doc_count | number }}</td>
+                                <td>{{ l[name_field_aggrega_for_result].value | number }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

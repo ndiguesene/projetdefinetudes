@@ -1,0 +1,373 @@
+<!-- Modal -->
+<!-- Début configuration choix de l'index -->
+<div class="modal fade" id="ModalCenterForSwitchIndex" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Choisir un index
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-body">
+            <div class="list-group">
+              <!-- <a [routerLink]="['/visualisation',nomIndexChoisi]" class="list-group-item list-group-item-action" value="nomIndexChoisi"
+                *ngFor="let item of listeIndex">
+                {{ item.index }}
+              </a> -->
+              <div class="col-md-*">
+                  Index par défaut : '<strong>{{ nomIndexChoisi }}</strong>'
+              </div>
+              <br>
+              <div class="col-md-*">
+                <select 
+                  id="index" 
+                  class="custom-select" 
+                  (change)="getNomIndex($event)">
+                  <option [value]="nomIndexChoisi">
+                    Nom index
+                  </option>
+                  <option *ngFor="let index of listeIndex" [value]="index.index">
+                    {{index.index}}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a data-dismiss="modal"
+          [routerLink]="['/visualisation', nomChart]" 
+          [queryParams] = "{ index : nomIndexChoisi }"
+          role="button" 
+          class="btn btn-primary">
+          <i class="fa fa-"></i>Valider
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<!-- fin configuration choix de l'index -->
+
+<div class="card">
+  <div class="card-header">
+    <div class="input-group">
+      <div class="col-md-6">
+        <input type="text" 
+          class="form-control float-right" 
+          placeholder="Rechercher une visualisation"
+          name="search"
+          [(ngModel)]="searchString">
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-4">
+            
+          </div>
+          <div class="col-md-2" 
+            data-toggle="collapse" 
+            data-target="#ajouterNouveauVisualisationTemplate">
+            <div class="input-group">
+              <button class="btn btn-primary show">
+                Nouveau Type Visualisation
+                <i class="fa fa-plus-circle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <div class="card"> -->
+    <div class="collapse" [class.show]="showCollapseListChart" id="ajouterNouveauVisualisationTemplate">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <h5 class="card-header">Basic Charts</h5>
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal" 
+                          (click) = "getNameVisualisation('polarArea')"
+                          data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-area-chart fa-3x">
+                                  <h6>Polar Area</h6>
+                                </i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal"
+                        (click) = "getNameVisualisation('radar')"
+                        data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-bar-chart-o fa-3x">
+                                  <h6>Radar</h6>
+                                </i>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                      <div class="col-md-2">
+                        <a role="button" data-toggle="modal" 
+                        (click) = "getNameVisualisation('bar')"
+                        data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-bar-chart fa-3x">
+                                  <h6>Bar</h6>
+                                </i>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                        <div class="col-md-2">
+                          <a role="button" data-toggle="modal"
+                          (click) = "getNameVisualisation('line')"
+                          data-target="#ModalCenterForSwitchIndex">
+                          <div class="card">
+                            <div class="card-body text-center"
+                                data-toggle="tooltip" 
+                                title="créer un diagramme de ...">
+                                <i class="fa fa-line-chart fa-3x">
+                                  <h6>Line</h6>
+                                </i>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal" 
+                            (click) = "getNameVisualisation('pie')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center"
+                                    data-toggle="tooltip" 
+                                    title="créer un diagramme de ...">
+                                    <i class="fa fa-pie-chart fa-3x">
+                                      <h6>Pie</h6>
+                                    </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal" 
+                            (click) = "getNameVisualisation('doughnut')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center"
+                                    data-toggle="tooltip" 
+                                    title="créer un diagramme de ...">
+                                    <i class="fa fa-adjust fa-3x" aria-hidden="true">
+                                      <h6>Doughnut</h6>
+                                    </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+    
+                          <div class="col-md-2">
+                            <a role="button" data-toggle="modal"
+                            (click) = "getNameVisualisation('horizontalBar')"
+                            data-target="#ModalCenterForSwitchIndex">
+                              <div class="card">
+                                <div class="card-body text-center" data-toggle="tooltip" title="créer un diagramme de ...">
+                                  <i class="fa fa-bar-chart-o fa-3x">
+                                    <h6>Horizontal Bar</h6>
+                                  </i>
+                                </div>
+                              </div>
+                            </a>
+                          </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-md-12">
+              <div class="card">
+                <h5 class="card-header">Données</h5>
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-2">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <a role="button" data-toggle="modal"
+                              (click) = "getNameVisualisation('metrics')"
+                              data-target="#ModalCenterForSwitchIndex">
+                              <i class="fa fa-table fa-3x">
+                                <h6>Metrics</h6>
+                              </i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+    
+            <div class="col-md-12">
+                <div class="card">
+                  <h5 class="card-header">Maps</h5>
+                  <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                          <div class="card">
+                            <div class="card-body text-center">
+                              <a role="button" data-toggle="modal"
+                                (click) = "getNameVisualisation('coordonneesmap')"
+                                data-target="#ModalCenterForSwitchIndex">
+                                <i class="fa fa-map" style="font-size: 45px;color:black;">
+                                  <h6>Coordonnées Map</h6>
+                                </i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+    
+                        <div class="col-md-2">
+                          <div class="card">
+                            <div class="card-body text-center">
+                              <a role="button" data-toggle="modal"
+                                (click) = "getNameVisualisation('regionmap')"
+                                data-target="#ModalCenterForSwitchIndex">
+                                <i class="fa fa-map-marker" style="font-size: 45px;color:black;">
+                                  <h6>Région Map</h6>
+                                </i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- </div> -->
+  <!-- {{ listeVisualisation | json }} -->
+  <div class="card-body" *ngIf="listeVisualisation;else templatePasDeVisualisation">
+    <table id="table" class="table table-bordered table-sm">
+      <thead class="thead-light">
+        <tr>
+          <th>#</th>
+          <th>Titre</th>
+          <!-- <th>Index</th> -->
+          <th>Type</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let visua of listeVisualisation | filter: searchString : 'title';let i = index;">
+          <td>{{ i+1 }}</td>
+          <td>{{ visua['_source'].visualization.title }}</td>
+          <!-- <td>
+            {{ visua['_source'].visualization.visState.index }}
+          </td> -->
+          <td>
+            <i class="fa fa-{{visua['_source'].visualization.visState.name_type_chart}}-chart"></i> 
+            {{visua['_source'].visualization.visState.name_type_chart | titlecase}}
+          </td>
+          <td>
+            <a [routerLink]="['/visualisation', visua['_source'].visualization.visState.name_type_chart]" 
+              [queryParams] = "{ index : visua['_source'].visualization.visState.index, idVisualisation : visua._id }">
+              Consulter
+            </a>
+          </td>
+          <td>
+            <button type="button" class="btn btn-outline-danger btn-sm"
+              (click)="removeVisualisation($event, visua._id)">
+                <i class="fa fa-remove"></i>
+            </button>
+            <!-- <button type="button" class="btn btn-outline-danger btn-sm" data-id="{{visua._id}}"
+              data-toggle="modal" data-target="#ModalCenterForDeleteIndex"
+              (click)="removeVisualisation($event, visua._id)">
+                <i class="fa fa-remove"></i>
+            </button> -->
+            <!-- Modal pour confirmer la suppression d'un index avec toutes ses données -->
+            <!-- <div class="modal fade" id="ModalCenterForDeleteIndex" 
+                tabindex="-1"
+                role="dialog" 
+                aria-labelledby="exampleModalCenterTitle" 
+                aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">
+                      Confirmation de suppression
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Voulez - vous vraiment supprimer cet index avec toutes ses données ?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <button 
+                        type="button"
+                        id="visua._id"
+                        data-id="visua._id"
+                        class="btn btn-primary"
+                        
+                        data-dismiss="modal">
+                        Oui
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            <!-- Fin du modal -->
+          </td>
+        </tr>
+        
+      </tbody>
+      <!-- <tfoot>
+        <tr *ngIf="nombreDeLigne > 1;else template">
+          <td colspan="3"><b> {{ nombreDeLigne }} lignes</b></td>
+        </tr>
+        <ng-template #template>
+          <td colspan="3">
+            <b> {{ nombreDeLigne }} ligne</b>
+          </td>
+        </ng-template>
+      </tfoot> -->
+    </table>
+  </div>
+  <ng-template #templatePasDeVisualisation>
+    <div class="well well-lg text-center">
+      <h4>Visualisation non trouvée !</h4>
+      <p class="lead">Oups !!! On dirait qu'aucune visualisation portant ce nom n'a été toruvée.</p>
+      <hr class="my-4">
+      <a class="btn btn-primary btn-sm" href="#" role="button"
+          data-toggle="collapse" 
+          data-target="#ajouterNouveauVisualisationTemplate">Créez s'en une</a>
+    </div>
+  </ng-template>
+</div>

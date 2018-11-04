@@ -1,0 +1,497 @@
+<ng2-slim-loading-bar></ng2-slim-loading-bar>
+<!-- Début Modal pour la sélection des liste de champs à filtrer pour la Recherche -->
+<div class="modal fade" id="ModalCenterForSelectFields" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">
+          Choisir votre liste de champs
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-success" 
+          data-dismiss="modal"
+          (click) = "selectFieldForFilter();">Valider</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Fin Modal pour la sélection des liste de champs à filtrer pour la Recherche -->
+
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-md-4">
+        <select id="index" class="custom-select form-control form-control-sm" 
+            (change)="displayFieldAndLoadData($event)">
+          <option [value] = "'null'" disabled>
+            Index
+          </option>
+          <option [selected]="indexParDefaut === index.index" *ngFor="let index of listeIndex" [value]="index.index">
+            {{ index.index }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select id="index" class="custom-select form-control form-control-sm" 
+              (change)="selectFieldMetricsAndBuckets($event)">
+          <option [value] = "''" disabled>
+            Type opération
+          </option>
+          <option [value] = "'metrics'">
+            Metrics
+          </option>
+          <option [value] = "'buckets'">
+            Buckets
+          </option>
+        </select>
+      </div>
+      <div class="col">
+          <button type="button" class="btn btn-sm btn-success" (click)="ajouterNewAggregation()">
+            <b>{{ typeDeFiltre | titlecase}}</b> <i class="fa fa-plus-square"></i>
+          </button>
+      </div>
+    </div>
+      <div class="container" *ngIf="typeDeFiltre">
+        <hr>
+        <div class="align-items-center" *ngIf="typeDeFiltre === 'metrics'">
+          <app-metrics-aggrega *ngFor="let metricAgg of listeMetrics"
+            [index]="metricAgg.index"
+            [idComposant]="metricAgg.id"
+            (change)="indexChangeFiltreMetrics($event)"
+            (changeRemoveComposant)="recupererIdComposantChangeMetrics($event)">
+          </app-metrics-aggrega>
+        </div>
+        <div class="align-items-center" *ngIf="typeDeFiltre === 'buckets'">
+          <app-buckets-aggrega *ngFor="let bucketAgg of listeBucketsAggrega"
+            [index]="bucketAgg.index"
+            [idComposant]="bucketAgg.id"
+            [hiddenButRemove] = "false"
+            (changeRemoveComponent)="recupererIdComposantChangeBucket($event)"
+            (changeResultFiltre)="filtreHitsChangeBucket($event)"
+          ></app-buckets-aggrega>
+        </div>
+      </div>
+  </div>
+
+      <!--
+      <div class="col-lg-8" *ngIf="choiceFieldMetricsAndBuckets;else templateChoiceBuckets">
+        <div class="row">
+          <div class="col-lg-3">
+            <select id="index" class="custom-select form-control form-control-sm" 
+                    (change)="selectTypeOfAggregationSwtich($event)">
+              <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+                {{ aggrega.value }}
+              </option>
+            </select>
+          </div>
+          <div *ngIf="selectFieldForAggregationAndBucket">
+            <div class="col-lg-3" *ngIf="choiceListeFieldAll; else templateForChoiceListFieldShow">
+              <select 
+                class="custom-select form-control form-control-sm" 
+                (change)="selectFieldMetricsChoice($event)">
+                <option [value] = "'null'">
+                  Nom Champ
+                </option>
+                <option *ngFor="let field of listFieldString" [value]="field">
+                  {{ field }}
+                </option>
+              </select>
+            </div>
+            <ng-template #templateForChoiceListFieldShow class="col-lg-3">
+              <select 
+                class="custom-select form-control form-control-sm"
+                (change)="selectFieldMetricsChoice($event)">
+                <option [value] = "'null'">
+                  Nom Champ
+                </option>
+                <option *ngFor="let field of listFieldNumber" [value]="field">
+                  {{ field }}
+                </option>
+              </select>
+            </ng-template>
+          </div>
+          <div class="col-lg-2">
+            <button class="btn btn-sm btn-primary" (click)="resultatAggregat()">Filtrer</button>
+          </div>
+          <div class="col-lg-2 right">
+            <button class="btn btn-sm btn-primary" (click)="ajoutNewAggregat()">
+              <i class="fa fa-plus-square"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <ng-template #templateChoiceBuckets class="col-lg-8">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-2">
+              <select id="index" class="custom-select form-control form-control-sm" 
+                      (change)="selectFieldAgg($event)">
+                <option *ngFor="let aggrega of listeOperationsMetrics" [value]="aggrega.key">
+                  {{ aggrega.value }}
+                </option>
+              </select>
+            </div>
+            <div *ngIf="selectFieldForAggregationAndBucket;else templateForChoiceListFieldShow" class="col-lg-2">
+                <select class="custom-select form-control form-control-sm">
+                  <option [value] = "'null'">
+                    Nom Champ
+                  </option>
+                  <option *ngFor="let field of listFieldString" [value]="field">
+                    {{ field }}
+                  </option>
+                </select>
+              <ng-template #templateForChoiceListFieldShow>
+                <select class="custom-select form-control form-control-sm">
+                  <option [value] = "'null'">
+                    Nom Champ
+                  </option>
+                  <option *ngFor="let field of listFieldNumber" [value]="field">
+                    {{ field }}
+                  </option>
+                </select>
+              </ng-template>
+            </div>
+            <div class="col-lg-2">
+              <select id="index" class="custom-select form-control form-control-sm" (change)="selectBucket($event)">
+                <option *ngFor="let li of listeBuckets" [value]="li.key">
+                  {{ li.value }}
+                </option>
+              </select>
+            </div>
+            <div class="col-lg-4" *ngIf="searchByRange">
+              <div class="input-group">
+                <div class="input-group input-daterange">
+                  <div class="input-group-addon"> From </div>
+                  <input type="number" class="form-control form-control-sm">
+                  <div class="input-group-addon"> To </div>
+                  <input type="number" class="form-control form-control-sm">
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4" *ngIf="searchByDateHistogramme">
+              <div class="input-group">
+                <div class="input-group input-daterange">
+                  <div class="input-group-addon"> From </div>
+                  <input type="date" class="form-control form-control-sm">
+                  <div class="input-group-addon"> To </div>
+                  <input type="date" class="form-control form-control-sm">
+                </div>
+              </div>
+            </div>
+            <div class="row center">
+              <div class="col-lg-2">
+                <button class="btn btn-sm btn-primary" (click)="resultatAggregat()">Filtrer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div> -->
+<div class="card">
+  <div class="card-body">
+    <ng-container *ngIf="(indexParDefaut.length === 0); else explorationDonneesTemplate">
+        <div class="card text-center">
+          <div class="card-header">
+            Exploration de Diagramme
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Choisir d'abors un index</h5>
+            <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+            <a [routerLink] = "['/parametres']" class="btn btn-primary">
+              <i class="fa fa-plus-square"> Ajouter Index</i>
+            </a>
+          </div>
+        </div>
+    </ng-container>
+    <ng-template #explorationDonneesTemplate>
+      <h5 class="align-items-lef"><u>Index</u> : {{ indexParDefaut }}</h5>
+      <hr>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <div class="form-inline">
+                <label for="" class="aria-label label-sm">
+                  Type de champs &nbsp;
+                </label>
+                  <select 
+                      class="custom-select form-control form-control-sm"
+                      (change)="filtreListField($event)">
+                    <option value="tous">
+                      Tous
+                    </option>
+                    <option value="date">
+                      Date
+                    </option>
+                    <option value="text">
+                      Text
+                    </option>
+                    <option value="number">
+                      Number
+                    </option>
+                  </select>
+              </div>
+            </div>
+            <div class="card-body">
+              <div *ngIf="loading;else templateListFields" class="row">
+                <div class="center-block">
+                  <i class="fa fa-spinner fa-spin"
+                    style="font-size:40px;color:rgb(0, 76, 216)"></i>
+                </div>
+              </div>
+              <ng-template #templateListFields>
+                <div class="row" *ngIf="returnedArray">
+                  <div class="col-md-12">
+                    <span class="" *ngFor="let content of returnedArray;let i = index">
+                      {{ content }}
+                      <hr>
+                      <!-- <span class="badge badge-primary badge-pill">
+                        <button class="btn btn-primary btn-sm">add</button>
+                      </span> -->
+                    </span>
+                  </div>
+                </div>
+                <div *ngIf="contentArray">
+                  <div *ngIf="contentArray.length > nombreItemShowForPaggination" class="col-md-8">
+                    <pagination 
+                      [totalItems]="contentArray.length" 
+                      (pageChanged)="pageChanged($event)"
+                      class="pagination-sm"
+                      previousText="&lsaquo;" 
+                      nextText="&rsaquo;" 
+                      firstText="&laquo;" 
+                      lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </ng-template>
+              <!-- </div> -->
+            </div>
+          </div>  
+        </div>
+        <div class="col-md-8">
+            <div *ngIf="loading;else templateListFieldsData" class="center-block">
+              <i class="fa fa-spinner fa-spin"
+                style="font-size:40px;color:rgb(0, 76, 216)"></i>
+            </div>
+            <ng-template #templateListFieldsData>
+              <div *ngIf="resultatFiltre">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-6 card text-center" 
+                      *ngFor="let resul of resultatFiltre">
+                      <div class="d-flex justify-content-between">
+                        <div class="p-2 bd-highlight">
+                          <button type="button" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-save"></i>
+                          </button>
+                        </div>
+                        <div class="p-2 bd-highlight">
+                          <button type="button" class="btn btn-outline-danger btn-sm"
+                            (click)="removeMetrics(resul.id)">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      </div>
+                      <hr>
+                      <p style="font-size: 50px;"><b>{{ resul.objectResult.result | number }}</b></p>
+                      <div class="card-body">
+                        <p class="card-text text-center">{{ resul.objectResult.label }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="resultatFiltreWithAggregation" class="card">
+                <div class="d-flex justify-content-between">
+                  <div class="p-2 bd-highlight">
+                    <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                      Réduire
+                    </button>
+                  </div>
+                  <div class="p-2 bd-highlight">
+                    <button class="btn btn-primary btn-block btn-sm">
+                      Enregistrer
+                    </button>
+                  </div>
+                </div>
+                <hr>
+                <div *ngIf="masquerresultatFiltreWithAggregation" class="collapse" id="collapseExample">
+                  <h3>{{ aggregation.type | titlecase }} of {{ aggregation.params.field }}</h3>
+                  <table class="table table-striped table-sm">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>{{ aggregation.params.fieldBucketsChoiceDate }} Interval '{{aggregation.params.typeDateFiltre | titlecase}}'</th>
+                        <th>Nombre enregistrement</th>
+                        <th>{{ aggregation.type | titlecase }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let l of resultatFiltreWithAggregation.result">
+                        <td>{{ l.key_as_string || l.key | date }}</td>
+                        <td>{{ l.doc_count | number }}</td>
+                        <td>{{ l[name_field_aggrega_for_result].value | number }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- <div class="table-responsive" style="overflow-x:auto;"> -->
+                <!-- <table class="table table-striped table-sm">
+                  <thead class="thead-light">
+                    <tr>
+                      <th *ngFor="let field of listFieldString">{{ field }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let li of listDataInIndex">
+                      <td *ngFor="let field of listFieldString">
+                        {{ li[field] }}
+                        {{li['adresse.ville']}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>  -->
+                <!-- {{ resultFilterDateHistogram[resultFilterDateHistogram.length-1] | json }} -->
+                
+                <div *ngIf="resultFilterDateHistogram.length > 0" class="card">
+                  <div class="d-flex justify-content-between">
+                    <div class="p-2 bd-highlight">
+                      <button class="btn btn-primary btn-block btn-sm" type="button" data-toggle="collapse" data-target="#collapseDataAggregation" aria-expanded="false" aria-controls="collapseDataAggregation">
+                        Réduire
+                      </button>
+                    </div>
+                    <div class="p-2 bd-highlight">
+                      <button class="btn btn-primary btn-block btn-sm">
+                        Enregistrer
+                      </button>
+                    </div>
+                  </div>
+                  <hr>
+                  <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram' 
+                              || resultFilterDateHistogramShowInHtml.type_bucket === 'histogram'"
+                    class="collapse show form-control" id="collapseDataAggregation">
+                    <div><b>Count number : {{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}</b></div>
+                    <div>
+                      <select name="showByNumber" id="showByNumber" (change)="showResult($event)"
+                        class="custom-select form-control form-control-sm">
+                        <option value="{{this.resultFilterDateHistogramShowInHtml.dataAggregation.length}}" selected>Tout</option>
+                        <option *ngFor="let resul of countLineResultByAggregation">
+                          {{ resul }}
+                        </option>
+                      </select>
+                    </div>
+                    <table class="table table-striped table-sm">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>{{resultFilterDateHistogramShowInHtml.nom_champ}} interval</th>
+                          <th>Nombre d'enregistrement</th>
+                        </tr>
+                      </thead>
+                      <tbody *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_histogram'">
+                        <tr *ngFor="let l of showList">
+                          <td>{{ l.key_as_string | date }}</td>
+                          <td>{{ l.doc_count }}</td>
+                        </tr>
+                      </tbody>
+                      <tbody *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'histogram'">
+                        <tr *ngFor="let l of showList">
+                          <td>{{ l.key | number }}</td>
+                          <td>{{ l.doc_count }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <!-- <div class="col-md-3 align-content-center">
+                      <button class="btn btn-primary btn-sm" (click)="showResult(showList.length%5)">Plus de données</button>
+                    </div> -->
+                  </div>
+                  <div *ngIf="resultFilterDateHistogramShowInHtml?.type_bucket === 'range_aggregation'">
+                    <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                      <li class="list-group-item">
+                        <b>Index:</b> {{ l._index }}, <b>Type:</b> {{ l._type }},<b>Id:</b> {{ l._id }},
+                        <!-- <span *ngFor="let field of listFieldStringAll"> -->
+                        <b>{{ resultFilterDateHistogramShowInHtml.nom_champ }}:</b> {{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}
+                        <span *ngIf="listFieldDate">
+                          <b>, {{ listFieldDate[0] }}</b> {{ l._source[listFieldDate[0]] }}
+                        </span>
+                        <!-- </span> -->
+                      </li>
+                    </ul>
+                    <!-- <table class="table table-striped table-sm" *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'range_aggregation'">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>Index</th>
+                          <th>Type</th>
+                          <th>Id</th>
+                          <th>{{ resultFilterDateHistogramShowInHtml.nom_champ }}</th>
+                          <th *ngIf="listFieldDate">
+                            {{ listFieldDate[0] }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                          <td>{{ l._index }}</td>
+                          <td>{{ l._type }}</td>
+                          <td>{{ l._id }}</td>
+                          <td>{{ l._source[resultFilterDateHistogramShowInHtml.nom_champ] }}</td>
+                          <td *ngIf="listFieldDate">
+                              {{ l._source[listFieldDate[0]] }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table> -->
+                  </div>
+                </div>
+                
+                
+                <div *ngIf="resultFilterDateHistogramShowInHtml.type_bucket === 'date_range'">
+                  <div class="col-md-12 card text-center">
+                    <p style="font-size: 50px;"><b>{{ showList[1] | number }}</b></p>
+                    <div class="card-body">
+                      <p class="card-text text-center">{{ showList[0] }}</p>
+                    </div>
+                  </div>
+                  <hr>
+                  <button (click)="showResultsHits = !showResultsHits" 
+                    class="btn btn-primary btn-sm btn-block">
+                    Afficher Resultats ( {{resultFilterDateHistogramShowInHtml.data.length}} row(s) )
+                  </button>
+                  <div *ngIf="showResultsHits">
+                    <ul class="list-group" *ngFor="let l of resultFilterDateHistogramShowInHtml.data">
+                      <li class="list-group-item">
+                        <span *ngFor="let field of listFieldStringAll">
+                          <b>{{ field }}:</b> {{ l._source[field] }},
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              <!-- </div> -->
+            </ng-template>
+              <!-- <div class="content-wrapper" *ngIf="listDataInIndex">
+                <div *ngFor="let li of listDataInIndex">
+                  <span class="content-item" *ngFor="let field of listFieldString">
+                    <b>{{ field }} :</b> {{ li._source[field] }}
+                  </span>
+                  <hr>
+                </div>
+                <pagination [totalItems]="listDataInIndex.length" (pageChanged)="pageChanged($event)"></pagination>
+              </div> -->
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
