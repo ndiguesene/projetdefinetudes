@@ -70,7 +70,7 @@
     "@types/jasminewd2": "~2.0.2",
     "@types/leaflet": "^1.2.7",
     "@types/node": "^6.0.106",
-    "angular-ide": "^0.9.44",
+    "angular-ide": "^0.9.77",
     "codelyzer": "^4.0.1",
     "jasmine-core": "~2.8.0",
     "jasmine-spec-reporter": "~4.2.1",
